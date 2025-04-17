@@ -1,6 +1,6 @@
 import { FiMenu, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 import Link from "next/link";
-
+import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
 export default function Navbar() {
   return (
     <nav className="bg-neutral text-dark shadow-sm sticky top-0 z-50">
@@ -35,24 +35,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center justify-between h-20">
           {/* Left Navigation Links */}
           <div className="flex-1 flex items-center gap-8">
-            <Link
-              href="/New-Arrivals"
-              className="font-poppins font-medium hover:text-secondary transition-colors"
-            >
-              New Arrivals
-            </Link>
-            <Link
-              href="/collections"
-              className="font-poppins font-medium hover:text-secondary transition-colors"
-            >
-              Collections
-            </Link>
-            <Link
-              href="/sale"
-              className="font-poppins font-medium hover:text-secondary transition-colors"
-            >
-              Sale
-            </Link>
+            <SearchBarDesktop />
           </div>
 
           {/* Centered Logo */}
