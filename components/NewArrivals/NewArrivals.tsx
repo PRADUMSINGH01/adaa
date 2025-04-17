@@ -3,7 +3,7 @@
 
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import { useState } from "react";
-
+import kurtiiImg from "@/app/(Images)/kurti.png";
 export default function NewArrivals() {
   // Sample data; replace with API or props
   const [arrivals] = useState([
@@ -69,7 +69,7 @@ export default function NewArrivals() {
             >
               <div className="relative">
                 <img
-                  src={item.image}
+                  src={kurtiiImg.src}
                   alt={item.name}
                   className="w-full h-56 object-cover"
                 />

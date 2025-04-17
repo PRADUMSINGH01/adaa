@@ -1,6 +1,6 @@
 // components/ProductPage.tsx
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   FiHeart,
   FiShoppingCart,
@@ -8,13 +8,10 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 import Image from "next/image";
-import kurti from "@/app/(Images)/kurti.png";
-const productImages = [
-  "/kurti-1.jpg",
-  "/kurti-2.jpg",
-  "/kurti-3.jpg",
-  "/kurti-4.jpg",
-];
+import kurti1 from "@/app/(Images)/kurti.png";
+import kurti2 from "@/app/(Images)/kurti.png";
+import kurti3 from "@/app/(Images)/kurti.png";
+import kurti4 from "@/app/(Images)/kurti.png";
 
 export default function ProductPage() {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -22,48 +19,58 @@ export default function ProductPage() {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showZoom, setShowZoom] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  const productImages = [kurti1, kurti2, kurti3, kurti4];
   const sizes = ["S", "M", "L", "XL", "XXL"];
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top, width, height } =
-      e.currentTarget.getBoundingClientRect();
-    const x = ((e.pageX - left) / width) * 100;
-    const y = ((e.pageY - top) / height) * 100;
+    if (!containerRef.current || !showZoom) return;
+
+    const container = containerRef.current;
+    const { left, top, width, height } = container.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+
     setZoomPosition({ x, y });
   };
 
   return (
     <div className="min-h-screen bg-neutral p-4 md:p-8">
-      <div className="max-w-7xl mx-auto bg-light rounded-xl shadow-lg overflow-hidden">
+      <div className="w-full mx-auto bg-light rounded-xl shadow-lg overflow-hidden">
         <div className="grid md:grid-cols-2 gap-8 p-6 md:p-12">
           {/* Image Gallery */}
           <div className="relative group">
-            {/* Main Image */}
+            {/* Main Image Container */}
             <div
+              ref={containerRef}
               className="relative aspect-square overflow-hidden rounded-xl cursor-zoom-in"
               onMouseMove={handleMouseMove}
               onMouseEnter={() => setShowZoom(true)}
               onMouseLeave={() => setShowZoom(false)}
             >
+              {/* Main Product Image */}
               <Image
-                src={kurti}
+                key={selectedImage}
+                src={productImages[selectedImage]}
                 alt="Designer Kurti"
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
+                priority
               />
 
               {/* Zoom Overlay */}
-              {showZoom && (
-                <div
-                  className="absolute inset-0 bg-[length:200%] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                  style={{
-                    backgroundImage: `url(${productImages[selectedImage]})`,
-                    backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                  }}
-                />
-              )}
+              <div
+                className={`absolute inset-0 bg-no-repeat bg-[length:200%] transition-opacity duration-300 pointer-events-none ${
+                  showZoom ? "opacity-100" : "opacity-0"
+                }`}
+                style={{
+                  backgroundImage: `url(${productImages[selectedImage].src})`,
+                  backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                }}
+              />
 
+              {/* Zoom Indicator */}
               <div className="absolute bottom-4 left-4 bg-primary text-neutral px-3 py-1 rounded-full text-sm flex items-center gap-2">
                 <FiZoomIn className="w-4 h-4" />
                 Hover to Zoom
@@ -76,17 +83,18 @@ export default function ProductPage() {
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
-                  className={`aspect-square overflow-hidden rounded-lg border-2 ${
+                  className={`aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
                     selectedImage === index
                       ? "border-primary"
                       : "border-transparent hover:border-secondary"
                   }`}
                 >
                   <Image
-                    src={kurti}
+                    src={img}
                     alt={`Kurti View ${index + 1}`}
                     fill
                     className="object-cover"
+                    quality={50}
                   />
                 </button>
               ))}
@@ -118,7 +126,7 @@ export default function ProductPage() {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-5 py-2 rounded-full font-poppins ${
+                    className={`px-5 py-2 rounded-full font-poppins transition-colors ${
                       selectedSize === size
                         ? "bg-primary text-neutral"
                         : "bg-white text-dark hover:bg-light"
@@ -211,7 +219,7 @@ export default function ProductPage() {
               >
                 <div className="aspect-square relative">
                   <Image
-                    src={kurti}
+                    src={productImages[item % productImages.length]}
                     alt="Related Kurta"
                     fill
                     className="object-cover"

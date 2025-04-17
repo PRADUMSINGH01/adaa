@@ -19,3 +19,9 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add smooth transitions for zoom effect */
+.zoom-overlay {
+  transition: opacity 0.3s ease, background-position 0.1s linear;
+  will-change: transform, opacity;
+}

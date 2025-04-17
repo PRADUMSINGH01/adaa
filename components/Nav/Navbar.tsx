@@ -17,7 +17,7 @@ export default function Navbar() {
             href="/"
             className="font-playfair text-2xl font-bold text-primary"
           >
-            KurtiKraft
+            Adaa
           </Link>
 
           {/* Right Icons */}
@@ -61,7 +61,7 @@ export default function Navbar() {
               href="/"
               className="font-playfair text-3xl font-bold text-primary hover:opacity-90 transition-opacity"
             >
-              KurtiKraft
+              Adaa
             </Link>
           </div>
 

@@ -399,7 +399,7 @@ export default function UserDashboard() {
                         <div className="border-b pb-3">
                           <button className="flex items-center justify-between w-full">
                             <span className="font-poppins text-dark">
-                              What's your exchange policy?
+                              What&apos;s your exchange policy?
                             </span>
                             <FiChevronDown className="text-primary" />
                           </button>

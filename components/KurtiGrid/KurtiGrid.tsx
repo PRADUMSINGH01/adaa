@@ -34,9 +34,6 @@ export default function KurtiGrid() {
   return (
     <section className="py-12 bg-neutral">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="font-playfair text-3xl font-bold text-dark mb-8 text-center">
-          Explore Our Kurtis
-        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-fr">
           {kurtis.map((k, idx) => (
             <div
