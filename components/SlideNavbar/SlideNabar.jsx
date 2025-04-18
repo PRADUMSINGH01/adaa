@@ -7,7 +7,13 @@ import { useState } from "react";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
-
+  const links = [
+    "Suit-Sets",
+    "Kurtas-Tops",
+    "Dresses",
+    "Dress-Material",
+    "Bottoms",
+  ];
   const navigation = [
     {
       name: "Clothing",
@@ -56,10 +62,10 @@ export default function Navbar() {
 
                 {item.items && openDropdown === item.name && (
                   <div className="absolute top-full left-0 bg-white shadow-lg rounded-lg p-4 min-w-[200px]">
-                    {item.items.map((subItem) => (
+                    {item.items.map((subItem, index) => (
                       <Link
-                        key={subItem}
-                        href="#"
+                        key={index}
+                        href={`Kurties/${links[index]}`}
                         className="block py-2 px-4 hover:bg-light rounded-md"
                       >
                         {subItem}

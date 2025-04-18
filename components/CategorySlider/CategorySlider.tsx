@@ -19,7 +19,7 @@ const categories = [
 
 export default function CategorySlider() {
   return (
-    <div className="relative py-12 px-4 bg-light z-0">
+    <div className="relative py-12 px-4 bg-light z-0 overflow-hidden">
       <Swiper
         modules={[Navigation, Pagination]}
         spaceBetween={30}

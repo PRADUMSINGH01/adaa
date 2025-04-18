@@ -1,5 +1,6 @@
 // components/NewArrivals.tsx
 "use client";
+import Image from "next/image";
 
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import { useState } from "react";
@@ -68,7 +69,7 @@ export default function NewArrivals() {
               className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform"
             >
               <div className="relative">
-                <img
+                <Image
                   src={kurtiiImg.src}
                   alt={item.name}
                   className="w-full h-56 object-cover"

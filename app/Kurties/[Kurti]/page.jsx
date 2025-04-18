@@ -1,13 +1,6 @@
-import ProductPage from "@/components/FullProduct/FullProduct";
-import ProductFilters from "@/components/Filter/Filter";
-
+import ProductGrid from "@/components/ProductGrid/ProductGrid";
 const page = () => {
-  return (
-    <div className="flex w-full justify-between">
-      <ProductFilters />
-      <ProductPage />
-    </div>
-  );
+  return <ProductGrid />;
 };
 
 export default page;

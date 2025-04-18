@@ -3,6 +3,7 @@
 import { FiShoppingCart, FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 export default function Cart() {
   const [cartItems, setCartItems] = useState([
     {
@@ -58,7 +59,7 @@ export default function Cart() {
                   key={item.id}
                   className="flex items-center gap-4 bg-light p-4 rounded-xl shadow-sm"
                 >
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.name}
                     className="w-24 h-24 object-cover rounded-md"

@@ -4,7 +4,7 @@
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import { useState } from "react";
 import kurtii from "@/app/(Images)/kurti.png";
-
+import Image from "next/image";
 type Kurti = {
   id: number;
   name: string;
@@ -41,7 +41,7 @@ export default function KurtiGrid() {
               className={`relative bg-white rounded-2xl shadow-lg overflow-hidden transform transition-transform hover:scale-105 group
                 ${idx % 5 === 0 ? "sm:col-span-2 sm:row-span-2" : ""}`}
             >
-              <img
+              <Image
                 src={kurtii.src}
                 alt={k.name}
                 className="w-full h-full object-cover"

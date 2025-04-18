@@ -22,12 +22,12 @@ export default function Navbar() {
 
           {/* Right Icons */}
           <div className="flex items-center gap-3">
-            <button className="p-2 hover:text-secondary">
+            <Link href={"/Wishlist"} className="p-2 hover:text-secondary">
               <FiHeart className="w-5 h-5" />
-            </button>
-            <button className="p-2 hover:text-secondary">
+            </Link>
+            <Link href={"/Cart"} className="p-2 hover:text-secondary">
               <FiShoppingCart className="w-5 h-5" />
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export default function Navbar() {
           {/* Right Icons */}
           <div className="flex-1 flex items-center justify-end gap-6">
             <Link
-              href={"/wishlist"}
+              href={"/Wishlist"}
               className="hover:text-secondary transition-colors relative"
             >
               <FiHeart className="w-6 h-6" />

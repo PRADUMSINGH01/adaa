@@ -2,7 +2,7 @@
 
 import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { useState } from "react";
-
+import Image from "next/image";
 export default function UserWishlist() {
   const [wishlist, setWishlist] = useState([
     {
@@ -45,7 +45,7 @@ export default function UserWishlist() {
                   key={item.id}
                   className="bg-white rounded-xl shadow-sm overflow-hidden"
                 >
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.name}
                     className="w-full h-56 object-cover"

@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { FiMapPin, FiTruck, FiCreditCard } from "react-icons/fi";
-
+import Image from "next/image";
 type CartItem = {
   id: number;
   name: string;
@@ -140,7 +140,7 @@ export default function Checkout() {
             <div className="space-y-4">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-center gap-4">
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded-md"
