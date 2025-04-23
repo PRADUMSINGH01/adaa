@@ -44,6 +44,8 @@ export default function KurtiGrid() {
               <Image
                 src={kurtii.src}
                 alt={k.name}
+                width={400}
+                height={100}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">

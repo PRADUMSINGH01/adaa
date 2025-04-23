@@ -87,9 +87,9 @@ export default function ProductGrid() {
               isGridView ? "grid-cols-2 md:grid-cols-3" : "grid-cols-1"
             } gap-6`}
           >
-            {products.map((product) => (
+            {products.map((product, index) => (
               <article
-                key={product.id}
+                key={index}
                 className="group bg-light rounded-lg overflow-hidden relative hover:shadow-md transition-shadow"
               >
                 <div

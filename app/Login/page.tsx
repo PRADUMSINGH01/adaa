@@ -1,7 +1,6 @@
-const page=()=>{
+import LoginPage from "@/components/Login/LoginForm";
+const page = () => {
+  return <LoginPage />;
+};
 
-
-    return <></>
-}
-
-export default page
+export default page;

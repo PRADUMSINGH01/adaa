@@ -1,5 +1,7 @@
 import { FiMenu, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
 import Link from "next/link";
+import Image from "next/image";
+import logo from "@/app/(Images)/logo.png";
 import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
 export default function Navbar() {
   return (
@@ -17,7 +19,7 @@ export default function Navbar() {
             href="/"
             className="font-playfair text-2xl font-bold text-primary"
           >
-            Adaa
+            <Image src={logo} alt=" " width={100} height={10} priority />
           </Link>
 
           {/* Right Icons */}
@@ -44,7 +46,7 @@ export default function Navbar() {
               href="/"
               className="font-playfair text-3xl font-bold text-primary hover:opacity-90 transition-opacity"
             >
-              Adaa
+              <Image src={logo} alt=" " width={200} height={20} priority />
             </Link>
           </div>
 

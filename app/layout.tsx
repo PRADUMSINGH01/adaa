@@ -3,7 +3,7 @@ import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
 import Navbar from "@/components/Nav/Navbar";
-
+import Provider from "./providers";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
@@ -30,10 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+        <Provider>
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
+        </Provider>
       </body>
     </html>
   );

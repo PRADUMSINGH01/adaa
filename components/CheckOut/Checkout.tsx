@@ -143,6 +143,8 @@ export default function Checkout() {
                   <Image
                     src={item.image}
                     alt={item.name}
+                    width={400}
+                    height={100}
                     className="w-16 h-16 object-cover rounded-md"
                   />
                   <div className="flex-1">
