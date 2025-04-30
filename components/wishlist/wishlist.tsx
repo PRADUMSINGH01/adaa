@@ -3,19 +3,24 @@
 import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { useState } from "react";
 import Image from "next/image";
+import { addToCart } from "@/server/AddToCart";
 export default function UserWishlist() {
   const [wishlist, setWishlist] = useState([
     {
       id: 1,
       name: "Floral Embroidered Kurti",
-      price: "₹1,499",
-      image: "/images/floral-kurti.jpg",
+      price: 1499,
+      image: "/",
+      size: "M",
+      color: "Red",
     },
     {
       id: 2,
       name: "Chikankari Cotton Kurti",
-      price: "₹1,299",
-      image: "/images/chikankari-kurti.jpg",
+      price: 1299,
+      image: "/",
+      size: "L",
+      color: "White",
     },
   ]);
 
@@ -48,6 +53,8 @@ export default function UserWishlist() {
                   <Image
                     src={item.image}
                     alt={item.name}
+                    width={400}
+                    height={400}  
                     className="w-full h-56 object-cover"
                   />
                   <div className="p-4 space-y-2">
@@ -56,7 +63,7 @@ export default function UserWishlist() {
                     </h3>
                     <p className="text-primary font-semibold">{item.price}</p>
                     <div className="flex gap-4 mt-3">
-                      <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-poppins text-sm">
+                      <button onClick={()=>addToCart(item,item.size,item.color)} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-poppins text-sm">
                         <FiShoppingCart />
                         Add to Cart
                       </button>

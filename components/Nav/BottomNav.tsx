@@ -13,7 +13,7 @@ const BottomNan = () => {
       <div className="flex justify-around items-center py-3">
         {/* Profile */}
         <Link
-          href="/user"
+          href="/User"
           className="flex flex-col items-center text-dark hover:text-primary transition-colors"
         >
           <FiUser className="w-6 h-6" />
@@ -31,7 +31,7 @@ const BottomNan = () => {
 
         {/* Customer Care */}
         <Link
-          href="/support"
+          href="User/#Customer-support"
           className="flex flex-col items-center text-dark hover:text-primary transition-colors"
         >
           <FiHeadphones className="w-6 h-6" />
@@ -40,7 +40,7 @@ const BottomNan = () => {
 
         {/* Refund & Return */}
         <Link
-          href="/returns"
+          href="/User/#Returns"
           className="flex flex-col items-center text-dark hover:text-primary transition-colors"
         >
           <div className="relative">

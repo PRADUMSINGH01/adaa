@@ -4,25 +4,15 @@ import { FiShoppingCart, FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getCart } from "@/server/GetCart";
+import { removeFromCart } from "@/server/AddToCart";
 export default function Cart() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Floral Cotton Kurti",
-      price: 999,
-      image: "/images/kurti1.jpg",
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "Silk Embroidered Kurti",
-      price: 1299,
-      image: "/images/kurti2.jpg",
-      quantity: 2,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState(getCart().cart || []);
 
-  const updateQuantity = (id: number, delta: number) => {
+
+
+
+  const updateQuantity = (id: string, delta: number) => {
     setCartItems((items) =>
       items.map((item) =>
         item.id === id
@@ -32,8 +22,13 @@ export default function Cart() {
     );
   };
 
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const removeItem = (id: string) => {
+    removeFromCart(id);
+    setCartItems((items) => items.filter((item) => item.id !== id));
+    window.dispatchEvent(new Event("cart-updated"));
+    setCartItems(getCart().cart || []);
+    alert("Item removed from cart");
+    window.location.reload();
   };
 
   const total = cartItems.reduce(
@@ -70,7 +65,7 @@ export default function Cart() {
                     <h3 className="font-poppins font-semibold text-dark">
                       {item.name}
                     </h3>
-                    <p className="text-primary font-poppins">₹{item.price}</p>
+                    <p className="text-primary font-poppins">{item.price}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, -1)}

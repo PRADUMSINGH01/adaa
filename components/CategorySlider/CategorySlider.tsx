@@ -7,14 +7,14 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Kurti from "@/app/(Images)/kurti.png";
-
+import Link from "next/link";
 const categories = [
-  { name: "Silk Kurtis", image: Kurti },
-  { name: "Cotton Kurtis", image: Kurti },
-  { name: "Party Wear", image: Kurti },
-  { name: "Casual Wear", image: Kurti },
-  { name: "Printed", image: Kurti },
-  { name: "Embroidered", image: Kurti },
+  { name: "Silk Kurtis",url:'Silk-Kurties', image: Kurti },
+  { name: "Cotton Kurtis", url:'Cotton-Kurties',image: Kurti },
+  { name: "Party Wear", url:'Party-Kurties',image: Kurti },
+  { name: "Casual Wear", url:'Casual-Kurties',image: Kurti },
+  { name: "Printed",url:'Printed-Kurties', image: Kurti },
+  { name: "Embroidered", url:'Embroidered-Kurties',image: Kurti },
 ];
 
 export default function CategorySlider() {
@@ -49,6 +49,8 @@ export default function CategorySlider() {
 
               {/* Image Container */}
               <div className="relative w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-secondary/20 hover:border-secondary transition-all duration-300">
+             <Link href={`Kurties/${category.url}`}>
+             
                 <Image
                   src={category.image}
                   alt={category.name}
@@ -56,6 +58,7 @@ export default function CategorySlider() {
                   className="object-cover transform group-hover:scale-110 transition-transform duration-300"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
+                </Link>
               </div>
             </div>
           </SwiperSlide>

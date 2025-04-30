@@ -7,7 +7,7 @@ import kurti1 from "@/app/(Images)/kurti.png";
 import kurti2 from "@/app/(Images)/kurti.png";
 import kurti3 from "@/app/(Images)/kurti.png";
 import kurti4 from "@/app/(Images)/kurti.png";
-
+import { addToCart } from "@/server/AddToCart";
 interface Product {
   name: string;
   price: number;
@@ -60,6 +60,21 @@ export default function ProductPage() {
 
     setZoomPosition({ x, y });
   };
+
+
+  const handleAddToCart = () => {
+
+    if (!selectedSize || !selectedColor) {
+      alert("Please select a size and color before adding to cart.");
+      return;
+    }
+
+
+
+    addToCart(productDetails,selectedColor ,selectedSize);
+    alert("Item added to cart!");
+  }
+
 
   const handleMouseEnter = () => {
     setShowZoom(true);
@@ -205,6 +220,7 @@ export default function ProductPage() {
 
             <div className="flex gap-4">
               <button
+              onClick={()=>handleAddToCart()}
                 className="flex-1 bg-primary text-white py-3 rounded-md font-poppins font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-3"
                 disabled={!selectedSize || !selectedColor}
               >

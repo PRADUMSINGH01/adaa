@@ -8,11 +8,11 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const links = [
-    "Suit-Sets",
-    "Kurtas-Tops",
-    "Dresses",
-    "Dress-Material",
-    "Bottoms",
+    "Kurties/Suit-Sets",
+    "Kurties/Kurtas-Tops",
+    "Kurties/Dresses",
+    "Kurties/Dress-Material",
+    "Bottom/Bottom-wear",
   ];
   const navigation = [
     {
@@ -29,7 +29,7 @@ export default function Navbar() {
       name: "Accessories",
       items: ["Jewellery", "Fragrances"],
     },
-    { name: "Girls" },
+    { name: "Girls" ,url:'Girls-Collection/Girl'},
     {
       name: "Collections",
       items: ["New Arrivals", "Co-ord Sets"],
@@ -56,7 +56,7 @@ export default function Navbar() {
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <button className="font-poppins font-medium hover:text-secondary transition-colors flex items-center gap-1">
-                  {item.name}
+                   <Link href={`${item.url}`}>{item.name} </Link>
                   {item.items && <span className="text-xs">⌄</span>}
                 </button>
 
@@ -65,7 +65,7 @@ export default function Navbar() {
                     {item.items.map((subItem, index) => (
                       <Link
                         key={index}
-                        href={`Kurties/${links[index]}`}
+                        href={`${links[index]}`}
                         className="block py-2 px-4 hover:bg-light rounded-md"
                       >
                         {subItem}

@@ -6,9 +6,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/Login", request.url));
   }
 
-  if (!token && request.nextUrl.pathname.startsWith("/User")) {
-    return NextResponse.redirect(new URL("/Login", request.url));
-  }
+  // if (!token && request.nextUrl.pathname.startsWith("/User")) {
+  //   return NextResponse.redirect(new URL("/Login", request.url));
+  // }
 
   return NextResponse.next();
 }

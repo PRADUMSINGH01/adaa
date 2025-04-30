@@ -1,41 +1,128 @@
-import {db} from '@/server/firebase/firebase'
+// cart-utils.ts
+import { CartItem, Product } from './types';
 
-interface CartItem {
-    productId: string;
-    quantity: number;
-}
+const CART_KEY = 'cart';
 
-export  async function addToCart(userId: string, item: CartItem): Promise<void> {
-    try {
-        const cartRef = db.collection('/Users/zJkrnsdL5481VfMPwEfe/Cart').doc(userId);
-        const cartDoc = await cartRef.get();
+export const getCart = (): CartItem[] => {
+  if (typeof window === 'undefined') return [];
+  const cart = localStorage.getItem(CART_KEY);
+  return cart ? JSON.parse(cart) : [];
+};
 
-        if (cartDoc.exists) {
-            const cartData = cartDoc.data();
-            const existingItems: CartItem[] = cartData?.items || [];
+export const addToCart = (
+  product: Product,
+  selectedColor: string,
+  selectedSize: string
+): { success: boolean; error?: string } => {
+  try {
+    const cart = getCart();
+    
+    // Generate unique item ID based on product and options
+    const itemId = `${product.id}-${selectedColor}-${selectedSize}`;
 
-            const itemIndex = existingItems.findIndex(
-                (existingItem) => existingItem.productId === item.productId
-            );
+    // Check if item already exists in cart
+    const existingItem = cart.find(item => 
+      item.productId === product.id &&
+      item.color === selectedColor &&
+      item.size === selectedSize
+    );
 
-            if (itemIndex > -1) {
-                // Update quantity if item already exists
-                existingItems[itemIndex].quantity += item.quantity;
-            } else {
-                // Add new item to the cart
-                existingItems.push(item);
-            }
-
-            await cartRef.update({ items: existingItems });
-        } else {
-            // Create a new cart for the user
-            await cartRef.set({ items: [item] });
-        }
-
-        console.log('Item added to cart successfully.');
-    } catch (error) {
-        console.error('Error adding item to cart:', error);
-        throw new Error('Failed to add item to cart.');
+    if (existingItem) {
+      // Update quantity if item exists
+      existingItem.quantity += 1;
+    } else {
+      // Add new item to cart
+      const newItem: CartItem = {
+        id: itemId,
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        color: selectedColor,
+        size: selectedSize,
+        quantity: 1,
+        addedAt: Date.now()
+      };
+      cart.push(newItem);
     }
-}
 
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    
+    // Optional: Dispatch cart update event
+    window.dispatchEvent(new Event('cart-updated'));
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    return { 
+      success: false, 
+      error: 'Failed to add item to cart. Please try again.' 
+    };
+  }
+};
+export const updateCartItemQuantity = (
+    itemId: string,
+    newQuantity: number
+  ): { success: boolean; error?: string } => {
+    try {
+      if (newQuantity < 1 || !Number.isInteger(newQuantity)) {
+        return { success: false, error: 'Invalid quantity' };
+      }
+  
+      const cart = getCart();
+      const itemIndex = cart.findIndex(item => item.id === itemId);
+      
+      if (itemIndex === -1) {
+        return { success: false, error: 'Item not found in cart' };
+      }
+  
+      const updatedCart = cart.map((item, index) => 
+        index === itemIndex ? { ...item, quantity: newQuantity } : item
+      );
+  
+      localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
+      window.dispatchEvent(new Event('cart-updated'));
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating cart:', error);
+      return { 
+        success: false, 
+        error: 'Failed to update item quantity. Please try again.' 
+      };
+    }
+  };
+  
+  export const removeFromCart = (
+    itemId: string
+  ): { success: boolean; error?: string } => {
+    try {
+      const cart = getCart();
+      const initialLength = cart.length;
+      const updatedCart = cart.filter(item => item.id !== itemId);
+  
+      if (updatedCart.length === initialLength) {
+        return { success: false, error: 'Item not found in cart' };
+      }
+  
+      localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
+      window.dispatchEvent(new Event('cart-updated'));
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      return { 
+        success: false, 
+        error: 'Failed to remove item from cart. Please try again.' 
+      };
+    }
+  };
+  
+  export const clearCart = (): void => {
+    try {
+      localStorage.removeItem(CART_KEY);
+      window.dispatchEvent(new Event('cart-updated'));
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+    }
+  };

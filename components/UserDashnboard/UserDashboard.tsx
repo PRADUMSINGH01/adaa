@@ -193,7 +193,7 @@ export default function UserDashboard() {
             )}
             {activeSection === "returns" && (
               <div className="space-y-6">
-                <h2 className="font-playfair text-3xl font-bold text-dark mb-6">
+                <h2 className="font-playfair text-3xl font-bold text-dark mb-6" id="returns">
                   Return & Refund Status
                 </h2>
                 <div className="space-y-4">

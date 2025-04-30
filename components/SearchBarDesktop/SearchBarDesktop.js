@@ -9,7 +9,7 @@ const SearchBarDesktop = () => {
   const handleSearch = (event) => {
     event.preventDefault();
     if (searchTerm.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
+      router.push(`/Kurties/${encodeURIComponent(searchTerm)}`);
     }
   };
 
