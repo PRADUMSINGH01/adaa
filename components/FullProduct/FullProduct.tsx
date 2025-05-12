@@ -4,40 +4,27 @@ import { useState, useRef } from "react";
 import { FiHeart, FiShoppingCart, FiX, FiChevronRight } from "react-icons/fi";
 import Image from "next/image";
 import kurti1 from "@/app/(Images)/kurti.png";
-import kurti2 from "@/app/(Images)/kurti.png";
-import kurti3 from "@/app/(Images)/kurti.png";
-import kurti4 from "@/app/(Images)/kurti.png";
+
 import { addToCart } from "@/server/AddToCart";
-interface Product {
-  name: string;
-  price: number;
-  originalPrice?: number;
-  discountPercentage?: number;
-  images: string[];
-  sizes: string[];
-  colors: string[];
-  description: string;
-  careInstructions: string;
-  fabric: string;
-  shippingInfo: string;
-  returnPolicy: string;
-}
+import { Product } from "../../server/types";
 
 const productDetails: Product = {
-  name: "Elegant Embroidered Kurti",
-  price: 2499,
-  originalPrice: 3299,
-  discountPercentage: 25,
-  images: [kurti1.src, kurti2.src, kurti3.src, kurti4.src],
-  sizes: ["S", "M", "L", "XL", "XXL"],
-  colors: ["#E07A5F", "#D57A7A", "#8A9B6E", "#4A4E69"],
+  id: 1,
+  name: "Floral Print Cotton Kurti",
+  price: 49.99,
+  images: Array(4).fill("/images/kurti.jpg"), // Replace with actual images
+  sizes: ["S", "M", "L", "XL"],
+  colors: ["#4A4A48", "#E07A5F", "#8A9B6E", "#D7D4CD"],
   description:
-    "Handcrafted with a luxurious cotton silk blend, this kurti features intricate thread embroidery and a comfortable fit. Perfect for special occasions and everyday elegance.",
-  careInstructions: "Dry clean only",
-  fabric: "70% Cotton, 30% Silk",
-  shippingInfo:
-    "Free shipping on orders above ₹2999. Delivery in 5-7 business days.",
-  returnPolicy: "Easy 15-day returns.",
+    "Beautiful handcrafted cotton kurti with intricate floral embroidery",
+  rating: 4.5,
+  reviews: 128,
+  details: [
+    "100% Premium Cotton",
+    "Hand Block Print",
+    "Machine Wash Cold",
+    "Semi-Stitched Length: 50 inches",
+  ],
 };
 
 export default function ProductPage() {
@@ -61,20 +48,15 @@ export default function ProductPage() {
     setZoomPosition({ x, y });
   };
 
-
   const handleAddToCart = () => {
-
     if (!selectedSize || !selectedColor) {
       alert("Please select a size and color before adding to cart.");
       return;
     }
 
-
-
-    addToCart(productDetails,selectedColor ,selectedSize);
+    addToCart(productDetails, selectedColor, selectedSize);
     alert("Item added to cart!");
-  }
-
+  };
 
   const handleMouseEnter = () => {
     setShowZoom(true);
@@ -220,7 +202,7 @@ export default function ProductPage() {
 
             <div className="flex gap-4">
               <button
-              onClick={()=>handleAddToCart()}
+                onClick={() => handleAddToCart()}
                 className="flex-1 bg-primary text-white py-3 rounded-md font-poppins font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-3"
                 disabled={!selectedSize || !selectedColor}
               >

@@ -1,24 +1,13 @@
 "use client";
-import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import kurti from '@/app/(Images)/kurti.png'
-import { addToCart } from '@/server/AddToCart';
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  images: string[];
-  sizes: string[];
-  colors: string[];
-  description: string;
-  rating: number;
-  reviews: number;
-  details: string[];
-}
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import kurti from "@/app/(Images)/kurti.png";
+import { addToCart } from "@/server/AddToCart";
+import { Product } from "@/server/types";
 
 export default function FullViewPage() {
-  const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
   const [currentImage, setCurrentImage] = useState(0);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showZoom, setShowZoom] = useState(false);
@@ -26,27 +15,19 @@ export default function FullViewPage() {
   const imgRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef<HTMLDivElement>(null);
 
-
-
-
-
-
-
-
-
-    function HandleAddtocart(){
-      if (!selectedSize || !selectedColor) {
-        alert("Please select size and color");
-        return;
-      }
-      const result = addToCart(product, selectedColor, selectedSize);
-      if (result.success) {
-        alert("Added to cart successfully");
-      } else {
-        alert(result.error);
-      }
+  function HandleAddtocart() {
+    if (!selectedSize || !selectedColor) {
+      alert("Please select size and color");
+      return;
     }
-       
+    const result = addToCart(product, selectedColor, selectedSize);
+    if (result.success) {
+      alert("Added to cart successfully");
+    } else {
+      alert(result.error);
+    }
+  }
+
   // Mock product data
   const product: Product = {
     id: 1,
@@ -55,15 +36,16 @@ export default function FullViewPage() {
     images: Array(4).fill("/images/kurti.jpg"), // Replace with actual images
     sizes: ["S", "M", "L", "XL"],
     colors: ["#4A4A48", "#E07A5F", "#8A9B6E", "#D7D4CD"],
-    description: "Beautiful handcrafted cotton kurti with intricate floral embroidery",
+    description:
+      "Beautiful handcrafted cotton kurti with intricate floral embroidery",
     rating: 4.5,
     reviews: 128,
     details: [
       "100% Premium Cotton",
       "Hand Block Print",
       "Machine Wash Cold",
-      "Semi-Stitched Length: 50 inches"
-    ]
+      "Semi-Stitched Length: 50 inches",
+    ],
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -100,9 +82,9 @@ export default function FullViewPage() {
                     key={index}
                     onClick={() => setCurrentImage(index)}
                     className={`relative h-20 w-20 min-w-[5rem] rounded-lg overflow-hidden border-2 transition-all ${
-                      currentImage === index 
-                        ? 'border-[#8A9B6E]' 
-                        : 'border-transparent'
+                      currentImage === index
+                        ? "border-[#8A9B6E]"
+                        : "border-transparent"
                     }`}
                   >
                     <Image
@@ -116,7 +98,7 @@ export default function FullViewPage() {
               </div>
 
               {/* Main Image */}
-              <div 
+              <div
                 className="relative aspect-square bg-white rounded-xl shadow-lg overflow-hidden order-1 lg:order-2"
                 onMouseEnter={() => setShowZoom(true)}
                 onMouseLeave={() => setShowZoom(false)}
@@ -136,21 +118,21 @@ export default function FullViewPage() {
                 {/* Desktop Zoom */}
                 {showZoom && (
                   <div className="hidden lg:block">
-                    <div 
+                    <div
                       className="absolute inset-0 pointer-events-none"
                       style={{
                         backgroundImage: `url(${kurti.src})`,
                         backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        backgroundSize: '200%',
-                        opacity: 0.5
+                        backgroundSize: "200%",
+                        opacity: 0.5,
                       }}
                     />
-                    <div 
+                    <div
                       className="absolute w-64 h-64 bg-white/30 border-2 border-[#8A9B6E] pointer-events-none"
                       style={{
                         left: `${zoomPosition.x}%`,
                         top: `${zoomPosition.y}%`,
-                        transform: 'translate(-50%, -50%)'
+                        transform: "translate(-50%, -50%)",
                       }}
                     />
                   </div>
@@ -158,7 +140,7 @@ export default function FullViewPage() {
 
                 {/* Mobile Zoom Modal */}
                 {isMobileZoomed && (
-                  <div 
+                  <div
                     className="fixed inset-0 z-50 bg-white lg:hidden"
                     onClick={() => setIsMobileZoomed(false)}
                   >
@@ -188,11 +170,13 @@ export default function FullViewPage() {
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className={`w-5 h-5 ${i < product.rating ? 'text-[#E07A5F]' : 'text-[#D7D4CD]'}`}
+                    className={`w-5 h-5 ${
+                      i < product.rating ? "text-[#E07A5F]" : "text-[#D7D4CD]"
+                    }`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
               </div>
@@ -205,23 +189,24 @@ export default function FullViewPage() {
               ${product.price.toFixed(2)}
             </p>
 
-            <p className="text-[#4A4A48] font-poppins">
-              {product.description}
-            </p>
+            <p className="text-[#4A4A48] font-poppins">{product.description}</p>
 
             {/* Color Selection */}
             <div className="space-y-3">
               <h3 className="font-poppins font-semibold text-lg text-[#4A4A48]">
-                Color: {selectedColor && <span className="font-normal">{selectedColor}</span>}
+                Color:{" "}
+                {selectedColor && (
+                  <span className="font-normal">{selectedColor}</span>
+                )}
               </h3>
               <div className="flex gap-3">
                 {product.colors.map((color, i) => (
                   <button
                     key={i}
                     className={`w-10 h-10 rounded-full border-2 transition-all ${
-                      selectedColor === color 
-                        ? 'border-[#8A9B6E] scale-110' 
-                        : 'border-transparent hover:scale-105'
+                      selectedColor === color
+                        ? "border-[#8A9B6E] scale-110"
+                        : "border-transparent hover:scale-105"
                     }`}
                     style={{ backgroundColor: color }}
                     onClick={() => setSelectedColor(color)}
@@ -233,7 +218,10 @@ export default function FullViewPage() {
             {/* Size Selection */}
             <div className="space-y-3">
               <h3 className="font-poppins font-semibold text-lg text-[#4A4A48]">
-                Size: {selectedSize && <span className="font-normal">{selectedSize}</span>}
+                Size:{" "}
+                {selectedSize && (
+                  <span className="font-normal">{selectedSize}</span>
+                )}
               </h3>
               <div className="flex flex-wrap gap-3">
                 {product.sizes.map((size) => (
@@ -241,8 +229,8 @@ export default function FullViewPage() {
                     key={size}
                     className={`px-4 py-2 rounded-full font-poppins transition-all ${
                       selectedSize === size
-                        ? 'bg-[#8A9B6E] text-white'
-                        : 'bg-[#F8F5F2] text-[#4A4A48] hover:bg-[#D7D4CD]'
+                        ? "bg-[#8A9B6E] text-white"
+                        : "bg-[#F8F5F2] text-[#4A4A48] hover:bg-[#D7D4CD]"
                     }`}
                     onClick={() => setSelectedSize(size)}
                   >
@@ -259,10 +247,7 @@ export default function FullViewPage() {
               </h3>
               <ul className="list-disc pl-6 space-y-2">
                 {product.details.map((detail, i) => (
-                  <li 
-                    key={i}
-                    className="font-poppins text-[#4A4A48]"
-                  >
+                  <li key={i} className="font-poppins text-[#4A4A48]">
                     {detail}
                   </li>
                 ))}
@@ -272,14 +257,18 @@ export default function FullViewPage() {
             {/* Add to Bag */}
             <button
               disabled={!selectedSize || !selectedColor}
-              onClick={() => {HandleAddtocart()}}
+              onClick={() => {
+                HandleAddtocart();
+              }}
               className={`w-full py-4 font-poppins text-lg rounded-xl transition-all ${
                 selectedSize && selectedColor
-                  ? 'bg-[#8A9B6E] hover:bg-[#76875F] text-white'
-                  : 'bg-[#D7D4CD] text-[#4A4A48] cursor-not-allowed'
+                  ? "bg-[#8A9B6E] hover:bg-[#76875F] text-white"
+                  : "bg-[#D7D4CD] text-[#4A4A48] cursor-not-allowed"
               }`}
             >
-              {selectedSize && selectedColor ? 'Add to Bag' : 'Select Size & Color'}
+              {selectedSize && selectedColor
+                ? "Add to Bag"
+                : "Select Size & Color"}
             </button>
           </div>
         </div>
@@ -291,7 +280,7 @@ export default function FullViewPage() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {product.images.map((img, index) => (
-              <div 
+              <div
                 key={index}
                 className="relative aspect-square bg-white rounded-xl shadow-lg overflow-hidden"
               >

@@ -3,7 +3,6 @@
 import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { useState } from "react";
 import Image from "next/image";
-import { addToCart } from "@/server/AddToCart";
 export default function UserWishlist() {
   const [wishlist, setWishlist] = useState([
     {
@@ -54,7 +53,7 @@ export default function UserWishlist() {
                     src={item.image}
                     alt={item.name}
                     width={400}
-                    height={400}  
+                    height={400}
                     className="w-full h-56 object-cover"
                   />
                   <div className="p-4 space-y-2">
@@ -63,7 +62,10 @@ export default function UserWishlist() {
                     </h3>
                     <p className="text-primary font-semibold">{item.price}</p>
                     <div className="flex gap-4 mt-3">
-                      <button onClick={()=>addToCart(item,item.size,item.color)} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-poppins text-sm">
+                      <button
+                        onClick={() => console.log("added")}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-poppins text-sm"
+                      >
                         <FiShoppingCart />
                         Add to Cart
                       </button>

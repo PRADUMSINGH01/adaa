@@ -9,9 +9,6 @@ import { removeFromCart } from "@/server/AddToCart";
 export default function Cart() {
   const [cartItems, setCartItems] = useState(getCart().cart || []);
 
-
-
-
   const updateQuantity = (id: string, delta: number) => {
     setCartItems((items) =>
       items.map((item) =>
@@ -55,7 +52,7 @@ export default function Cart() {
                   className="flex items-center gap-4 bg-light p-4 rounded-xl shadow-sm"
                 >
                   <Image
-                    src={item.image}
+                    src={"/"}
                     width={400}
                     height={100}
                     alt={item.name}
