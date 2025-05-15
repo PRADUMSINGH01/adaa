@@ -27,14 +27,13 @@ export default function Navbar() {
     },
     {
       name: "Accessories",
-      items: ["Jewellery", "Fragrances"],
+      items: ["Jewellery", "Bags", "Footer wear"],
     },
-    { name: "Girls" ,url:'Girls-Collection/Girl'},
     {
       name: "Collections",
       items: ["New Arrivals", "Co-ord Sets"],
     },
-    { name: "Sale", highlight: true },
+    { name: "Girls", url: "Girls-Collection/Girl" },
   ];
 
   return (
@@ -56,7 +55,7 @@ export default function Navbar() {
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <button className="font-poppins font-medium hover:text-secondary transition-colors flex items-center gap-1">
-                   <Link href={`${item.url}`}>{item.name} </Link>
+                  <Link href={`${item.url}`}>{item.name} </Link>
                   {item.items && <span className="text-xs">⌄</span>}
                 </button>
 

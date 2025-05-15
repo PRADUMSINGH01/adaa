@@ -3,8 +3,10 @@
 
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import { useState } from "react";
-import kurtii from "@/app/(Images)/kurti.png";
+// import kurtii from "@/app/(Images)/kurti.png";
+import office from "@/app/(Images)/party.png";
 import Image from "next/image";
+
 type Kurti = {
   id: number;
   name: string;
@@ -42,7 +44,7 @@ export default function KurtiGrid() {
                 ${idx % 5 === 0 ? "sm:col-span-2 sm:row-span-2" : ""}`}
             >
               <Image
-                src={kurtii.src}
+                src={office.src}
                 alt={k.name}
                 width={400}
                 height={100}

@@ -6,7 +6,6 @@ import { FiGrid, FiList, FiShoppingCart, FiHeart, FiEye } from "react-icons/fi";
 import { BsFillLightningFill } from "react-icons/bs";
 import Image from "next/image";
 import kurtiimg from "@/app/(Images)/kurti.png";
-
 const products = Array(12).fill({
   id: Math.random().toString(36).substring(7), // Unique ID for each product
   name: "Minimal Cotton Kurta",

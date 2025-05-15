@@ -2,7 +2,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
-  if (!token && request.nextUrl.pathname.startsWith("/Checkout")) {
+  if (!token && request.nextUrl.pathname.startsWith("/User")) {
     return NextResponse.redirect(new URL("/Login", request.url));
   }
 

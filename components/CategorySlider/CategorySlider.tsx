@@ -7,14 +7,20 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Kurti from "@/app/(Images)/kurti.png";
+import cottonkurtiimage from "@/app/(Images)/cotton.png";
+import office from "@/app/(Images)/office.png";
+import party from "@/app/(Images)/party.png";
+import printed from "@/app/(Images)/printed.png";
+import embro from "@/app/(Images)/embro.png";
+
 import Link from "next/link";
 const categories = [
-  { name: "Silk Kurtis",url:'Silk-Kurties', image: Kurti },
-  { name: "Cotton Kurtis", url:'Cotton-Kurties',image: Kurti },
-  { name: "Party Wear", url:'Party-Kurties',image: Kurti },
-  { name: "Casual Wear", url:'Casual-Kurties',image: Kurti },
-  { name: "Printed",url:'Printed-Kurties', image: Kurti },
-  { name: "Embroidered", url:'Embroidered-Kurties',image: Kurti },
+  { name: "Office wear", url: "Office-wear", image: office },
+  { name: "Cotton Kurtis", url: "Cotton-Kurties", image: cottonkurtiimage },
+  { name: "Party Wear", url: "Party-Kurties", image: party },
+  { name: "Casual Wear", url: "Casual-Kurties", image: Kurti },
+  { name: "Printed", url: "Printed-Kurties", image: printed },
+  { name: "Embroidered", url: "Embroidered-Kurties", image: embro },
 ];
 
 export default function CategorySlider() {
@@ -48,16 +54,15 @@ export default function CategorySlider() {
               </h3>
 
               {/* Image Container */}
-              <div className="relative w-48 h-48 mx-auto rounded-full overflow-hidden border-4 border-secondary/20 hover:border-secondary transition-all duration-300">
-             <Link href={`Kurties/${category.url}`}>
-             
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  className="object-cover transform group-hover:scale-110 transition-transform duration-300"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                />
+              <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-secondary/20 hover:border-secondary transition-all duration-300">
+                <Link href={`Kurties/${category.url}`}>
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover transform group-hover:scale-110 transition-transform duration-300"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
                 </Link>
               </div>
             </div>
