@@ -6,7 +6,7 @@
 //   );
 // }
 const page = () => {
-  return <>page bottom</>;
+  return <>page bottom wear</>;
 };
 
 export default page;
