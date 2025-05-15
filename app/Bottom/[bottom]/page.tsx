@@ -6,7 +6,7 @@
 //   );
 // }
 const page = () => {
-  return <>page</>;
+  return <>page bottom</>;
 };
 
 export default page;
