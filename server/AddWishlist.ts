@@ -1,39 +1,79 @@
 import { db } from "./firebase/firebase";
 import { FieldValue } from "firebase-admin/firestore";
+import { Product } from "@/server/types"; // Assuming Product interface is available in server/types
+
+// Define the structure we expect in the database wishlist array
+type WishlistItemInDB = number; // Store just the product ID as a number
 
 export async function addToWishlist(
-  userId: string = "NMONine4nmyeTgSnDyoS",
-  product: { id: string; [key: string]: any } = { id: "one", brand: "heheheh" }
+  userId: string,
+  product: { id: Product["id"] } // We only need the id from the product object
 ): Promise<void> {
-  if (!userId) throw new Error("addToWishlist: userId is required");
-  if (!product?.id) throw new Error("addToWishlist: product.id is required");
+  // Basic validation
+  if (!userId) {
+    console.error("addToWishlist: userId is required");
+    throw new Error("Authentication error: userId is required");
+  }
+  if (!product?.id) {
+    console.error("addToWishlist: product.id is required");
+    throw new Error("Invalid product data: product ID is missing");
+  }
 
   const userRef = db.collection("Users").doc(userId);
 
-  // 1. Fetch current wishlist
-  const snap = await userRef.get();
-  const data = snap.exists ? snap.data() : {};
-  const wishlist: Array<{ id: string }> = Array.isArray(data?.wishlist)
-    ? data.wishlist
-    : [];
+  try {
+    // Fetch the user document
+    const snap = await userRef.get();
+    const data = snap.exists ? snap.data() : {};
 
-  // 2. Check for duplicate
-  if (wishlist.some((item) => item.id === product.id)) {
-    throw new Error(`Product with id="${product.id}" is already in wishlist`);
-  }
+    // Get the current wishlist array, defaulting to empty array if it doesn't exist or is not an array
+    // We expect the wishlist to be an array of numbers (product IDs)
+    const wishlist: WishlistItemInDB[] = Array.isArray(data?.wishlist)
+      ? (data.wishlist as WishlistItemInDB[]) // Cast to our expected type
+      : [];
 
-  // 3. Add to wishlist
-  // If doc already existed, use update(); otherwise set with merge
-  if (snap.exists) {
+    // Check for duplicate using the product ID (number comparison)
+    if (wishlist.some((itemId) => itemId === product.id)) {
+      console.warn(
+        `Product with id="${product.id}" is already in wishlist for user "${userId}"`
+      );
+      // Optionally throw an error or return early if duplicates are not allowed
+      return; // Product is already there, do nothing
+    }
+
+    // Add ONLY the product ID to the wishlist array
+    // FieldValue.arrayUnion is the correct way to add an item to an array field atomically
     await userRef.update({
-      wishlist: FieldValue.arrayUnion(product),
+      wishlist: FieldValue.arrayUnion(product.id),
     });
-  } else {
-    await userRef.set(
-      {
-        wishlist: [product],
-      },
-      { merge: true }
+
+    console.log(
+      `Product id="${product.id}" added to wishlist for user "${userId}"`
+    );
+  } catch (error) {
+    console.error(
+      `Error adding product id="${product.id}" to wishlist for user "${userId}":`,
+      error
+    );
+    throw new Error(
+      `Failed to add product to wishlist: ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
   }
 }
+
+// --- Example usage (for testing/demonstration, remove in production) ---
+// async function exampleUsage() {
+//     const testUserId = "some_user_id"; // Replace with a real user ID
+//     const testProduct = { id: 123, name: "Example Bag", ... }; // Use a Product object or just { id: number }
+
+//     try {
+//         await addToWishlist(testUserId, { id: testProduct.id });
+//         console.log("addToWishlist successful (hopefully!)");
+//     } catch (e) {
+//         console.error("addToWishlist failed:", e);
+//     }
+// }
+
+// exampleUsage();

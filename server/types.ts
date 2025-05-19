@@ -1,6 +1,6 @@
 // types.ts
 export interface CartItem {
-  id: string; // Unique item ID
+  id: number; // Unique item ID
   productId: number;
   name: string;
   price: number;
@@ -24,8 +24,40 @@ export interface Product {
   colors: string[];
   description: string;
   careInstructions?: string;
-  fabric?: string;
+  fabric: string;
   shippingInfo?: string;
   returnPolicy?: string;
   details: string[];
+  brand: string;
+  category?: string;
+  sku?: string;
+  stock: number;
+  seo?: object;
+}
+// types/next-auth.d.ts
+import "next-auth";
+
+declare module "next-auth" {
+  interface User {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  }
+
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string;
+    accessToken?: string;
+  }
 }

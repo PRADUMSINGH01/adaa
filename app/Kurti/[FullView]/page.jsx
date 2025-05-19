@@ -1,6 +1,5 @@
-import FullProduct from "@/components/FullProduct/FullProduct";
 const page = () => {
-  return <FullProduct />;
+  return <></>;
 };
 
 export default page;

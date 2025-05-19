@@ -62,7 +62,7 @@ export default function RegisterPage() {
 
         <div className="mt-6 text-center">
           <Link
-            href="/auth/login"
+            href="/login"
             className="text-secondary font-poppins hover:text-secondary/80"
           >
             Already have an account? Login

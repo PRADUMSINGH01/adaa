@@ -1,10 +1,9 @@
 "use client";
-// app/auth/login/page.tsx
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
-import { signIn } from "next-auth/react";
+
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-neutral p-4">
@@ -41,7 +40,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center">
           <Link
-            href="/auth/register"
+            href="/Register"
             className="text-secondary font-poppins hover:text-secondary/80"
           >
             New to KurtiKraft? Create Account
@@ -63,12 +62,7 @@ export default function LoginPage() {
           <div className="mt-6 grid grid-cols-2 gap-4">
             <button className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
               <FcGoogle className="w-6 h-6" />
-              <span
-                className="font-poppins text-dark"
-                onClick={() => signIn("google")}
-              >
-                Google
-              </span>
+              <span className="font-poppins text-dark">Google</span>
             </button>
 
             <button className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">

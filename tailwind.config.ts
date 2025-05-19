@@ -17,10 +17,14 @@ export default {
         light: "#F8F5F2",
       },
       fontFamily: {
-        playfair: ["var(--font-playfair)"],
-        poppins: ["var(--font-poppins)"],
+        playfair: ['"Playfair Display"', "serif"],
+        poppins: ["Poppins", "sans-serif"],
+      },
+
+      backdropBlur: {
+        xs: "2px",
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 } satisfies Config;

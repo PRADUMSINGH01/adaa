@@ -24,14 +24,30 @@ export default function Navbar() {
         "Dress Material",
         "Bottoms",
       ],
+      links: [
+        "Kurties/Suit-Sets",
+        "Kurties/Kurtas-Tops",
+        "Kurties/Dresses",
+        "Kurties/Dress-Material",
+        "Bottom/Bottom-wear",
+      ],
+      url: "Clothing",
     },
     {
       name: "Accessories",
       items: ["Jewellery", "Bags", "Footer wear"],
+      links: [
+        "Accessories/Jewellery",
+        "Accessories/Bags",
+        "Accessories/Footer-wear",
+      ],
+      url: "Accessories",
     },
     {
       name: "Collections",
       items: ["New Arrivals", "Co-ord Sets"],
+      links: ["Collections/New-Arrivals", "Collections/Co-ord-Sets"],
+      url: "Collection",
     },
     { name: "Girls", url: "Girls-Collection/Girl" },
   ];
@@ -64,7 +80,7 @@ export default function Navbar() {
                     {item.items.map((subItem, index) => (
                       <Link
                         key={index}
-                        href={`${links[index]}`}
+                        href={`${item.links[index]}`}
                         className="block py-2 px-4 hover:bg-light rounded-md"
                       >
                         {subItem}
