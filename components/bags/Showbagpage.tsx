@@ -127,7 +127,7 @@ const FiltersPanel = ({
 
   return (
     <div
-      className={`fixed inset-0 z-40 bg-dark/70 backdrop-blur-md transition-opacity ${
+      className={`fixed inset-0 z-50 bg-dark/70 backdrop-blur-md transition-opacity ${
         isOpen ? "opacity-100 visible" : "opacity-0 invisible"
       } md:static md:z-auto md:bg-transparent md:backdrop-blur-none md:opacity-100 md:visible md:w-72 lg:w-80`}
     >
@@ -384,6 +384,8 @@ const ProductCard = ({
             key={index}
             src={img}
             alt={`${product.name} image ${index + 1}`}
+            height={300}
+            width={300}
             className={`absolute inset-0 w-full h-full object-contain rounded-t-xl transition-opacity duration-700 ease-in-out ${
               index === activeImage ? "opacity-100" : "opacity-0"
             }`}

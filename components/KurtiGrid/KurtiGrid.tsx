@@ -145,173 +145,103 @@ export default function KurtiGrid() {
 
   return (
     <section
-      className="py-16 bg-gradient-to-br from-[#FDF6E9] to-[#F5F0E6] min-h-screen" // Softer gradient background
+      className="min-h-screen bg-neutral"
+      style={{ backgroundColor: "#F5F0E6" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2
-            className="text-4xl font-playfair font-bold"
-            style={{ color: "#6D5D4B" }}
-          >
-            Discover Your Next Statement Piece
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        {/* Minimal Header */}
+        <div className="mb-16 text-center">
+          <h2 className="font-playfair text-4xl font-medium text-dark mb-2">
+            Modern Kurti Collection
           </h2>
-          <p className="mt-3 text-lg font-poppins" style={{ color: "#8B796A" }}>
-            Handpicked kurtis for the modern woman who values elegance and
-            comfort.
+          <p className="font-poppins text-lg text-secondary max-w-xl mx-auto">
+            Contemporary designs meeting traditional craftsmanship
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+        {/* Enhanced Product Grid */}
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {kurtis.map((kurti) => (
             <article
               key={kurti.id}
-              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden transform hover:-translate-y-1"
+              className="group relative overflow-hidden bg-light rounded-xl shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="relative aspect-[3/4.2] overflow-hidden">
-                {" "}
-                {/* Slightly taller aspect ratio */}
+              {/* Image Container */}
+              <div className="relative aspect-[3/4] top-3">
                 <Image
                   src={kurti.image}
                   alt={kurti.name}
-                  width={600}
-                  height={850} // Adjusted height for new aspect ratio
-                  className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                  fill
+                  className="object-contain transition-transform duration-500 group-hover:scale-103"
                 />
-                {/* Badges - More stylized */}
-                <div className="absolute top-3 right-0 flex flex-col gap-2 items-end">
+
+                {/* Status Badges */}
+                <div className="absolute left-4 top-4 flex flex-col items-start gap-2">
                   {kurti.isNew && (
-                    <span
-                      className="px-4 py-1.5 text-xs font-poppins font-semibold tracking-wider uppercase shadow-md"
-                      style={{
-                        backgroundColor: "#A0D2DB", // Soft Teal
-                        color: "#2A3D45", // Darker Teal for text
-                        clipPath:
-                          "polygon(0% 0%, 100% 0%, 90% 50%, 100% 100%, 0% 100%)", // Angled edge
-                      }}
-                    >
+                    <span className="font-poppins px-3 py-1 text-xs uppercase tracking-wide bg-primary text-light rounded-full">
                       New
                     </span>
                   )}
                   {kurti.onSale && (
-                    <span
-                      className="px-4 py-1.5 text-xs font-poppins font-semibold tracking-wider uppercase shadow-md"
-                      style={{
-                        backgroundColor: "#E5989B", // Soft Coral
-                        color: "#5E3C3D", // Darker Coral for text
-                        clipPath:
-                          "polygon(10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%)", // Another angled edge
-                      }}
-                    >
+                    <span className="font-poppins px-3 py-1 text-xs uppercase tracking-wide bg-secondary text-light rounded-full">
                       Sale
                     </span>
                   )}
                 </div>
-                {/* Quick View Teaser - Appears on hover over image area */}
-                <div
-                  className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300 ease-in-out cursor-pointer"
-                  onClick={() => handleQuickView(kurti.id)}
-                >
-                  <FiEye className="text-white text-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform group-hover:scale-110" />
+
+                {/* Color Swatches */}
+                {kurti.colorsAvailable && (
+                  <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
+                    {kurti.colorsAvailable.map((color) => (
+                      <div
+                        key={color}
+                        className="relative h-6 w-6 rounded-full border-2 border-light shadow-md transition-transform hover:scale-110"
+                        style={{ backgroundColor: color.toLowerCase() }}
+                      >
+                        <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 font-poppins text-xs bg-dark text-light px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+                          {color}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Quick Actions */}
+                <div className="absolute right-4 top-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="p-2 bg-light/80 backdrop-blur-sm rounded-full hover:bg-accent transition-colors">
+                    <FiHeart className="h-5 w-5 text-dark hover:text-light" />
+                  </button>
+                  <button className="p-2 bg-light/80 backdrop-blur-sm rounded-full hover:bg-accent transition-colors">
+                    <FiEye className="h-5 w-5 text-dark hover:text-light" />
+                  </button>
                 </div>
               </div>
 
               {/* Product Info */}
-              <div className="p-5 space-y-2 text-center">
-                {kurti.brand && (
-                  <p
-                    className="font-poppins text-xs uppercase tracking-wider"
-                    style={{ color: "#B0A89D" }}
-                  >
-                    {kurti.brand}
-                  </p>
-                )}
-                <h3
-                  className="font-playfair text-lg font-bold leading-tight" // Slightly smaller for balance
-                  style={{ color: "#4A4A48" }}
-                >
-                  {kurti.name}
-                </h3>
-                <div className="flex items-center justify-center gap-2">
-                  <p
-                    className="font-poppins text-xl font-semibold" // Bolder price
-                    style={{ color: "#D57A7A" }} // Warm, inviting price color
-                  >
-                    {kurti.price}
-                  </p>
-                  {kurti.onSale && kurti.originalPrice && (
-                    <p
-                      className="font-poppins text-sm line-through"
-                      style={{ color: "#A0A0A0" }}
-                    >
-                      {kurti.originalPrice}
+              <div className="p-5">
+                <div className="mb-3">
+                  <h3 className="font-playfair text-xl font-medium text-dark mb-1">
+                    {kurti.name}
+                  </h3>
+                  {kurti.brand && (
+                    <p className="font-poppins text-sm text-secondary uppercase tracking-wide">
+                      {kurti.brand}
                     </p>
                   )}
                 </div>
-                {renderStars(kurti.rating)}
-                {kurti.colorsAvailable && kurti.colorsAvailable.length > 0 && (
-                  <div className="pt-1 flex justify-center space-x-1.5">
-                    {kurti.colorsAvailable.slice(0, 3).map(
-                      (
-                        color // Show max 3 colors
-                      ) => (
-                        <span
-                          key={color}
-                          title={color}
-                          className="block w-3 h-3 rounded-full border border-gray-300"
-                          style={{
-                            backgroundColor: color
-                              .toLowerCase()
-                              .replace(/\s+/g, ""),
-                          }}
-                        ></span>
-                      )
-                    )}
-                    {kurti.colorsAvailable.length > 3 && (
-                      <span className="text-xs text-gray-400">
-                        +{kurti.colorsAvailable.length - 3}
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-poppins text-xl font-semibold text-primary">
+                      {kurti.price}
+                    </span>
+                    {kurti.originalPrice && (
+                      <span className="font-poppins text-sm text-secondary line-through">
+                        {kurti.originalPrice}
                       </span>
                     )}
                   </div>
-                )}
-              </div>
-
-              {/* Action Buttons - Revealed on card hover */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/90 to-white/70 backdrop-blur-sm p-4 transform translate-y-full group-hover:translate-y-0 transition-all duration-500 ease-in-out opacity-0 group-hover:opacity-100">
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleAddToCart(kurti.id)}
-                    className="flex items-center justify-center flex-1 gap-2 px-4 py-3 rounded-lg font-poppins font-medium text-sm transition-all duration-300 ease-in-out group/btn"
-                    style={{
-                      backgroundColor: "#E07A5F", // Main action color
-                      color: "#F8F5F2",
-                    }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#D57A7A")
-                    } // Darker on hover
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#E07A5F")
-                    }
-                  >
-                    <FiShoppingCart className="text-lg transform transition-transform duration-300 group-hover/btn:scale-110" />
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={() => handleWishlist(kurti.id)}
-                    className="p-3 rounded-lg border transition-all duration-300 ease-in-out group/btn"
-                    style={{
-                      borderColor: "#B0A89D", // Softer border
-                      color: "#6D5D4B", // Darker text for contrast
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#6D5D4B";
-                      e.currentTarget.style.color = "#F8F5F2";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.color = "#6D5D4B";
-                    }}
-                  >
-                    <FiHeart className="text-lg transform transition-transform duration-300 group-hover/btn:scale-110" />
-                  </button>
+                  {renderStars(kurti.rating)}
                 </div>
               </div>
             </article>
@@ -321,3 +251,24 @@ export default function KurtiGrid() {
     </section>
   );
 }
+
+// Enhanced Star Rating Component
+const renderStars = (rating?: number) => {
+  if (!rating) return null;
+  return (
+    <div className="flex items-center gap-1">
+      {[...Array(5)].map((_, i) => (
+        <svg
+          key={i}
+          className={`w-4 h-4 ${
+            i < rating ? "text-accent" : "text-secondary/30"
+          }`}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
+  );
+};

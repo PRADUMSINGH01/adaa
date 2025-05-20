@@ -1,6 +1,6 @@
 // components/ProductFilters.tsx
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiFilter, FiX } from "react-icons/fi";
 
 export default function ProductFilters() {
@@ -10,6 +10,19 @@ export default function ProductFilters() {
   const [isNew, setIsNew] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+
+  // Prevent body scroll when mobile filters are open
+  useEffect(() => {
+    if (isMobileFiltersOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    // Cleanup effect: ensure body scroll is re-enabled when component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isMobileFiltersOpen]);
 
   const colors = [
     { name: "Red", value: "#E07A5F" },
@@ -35,25 +48,44 @@ export default function ProductFilters() {
     );
   };
 
+  const clearAllFilters = () => {
+    setPriceRange(10000);
+    setSelectedColors([]);
+    setSelectedFabrics([]);
+    setIsNew(false);
+    setIsTrending(false);
+  };
+
   return (
-    <div className="relative z-0">
-      {/* Mobile Filter Button */}
+    <div className="relative">
+      {/* Mobile Filter Button - always visible on mobile */}
       <button
         onClick={() => setIsMobileFiltersOpen(true)}
-        className="md:hidden fixed bottom-6 right-6 bg-primary text-neutral p-4 rounded-full shadow-lg z-50"
+        className="md:hidden fixed bottom-6 right-6 bg-accent text-neutral p-4 rounded-full shadow-lg z-40"
+        aria-label="Open filters"
       >
         <FiFilter className="w-6 h-6" />
       </button>
 
+      {/* Backdrop for mobile filters */}
+      {isMobileFiltersOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 md:hidden z-40" // z-index lower than sidebar
+          onClick={() => setIsMobileFiltersOpen(false)}
+          aria-hidden="true" // Hide from screen readers
+        />
+      )}
+
       {/* Filter Sidebar */}
       <div
-        className={`fixed md:relative inset-0 md:inset-auto z-50 bg-white md:bg-transparent transform transition-transform duration-300 ${
+        className={`fixed md:relative inset-y-0 left-0 bg-white transform transition-transform duration-300 w-80 md:w-64 h-screen md:h-auto z-50 ${
+          // Higher z-index
           isMobileFiltersOpen
             ? "translate-x-0"
             : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="w-80 md:w-64 h-screen md:h-auto overflow-y-auto p-6 md:p-0 bg-light md:bg-transparent">
+        <div className="h-full overflow-y-auto p-6 md:p-0 bg-light md:bg-neutral">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-playfair text-xl font-bold text-dark">
@@ -62,16 +94,18 @@ export default function ProductFilters() {
             <button
               onClick={() => setIsMobileFiltersOpen(false)}
               className="md:hidden text-dark"
+              aria-label="Close filters"
             >
               <FiX className="w-6 h-6" />
             </button>
           </div>
 
           {/* Price Range */}
-          <div className="mb-8">
+          <div className="mb-8 ">
             <h4 className="font-poppins font-medium text-dark mb-4">
               Price Range
             </h4>
+
             <div className="space-y-4">
               <input
                 type="range"
@@ -131,6 +165,7 @@ export default function ProductFilters() {
                   }`}
                   style={{ backgroundColor: color.value }}
                   title={color.name}
+                  aria-pressed={selectedColors.includes(color.name)}
                 />
               ))}
             </div>
@@ -151,6 +186,7 @@ export default function ProductFilters() {
                       ? "bg-primary text-neutral"
                       : "bg-white text-dark hover:bg-light"
                   }`}
+                  aria-pressed={selectedFabrics.includes(fabric)}
                 >
                   {fabric}
                 </button>
@@ -160,13 +196,7 @@ export default function ProductFilters() {
 
           {/* Clear All */}
           <button
-            onClick={() => {
-              setPriceRange(10000);
-              setSelectedColors([]);
-              setSelectedFabrics([]);
-              setIsNew(false);
-              setIsTrending(false);
-            }}
+            onClick={clearAllFilters}
             className="w-full py-3 bg-accent text-white rounded-lg font-poppins hover:bg-accent/90"
           >
             Clear All Filters
