@@ -1,4 +1,3 @@
-// app/products/page.tsx
 "use client";
 import { useState } from "react";
 import ProductFilters from "@/components/Filter/Filter";
@@ -6,151 +5,170 @@ import { FiGrid, FiList, FiShoppingCart, FiHeart, FiEye } from "react-icons/fi";
 import { BsFillLightningFill } from "react-icons/bs";
 import Image from "next/image";
 import kurtiimg from "@/app/(Images)/kurti.png";
-const products = Array(12).fill({
-  id: Math.random().toString(36).substring(7), // Unique ID for each product
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  originalPrice: number;
+  sizes: string[];
+  colors: string[];
+  isNew: boolean;
+}
+
+const products: Product[] = Array.from({ length: 12 }, () => ({
+  id: Math.random().toString(36).substring(2, 9),
   name: "Minimal Cotton Kurta",
   price: 2499,
-  sizes: ["S", "M", "L", "XL", "XXL"],
   originalPrice: 3299,
+  sizes: ["S", "M", "L", "XL", "XXL"],
   colors: ["#E07A5F", "#D57A7A", "#8A9B6E"],
-  fabric: "Cotton",
   isNew: true,
-});
+}));
 
-export default function ProductGrid() {
+export default function ProductGrid({ params }: { params: string }) {
   const [isGridView, setIsGridView] = useState(true);
 
   const handleAddToCart = (productId: string) => {
     console.log(`Added product ${productId} to cart`);
-    // Implement your add to cart logic here
+    // TODO: add cart integration
   };
 
   const handleBuyNow = (productId: string) => {
     console.log(`Buying product ${productId} now`);
-    // Implement your buy now logic here
+    // TODO: buy now flow
   };
 
   const handleAddToWishlist = (productId: string) => {
     console.log(`Added product ${productId} to wishlist`);
-    // Implement your add to wishlist logic here
+    // TODO: wishlist integration
   };
 
   const handleViewFullProduct = (productId: string) => {
-    const productUrl = `/Kurti/${productId}`; // Construct the product URL
-    window.open(productUrl, "_blank", "noopener,noreferrer");
+    window.open(`/kurti/${productId}`, "_blank", "noopener,noreferrer");
   };
 
-  const calculateDiscount = (originalPrice: number, price: number) => {
-    if (originalPrice > price) {
-      const discountPercentage = Math.round(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      return `(${discountPercentage}% off)`;
+  const calculateDiscount = (
+    original: number,
+    current: number
+  ): string | null => {
+    if (original > current) {
+      return `(${Math.round(((original - current) / original) * 100)}% off)`;
     }
     return null;
   };
 
   return (
     <div className="min-h-screen bg-neutral">
-      <div className="max-w-7xl mx-auto px-4 py-8 flex md:gap-8">
-        {/* Filters - Sticky on larger screens */}
-        <div className="w-full md:w-64 z-20 sticky top-20 self-start">
+      <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
+        {/* Mobile Filters */}
+        <div className="md:hidden">
           <ProductFilters />
         </div>
 
-        {/* Product Grid */}
-        <div className="flex-1">
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:block w-full md:w-64 sticky top-20 self-start">
+          <ProductFilters />
+        </aside>
+
+        {/* Products Section */}
+        <section className="flex-1">
           {/* Header */}
-          <div className="mb-8 text-center md:text-left">
-            <h1 className="font-playfair text-3xl md:text-4xl font-light text-dark mb-2">
-              Modern Ethnic Wear
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+            <h1 className="font-playfair text-2xl sm:text-3xl md:text-4xl font-light text-dark mb-4 sm:mb-0">
+              {params}
             </h1>
-            <div className="flex justify-center md:justify-start gap-4">
+            <div className="flex space-x-2">
               <button
                 onClick={() => setIsGridView(true)}
-                className={`p-2 ${isGridView ? "text-primary" : "text-dark"}`}
+                className={`p-2 rounded transition-shadow ${
+                  isGridView ? "bg-primary text-white" : "bg-light text-dark"
+                }`}
+                aria-label="Grid view"
               >
                 <FiGrid className="w-5 h-5 md:w-6 md:h-6" />
               </button>
               <button
                 onClick={() => setIsGridView(false)}
-                className={`p-2 ${!isGridView ? "text-primary" : "text-dark"}`}
+                className={`p-2 rounded transition-shadow ${
+                  !isGridView ? "bg-primary text-white" : "bg-light text-dark"
+                }`}
+                aria-label="List view"
               >
                 <FiList className="w-5 h-5 md:w-6 md:h-6" />
               </button>
             </div>
           </div>
 
+          {/* Product Listing */}
           <div
-            className={`grid ${
-              isGridView ? "grid-cols-2 md:grid-cols-3" : "grid-cols-1"
-            } gap-6`}
+            className={`grid gap-6 ${
+              isGridView
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+                : "grid-cols-1"
+            }`}
           >
-            {products.map((product, index) => (
+            {products.map((product) => (
               <article
-                key={index}
-                className="group bg-light rounded-lg overflow-hidden relative hover:shadow-md transition-shadow"
+                key={product.id}
+                className="group bg-light rounded-lg overflow-hidden relative hover:shadow-lg transition-shadow"
               >
                 <div
                   className="relative aspect-square cursor-pointer"
                   onClick={() => handleViewFullProduct(product.id)}
                 >
                   <Image
-                    src={kurtiimg.src}
+                    src={kurtiimg}
                     alt={product.name}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, 33vw"
                   />
                   {product.isNew && (
-                    <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-xs">
+                    <span className="absolute top-3 right-3 bg-accent text-white px-2 py-1 rounded-full text-xs">
                       New
-                    </div>
+                    </span>
                   )}
                   {calculateDiscount(product.originalPrice, product.price) && (
-                    <div className="absolute top-4 left-4 bg-secondary text-white px-3 py-1 rounded-full text-xs">
+                    <span className="absolute top-3 left-3 bg-secondary text-white px-2 py-1 rounded-full text-xs">
                       {calculateDiscount(product.originalPrice, product.price)}
-                    </div>
+                    </span>
                   )}
-                  {/* Hover Actions */}
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleAddToWishlist(product.id)}
-                      className="p-2 bg-light rounded-full text-dark hover:text-primary transition-colors"
-                      aria-label="Add to Wishlist"
+                      className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
+                      aria-label="Add to wishlist"
                     >
                       <FiHeart className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleBuyNow(product.id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-primary text-light rounded-full hover:bg-primary-dark transition-colors"
+                      className="flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors text-sm"
                     >
-                      <BsFillLightningFill className="w-5 h-5" /> Buy Now
+                      <BsFillLightningFill className="w-4 h-4" /> Buy Now
                     </button>
                     <button
                       onClick={() => handleAddToCart(product.id)}
-                      className="p-2 bg-light rounded-full text-dark hover:text-primary transition-colors"
-                      aria-label="Add to Cart"
+                      className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
+                      aria-label="Add to cart"
                     >
                       <FiShoppingCart className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleViewFullProduct(product.id)}
-                      className="p-2 bg-light rounded-full text-dark hover:text-primary transition-colors"
-                      aria-label="View Full Product"
+                      className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
+                      aria-label="View product"
                     >
                       <FiEye className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
-
                 <div className="p-4 space-y-2">
-                  <h3 className="font-playfair text-lg font-normal text-dark truncate">
+                  <h3 className="font-playfair text-base md:text-lg font-semibold text-dark truncate">
                     {product.name}
                   </h3>
-
-                  <div className="flex items-center gap-3">
-                    <span className="font-poppins text-secondary font-semibold">
+                  <div className="flex items-center gap-2">
+                    <span className="font-poppins text-secondary font-bold">
                       ₹{product.price}
                     </span>
                     {product.originalPrice > product.price && (
@@ -159,31 +177,25 @@ export default function ProductGrid() {
                       </span>
                     )}
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="font-poppins text-sm text-gray-600">
-                      Sizes:
-                    </span>
-                    <div className="flex gap-1">
-                      {product.sizes.map((size: string, i: number) => (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Sizes:</span>
+                    <div className="flex gap-1 flex-wrap">
+                      {product.sizes.map((size) => (
                         <span
-                          key={i}
-                          className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-200 rounded-full"
+                          key={size}
+                          className="px-2 py-0.5 bg-gray-200 rounded-full"
                         >
                           {size}
                         </span>
                       ))}
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="font-poppins text-sm text-gray-600">
-                      Colors:
-                    </span>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Colors:</span>
                     <div className="flex gap-1">
-                      {product.colors.map((color: string, i: number) => (
+                      {product.colors.map((color, idx) => (
                         <span
-                          key={i}
+                          key={idx}
                           className="w-4 h-4 rounded-full border border-gray-300"
                           style={{ backgroundColor: color }}
                         />
@@ -196,16 +208,16 @@ export default function ProductGrid() {
           </div>
 
           {/* Pagination */}
-          <div className="mt-12 flex justify-center gap-2">
-            <button className="px-4 py-2 text-dark hover:text-primary transition-colors">
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+            <button className="px-4 py-2 bg-light rounded hover:bg-light/80 transition">
               ← Previous
             </button>
-            <span className="px-4 py-2 text-gray-400">Page 1 of 4</span>
-            <button className="px-4 py-2 text-dark hover:text-primary transition-colors">
+            <span className="text-gray-500">Page 1 of 4</span>
+            <button className="px-4 py-2 bg-light rounded hover:bg-light/80 transition">
               Next →
             </button>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

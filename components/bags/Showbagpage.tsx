@@ -561,6 +561,8 @@ const QuickViewModal = ({
             <Image
               src={product.images[currentImageIndex]}
               alt={`${product.name} image ${currentImageIndex + 1}`}
+              width={400}
+              height={400}
               className="w-full h-full object-contain rounded-lg"
             />
           </div>

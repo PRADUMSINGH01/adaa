@@ -10,7 +10,7 @@ export default async function Page({ params }: { params: Params }) {
 
   return (
     <>
-      <ProductGrid />
+      <ProductGrid params={Kurti} />
     </>
   );
 }

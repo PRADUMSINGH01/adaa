@@ -1,4 +1,3 @@
-// components/ProductFilters.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { FiFilter, FiX } from "react-icons/fi";
@@ -13,12 +12,7 @@ export default function ProductFilters() {
 
   // Prevent body scroll when mobile filters are open
   useEffect(() => {
-    if (isMobileFiltersOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    // Cleanup effect: ensure body scroll is re-enabled when component unmounts
+    document.body.style.overflow = isMobileFiltersOpen ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -58,7 +52,7 @@ export default function ProductFilters() {
 
   return (
     <div className="relative">
-      {/* Mobile Filter Button - always visible on mobile */}
+      {/* Mobile Filter Button */}
       <button
         onClick={() => setIsMobileFiltersOpen(true)}
         className="md:hidden fixed bottom-6 right-6 bg-accent text-neutral p-4 rounded-full shadow-lg z-40"
@@ -67,25 +61,24 @@ export default function ProductFilters() {
         <FiFilter className="w-6 h-6" />
       </button>
 
-      {/* Backdrop for mobile filters */}
+      {/* Backdrop */}
       {isMobileFiltersOpen && (
         <div
-          className="fixed inset-0 bg-black/50 md:hidden z-40" // z-index lower than sidebar
+          className="fixed inset-0 bg-black/50 md:hidden z-40"
           onClick={() => setIsMobileFiltersOpen(false)}
-          aria-hidden="true" // Hide from screen readers
+          aria-hidden="true"
         />
       )}
 
       {/* Filter Sidebar */}
       <div
-        className={`fixed md:relative inset-y-0 left-0 bg-white transform transition-transform duration-300 w-80 md:w-64 h-screen md:h-auto z-50 ${
-          // Higher z-index
+        className={`fixed md:relative inset-y-0 left-0 bg-white transform transition-transform duration-300 w-full max-w-xs md:w-64 h-full md:h-auto z-50 ${
           isMobileFiltersOpen
             ? "translate-x-0"
             : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="h-full overflow-y-auto p-6 md:p-0 bg-light md:bg-neutral">
+        <div className="h-full overflow-y-auto p-6 bg-light md:bg-neutral">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-playfair text-xl font-bold text-dark">
@@ -101,29 +94,26 @@ export default function ProductFilters() {
           </div>
 
           {/* Price Range */}
-          <div className="mb-8 ">
+          <div className="mb-8">
             <h4 className="font-poppins font-medium text-dark mb-4">
               Price Range
             </h4>
-
-            <div className="space-y-4">
-              <input
-                type="range"
-                min="0"
-                max="20000"
-                value={priceRange}
-                onChange={(e) => setPriceRange(Number(e.target.value))}
-                className="w-full accent-primary"
-              />
-              <div className="flex justify-between text-secondary">
-                <span>₹0</span>
-                <span>₹{priceRange.toLocaleString()}</span>
-                <span>₹20,000</span>
-              </div>
+            <input
+              type="range"
+              min="0"
+              max="20000"
+              value={priceRange}
+              onChange={(e) => setPriceRange(Number(e.target.value))}
+              className="w-full accent-primary mb-2"
+            />
+            <div className="flex justify-between text-secondary text-sm">
+              <span>₹0</span>
+              <span>₹{priceRange.toLocaleString()}</span>
+              <span>₹20,000</span>
             </div>
           </div>
 
-          {/* New & Trending */}
+          {/* Collection */}
           <div className="mb-8">
             <h4 className="font-poppins font-medium text-dark mb-4">
               Collection
@@ -197,7 +187,7 @@ export default function ProductFilters() {
           {/* Clear All */}
           <button
             onClick={clearAllFilters}
-            className="w-full py-3 bg-accent text-white rounded-lg font-poppins hover:bg-accent/90"
+            className="w-full py-3 bg-accent text-white rounded-lg font-poppins hover:bg-accent/90 mb-16"
           >
             Clear All Filters
           </button>

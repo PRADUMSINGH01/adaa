@@ -1,4 +1,6 @@
 // types.ts
+import { StaticImageData } from "next/image";
+
 export interface CartItem {
   id: number; // Unique item ID
   productId: number;
@@ -33,6 +35,19 @@ export interface Product {
   sku?: string;
   stock: number;
   seo?: object;
+}
+
+export interface Kurti {
+  id: number;
+  name: string;
+  price: string;
+  originalPrice?: string; // For showing a slash-through price on sale items
+  image: StaticImageData | string; // Allow string for external URLs too if needed
+  isNew?: boolean;
+  onSale?: boolean;
+  brand?: string; // Added brand for more detail
+  rating?: number; // Added rating
+  colorsAvailable?: string[]; // Example: ['Red', 'Blue', 'Green']
 }
 // types/next-auth.d.ts
 import "next-auth";
