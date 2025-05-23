@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
-
+import GoogleSignInButton from "../GoogleSignInButton";
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-neutral p-4">
@@ -60,10 +59,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <button className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
-              <FcGoogle className="w-6 h-6" />
-              <span className="font-poppins text-dark">Google</span>
-            </button>
+            <GoogleSignInButton />
 
             <button className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
               <FaGithub className="w-6 h-6" />
