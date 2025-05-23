@@ -6,8 +6,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 // Import high-quality images (minimum 3840px width recommended for 4K)
 import banner1 from "@/app/(Images)/banners/canvatwo.jpg";
 import banner2 from "@/app/(Images)/banners/canvaOne.png";
-import banner3 from "@/app/(Images)/banners/canvaOne.png";
-import banner4 from "@/app/(Images)/banners/canvaOne.png";
+import banner3 from "@/app/(Images)/banners/summerrr.jpg";
+import banner4 from "@/app/(Images)/banners/summerrrr.png";
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -23,7 +23,7 @@ const HeroSlider = () => {
   ];
 
   // Configuration
-  const AUTO_PLAY_INTERVAL = 7000;
+  const AUTO_PLAY_INTERVAL = 3000;
   const SWIPE_THRESHOLD = 50;
   const ASPECT_RATIO = 16 / 9; // 16:9 aspect ratio for wide banners
 
@@ -74,7 +74,7 @@ const HeroSlider = () => {
     <section
       className="relative w-full bg-gray-100"
       style={{ height: calculateHeight() }}
-      onMouseEnter={() => setIsAutoPlaying(false)}
+      onMouseEnter={() => setIsAutoPlaying(true)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
       {/* Slides container */}
@@ -117,7 +117,7 @@ const HeroSlider = () => {
           <button
             key={index}
             onClick={() => {
-              setIsAutoPlaying(false);
+              setIsAutoPlaying(true);
               setCurrentSlide(index);
             }}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${

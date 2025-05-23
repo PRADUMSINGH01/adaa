@@ -1,6 +1,5 @@
 "use client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
 import Image from "next/image";
 import Link from "next/link";
 import "swiper/css";
@@ -31,49 +30,7 @@ export default function CategorySlider() {
       bg-gradient-to-br from-light/90 via-[#FEFCF9] to-light/90
       shadow-[inset_0_0_80px_rgba(224,122,95,0.05)]"
     >
-      {/* Dynamic background elements */}
-      <div
-        className="absolute inset-0 z-0 opacity-15"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 10% 20%, rgba(234,122,122,0.08) 0%, transparent 40%),
-            radial-gradient(circle at 90% 80%, rgba(224,122,95,0.08) 0%, transparent 40%),
-            linear-gradient(45deg, transparent 48%, rgba(138,155,110,0.05) 50%, transparent 52%)
-          `,
-          backgroundSize: "cover",
-        }}
-      />
-
-      {/* Floating textile pattern */}
-      <div className="absolute inset-0 z-0 animate-float">
-        <div
-          className="absolute w-64 h-64 -left-16 -top-16 rotate-45 opacity-10"
-          style={{
-            background: `repeating-linear-gradient(
-              -45deg,
-              ${"#8A9B6E"},
-              ${"#8A9B6E"} 10px,
-              transparent 10px,
-              transparent 20px
-            )`,
-          }}
-        />
-        <div
-          className="absolute w-64 h-64 -right-16 -bottom-16 rotate-45 opacity-10"
-          style={{
-            background: `repeating-linear-gradient(
-              45deg,
-              ${"#D57A7A"},
-              ${"#D57A7A"} 10px,
-              transparent 10px,
-              transparent 20px
-            )`,
-          }}
-        />
-      </div>
-
       <Swiper
-        modules={[Navigation, Pagination]}
         spaceBetween={20}
         slidesPerView={2}
         breakpoints={{
@@ -85,15 +42,6 @@ export default function CategorySlider() {
             slidesPerView: 4,
             spaceBetween: 28,
           },
-        }}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
-        pagination={{
-          clickable: true,
-          bulletClass: "swiper-pagination-bullet !bg-secondary",
-          bulletActiveClass: "swiper-pagination-bullet-active !bg-secondary",
         }}
         className="!overflow-visible relative z-10"
       >
@@ -113,7 +61,7 @@ export default function CategorySlider() {
               </div>
 
               {/* Image Container */}
-              <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-4 border-secondary/20 group-hover:border-secondary transition-all duration-300 shadow-xl">
+              <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-full overflow-hidden border-4 border-secondary group-hover:border-secondary transition-all duration-300 shadow-xl">
                 <Link href={`Kurties/${category.url}`} className="block h-full">
                   <Image
                     src={category.image}

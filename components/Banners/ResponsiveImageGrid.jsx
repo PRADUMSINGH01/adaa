@@ -1,13 +1,13 @@
 import Image from "next/image";
 import summer from "@/app/(Images)/banners/summer.png";
-import embro from "@/app/(Images)/embro.png";
+import bag from "@/app/(Images)/banners/bag.png";
 
-import office from "@/app/(Images)/office.png";
+import office from "@/app/(Images)/banners/offcotton.png";
 
-import party from "@/app/(Images)/party.png";
+import party from "@/app/(Images)/banners/summer.png";
 
 const ResponsiveImageGrid = () => {
-  const images = [summer, embro, office, party];
+  const images = [summer, bag, office, party];
 
   return (
     <div className="w-full mx-auto  mt-2">
