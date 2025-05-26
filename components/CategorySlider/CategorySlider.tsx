@@ -26,7 +26,7 @@ const categories = [
 export default function CategorySlider() {
   return (
     <div
-      className="relative py-16 px-4 overflow-hidden 
+      className="relative py-6 px-4 overflow-hidden 
       bg-gradient-to-br from-light/90 via-[#FEFCF9] to-light/90
       shadow-[inset_0_0_80px_rgba(224,122,95,0.05)]"
     >

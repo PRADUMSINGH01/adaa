@@ -2,9 +2,9 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
-import { FiHeart, FiEye } from "react-icons/fi";
-import { useState } from "react";
-import Image, { StaticImageData } from "next/image";
+import { FiHeart, FiEye, FiX } from "react-icons/fi";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -15,145 +15,67 @@ import hero1 from "@/app/(Images)/banners/canvaOne.png";
 import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
 import hero3 from "@/app/(Images)/banners/summerr.png";
 import hero4 from "@/app/(Images)/banners/summerrrr.png";
-import kurtiImage from "@/app/(Images)/party.png";
 import { KurtiCarousel } from "./KurtiCaru";
+// import { fetchLatestKurties } from "@/server/FetchKurti";
+
+// type Product = {
+//   images: StaticImageData[];
+//   title: string;
+//   price: number;
+//   description: string;
+//   sizes: string[];
+// };
 
 type Kurti = {
   id: number;
   name: string;
   price: string;
   originalPrice?: string;
-  image: StaticImageData | string;
+  images: string[];
   isNew?: boolean;
   onSale?: boolean;
   brand?: string;
   rating?: number;
   colorsAvailable?: string[];
+  sizes: string[];
+  description: string;
 };
 
 export default function KurtiGrid() {
-  const [kurtis] = useState<Kurti[]>([
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
+  const [selectedProduct, setSelectedProduct] = useState<Kurti | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-
-    {
-      id: 1,
-      name: "Enchanted Rose Kurti",
-      brand: "Aura Collections",
-      price: "₹1,499",
-      image: kurtiImage,
-      isNew: true,
-      rating: 4.5,
-      colorsAvailable: ["#E07A5F", "#8A9B6E"],
-    },
-    // Add other 7 kurti objects here...
-  ]);
+  const [kurtis, setKurties] = useState<Kurti[]>([]);
 
   const heroImages = [hero1, hero2, hero3, hero4];
 
+  useEffect(() => {
+    async function fetchKurti() {
+      const response = await fetch("/api/fetchKurti");
+      const products = await response.json();
+      return setKurties(products);
+    }
+    fetchKurti();
+  }, []);
+  console.log(kurtis, "Kurti");
   const handleWishlist = (id: number) => console.log(`Wishlist: ${id}`);
-  const handleQuickView = (id: number) => console.log(`Quick view: ${id}`);
+  const handleQuickView = (id: number) => {
+    const product = kurtis.find((k) => k.id === id);
+    setSelectedProduct(product || null);
+    setIsQuickViewOpen(true);
+  };
 
   const renderStars = (rating?: number) => {
     if (!rating) return null;
-
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
     return (
       <div className="flex items-center gap-1">
-        {[...Array(fullStars)].map((_, i) => (
-          <Star key={`full-${i}`} type="full" />
-        ))}
-        {hasHalfStar && <Star key="half" type="half" />}
-        {[...Array(emptyStars)].map((_, i) => (
-          <Star key={`empty-${i}`} type="empty" />
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            type={
+              rating >= i + 1 ? "full" : rating >= i + 0.5 ? "half" : "empty"
+            }
+          />
         ))}
         <span className="ml-1 text-sm text-secondary">
           ({rating.toFixed(1)})
@@ -163,37 +85,36 @@ export default function KurtiGrid() {
   };
 
   return (
-    <section
-      className="min-h-screen py-20"
-      style={{ backgroundColor: "#F8F5F2" }}
-    >
+    <section className="min-h-screen py-8 md:py-12 lg:py-20 bg-[#F8F5F2]">
       {/* Hero Carousel */}
-      <div className="">
+      <div className="px-4 sm:px-6 lg:px-8 mb-8 md:mb-12 lg:mb-16">
         <Swiper
           modules={[Autoplay, Navigation]}
-          spaceBetween={30}
+          spaceBetween={16}
           loop={true}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
           navigation={{
             nextEl: ".hero-button-next",
             prevEl: ".hero-button-prev",
           }}
           breakpoints={{
-            640: { slidesPerView: 1 },
+            320: { slidesPerView: 1 },
+            640: { slidesPerView: 1.2 },
+            768: { slidesPerView: 1.5 },
             1024: { slidesPerView: 2 },
-            1280: { slidesPerView: 3 },
+            1280: { slidesPerView: 2.5 },
           }}
           className="!pb-12"
         >
           {heroImages.map((image, index) => (
             <SwiperSlide key={index}>
-              <div className="relative aspect-[16/9] mx-4 rounded-2xl overflow-hidden shadow-xl">
+              <div className="relative aspect-[16/9] mx-2 rounded-xl lg:rounded-2xl overflow-hidden shadow-lg">
                 <Image
                   src={image}
                   alt={`Fashion Showcase ${index + 1}`}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 80vw"
+                  sizes="(max-width: 640px) 100vw, 80vw"
                   priority={index === 0}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-dark/40 to-transparent" />
@@ -201,27 +122,25 @@ export default function KurtiGrid() {
             </SwiperSlide>
           ))}
 
-          <div className="hero-button-prev !text-secondary !left-4 after:!text-3xl" />
-          <div className="hero-button-next !text-secondary !right-4 after:!text-3xl" />
+          <div className="hero-button-prev !text-secondary !left-2 lg:!left-4 after:!text-2xl lg:after:!text-3xl" />
+          <div className="hero-button-next !text-secondary !right-2 lg:!right-4 after:!text-2xl lg:after:!text-3xl" />
         </Swiper>
       </div>
 
       {/* Product Grid */}
-      <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-4">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {kurtis.map((kurti, index) => (
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 lg:gap-8">
+          {kurtis.map((kurti) => (
             <article
-              key={index}
-              className="group relative overflow-hidden bg-light rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              key={kurti.id}
+              className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <div className="relative aspect-[3/4]">
-                <div className="absolute inset-0 bg-gradient-to-t from-dark/30 to-transparent opacity-0 group-hover:transition-opacity z-10" />
-
-                <KurtiCarousel />
+                <KurtiCarousel images={kurti.images} />
 
                 {/* Status Badges */}
-                <div className="absolute left-4 top-4 flex gap-2 z-20">
-                  {kurti.isNew && <Badge color="primary">New Arrival</Badge>}
+                <div className="absolute left-2 top-2 flex gap-1 z-20">
+                  {kurti.isNew && <Badge color="primary">New</Badge>}
                   {kurti.onSale && kurti.originalPrice && (
                     <Badge color="secondary">
                       {calculateDiscount(kurti.originalPrice, kurti.price)}% Off
@@ -230,41 +149,39 @@ export default function KurtiGrid() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="absolute right-4 top-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                   <IconButton onClick={() => handleWishlist(kurti.id)}>
-                    <FiHeart className="h-5 w-5" />
+                    <FiHeart className="h-4 w-4 lg:h-5 lg:w-5" />
                   </IconButton>
                   <IconButton onClick={() => handleQuickView(kurti.id)}>
-                    <FiEye className="h-5 w-5" />
+                    <FiEye className="h-4 w-4 lg:h-5 lg:w-5" />
                   </IconButton>
                 </div>
 
                 {/* Color Swatches */}
                 {kurti.colorsAvailable && (
-                  <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 z-20">
+                  <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
                     {kurti.colorsAvailable.map((color) => (
-                      <ColorSwatch key={color} color={color} name={color} />
+                      <ColorSwatch key={color} color={color} />
                     ))}
                   </div>
                 )}
-
-                {/* Add to Cart Button */}
               </div>
 
               {/* Product Info */}
-              <div className="p-6 bg-light relative z-20">
-                <div className="mb-3">
+              <div className="p-4 lg:p-6">
+                <div className="mb-2">
                   {kurti.brand && (
-                    <p className="font-poppins text-sm text-secondary uppercase tracking-widest mb-1">
+                    <p className="text-xs lg:text-sm text-secondary uppercase tracking-wide mb-1">
                       {kurti.brand}
                     </p>
                   )}
-                  <h3 className="font-playfair text-xl font-semibold text-dark mb-2">
+                  <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2">
                     {kurti.name}
                   </h3>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <PriceDisplay
                       price={kurti.price}
@@ -272,8 +189,7 @@ export default function KurtiGrid() {
                     />
                     {renderStars(kurti.rating)}
                   </div>
-
-                  <SizePreview sizes={["S", "M", "L"]} />
+                  <SizePreview sizes={kurti.sizes} />
                 </div>
               </div>
             </article>
@@ -281,31 +197,122 @@ export default function KurtiGrid() {
         </div>
       </div>
 
-      {/* Global Styles */}
-      <style>{`
-        .hero-button-prev,
-        .hero-button-next,
-        .swiper-pagination-bullet {
-          transition: all 0.3s ease;
-        }
-
-        .hero-button-prev:hover::after,
-        .hero-button-next:hover::after {
-          color: #d57a7a !important;
-        }
-
-        .swiper-pagination {
-          bottom: 0 !important;
-        }
-
-        .swiper-pagination-bullet-active {
-          transform: scale(1.3);
-        }
-      `}</style>
+      {/* QuickView Modal */}
+      {isQuickViewOpen && selectedProduct && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl max-w-4xl w-full h-[90vh] overflow-y-auto relative animate-fade-in">
+            <button
+              onClick={() => setIsQuickViewOpen(false)}
+              className="sticky top-2 right-2 z-50 p-2 bg-white/90 rounded-full hover:bg-gray-100 transition-all shadow-lg ml-auto m-2"
+            >
+              <FiX className="h-6 w-6" />
+            </button>
+            <QuickView product={selectedProduct} />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
+// QuickView Component
+function QuickView({ product }: { product: Kurti }) {
+  const [selectedSize, setSelectedSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 lg:p-6">
+      {/* Image Gallery */}
+      <div className="grid grid-cols-2 gap-2 h-64 sm:h-80 lg:h-96">
+        {product.images.map((img, idx) => (
+          <div
+            key={idx}
+            className="relative overflow-hidden rounded-lg group cursor-zoom-in"
+          >
+            <Image
+              src={img}
+              alt={`Product view ${idx + 1}`}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 640px) 50vw, 30vw"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Product Details */}
+      <div className="flex flex-col gap-3 lg:gap-4">
+        <h1 className="text-2xl lg:text-3xl font-bold">{product.name}</h1>
+        <p className="text-lg lg:text-xl text-primary">{product.price}</p>
+        <p className="text-gray-600 text-sm lg:text-base">
+          {product.description}
+        </p>
+
+        {/* Size Selection */}
+        <div className="mt-2">
+          <h3 className="text-base lg:text-lg font-semibold">Select Size</h3>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {product.sizes.map((size) => (
+              <button
+                key={size}
+                onClick={() => setSelectedSize(size)}
+                className={`px-3 py-1 text-sm lg:text-base rounded-md border ${
+                  selectedSize === size
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white text-gray-700 border-gray-300"
+                }`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Quantity Selector */}
+        <div className="mt-2">
+          <h3 className="text-base lg:text-lg font-semibold">Quantity</h3>
+          <div className="flex items-center gap-2 mt-1">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="px-2 py-1 border rounded-md text-sm lg:text-base"
+            >
+              -
+            </button>
+            <span className="px-3 py-1">{quantity}</span>
+            <button
+              onClick={() => setQuantity(quantity + 1)}
+              className="px-2 py-1 border rounded-md text-sm lg:text-base"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-4 flex flex-col gap-2">
+          <button className="bg-primary text-white py-2 lg:py-3 rounded-md hover:bg-primary-dark text-sm lg:text-base">
+            Buy Now
+          </button>
+          <button className="bg-secondary text-white py-2 lg:py-3 rounded-md hover:bg-secondary-dark text-sm lg:text-base">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Helper Components (Keep previous implementations with responsive classes)
+// Badge, IconButton, ColorSwatch, PriceDisplay, SizePreview, Star components
+// ... (Same as previous implementation with responsive text sizing and padding)
+
+// Helper function
+const calculateDiscount = (original: string, current: string) => {
+  const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
+  return Math.round(
+    ((cleanPrice(original) - cleanPrice(current)) / cleanPrice(original)) * 100
+  );
+};
 // Helper Components
 const Badge = ({
   color,
@@ -338,15 +345,12 @@ const IconButton = ({
   </button>
 );
 
-const ColorSwatch = ({ color, name }: { color: string; name: string }) => (
+const ColorSwatch = ({ color }: { color: string }) => (
   <div className="relative h-6 w-6 rounded-full border-2 border-light shadow-lg transition-transform hover:scale-125">
     <span
       className="absolute inset-0 rounded-full"
       style={{ backgroundColor: color }}
     />
-    <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 font-poppins text-xs bg-dark text-light px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-      {name}
-    </span>
   </div>
 );
 
@@ -371,14 +375,16 @@ const SizePreview = ({ sizes }: { sizes: string[] }) => (
   <div className="flex items-center gap-2">
     <span className="font-poppins text-sm text-secondary">Sizes:</span>
     <div className="flex gap-1">
-      {sizes.map((size) => (
-        <span
-          key={size}
-          className="px-2 py-1 text-xs bg-light border border-secondary/20 rounded-md"
-        >
-          {size}
-        </span>
-      ))}
+      {sizes.length > 0
+        ? sizes.map((size) => (
+            <span
+              key={size}
+              className="px-2 py-1 text-xs bg-light border border-secondary/20 rounded-md"
+            >
+              {size}
+            </span>
+          ))
+        : ""}
     </div>
   </div>
 );
@@ -397,10 +403,10 @@ const Star = ({ type }: { type: "full" | "half" | "empty" }) => (
   </svg>
 );
 
-// Helper function
-const calculateDiscount = (original: string, current: string) => {
-  const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
-  const originalPrice = cleanPrice(original);
-  const currentPrice = cleanPrice(current);
-  return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
-};
+// // Helper function
+// const calculateDiscount = (original: string, current: string) => {
+//   const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
+//   const originalPrice = cleanPrice(original);
+//   const currentPrice = cleanPrice(current);
+//   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+// };

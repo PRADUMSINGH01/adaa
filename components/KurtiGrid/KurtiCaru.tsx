@@ -1,46 +1,48 @@
 "use client";
 
-import { useState, useRef } from "react";
-import Image, { StaticImageData } from "next/image";
-
-import hero1 from "@/app/(Images)/banners/canvaOne.png";
-import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
-import hero3 from "@/app/(Images)/banners/summerr.png";
-import hero4 from "@/app/(Images)/banners/summerrrr.png";
-
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 type Slide = {
-  src: StaticImageData;
-  alt: string;
+  src: string;
 };
 
-export function KurtiCarousel() {
+export function KurtiCarousel({ images }: { images: string[] }) {
   const slides: Slide[] = [
-    { src: hero1, alt: "Kurti style 1" },
-    { src: hero2, alt: "Kurti style 2" },
-    { src: hero3, alt: "Kurti style 3" },
-    { src: hero4, alt: "Kurti style 4" },
+    { src: images[0] },
+    { src: images[1] },
+    { src: images[2] },
+    { src: images[3] },
   ];
   const total = slides.length;
-
+  console.log(images, "Image");
   const [current, setCurrent] = useState(0);
   const [playing, setPlaying] = useState(true);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
-  // useEffect(() => {
-  //   if (!playing) return;
-  //   window.setInterval(() => {
-  //     setCurrent((prev) => (prev + 1) % total);
-  //   }, 3000);
-  //   return () => {
-  //     if (intervalRef.current) clearInterval(intervalRef.current);
-  //   };
-  // }, [playing, total]);
+  useEffect(() => {
+    if (!playing) return;
+
+    intervalRef.current = window.setInterval(() => {
+      setCurrent((prev) => (prev + 1) % total);
+    }, 3000);
+
+    return () => {
+      if (intervalRef.current) {
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [playing, total]);
 
   const goTo = (idx: number) => {
-    console.log("Pagination clicked:", total, playing, idx);
     setCurrent(idx);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setPlaying(true);
+    // Reset interval when manually navigating
+    if (intervalRef.current) {
+      window.clearInterval(intervalRef.current);
+    }
+    intervalRef.current = window.setInterval(() => {
+      setCurrent((prev) => (prev + 1) % total);
+    }, 3000);
   };
 
   return (
@@ -55,7 +57,7 @@ export function KurtiCarousel() {
           className="flex h-full transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${current * 100}%)` }}
         >
-          {slides.map(({ src, alt }, idx) => (
+          {slides.map(({ src }, idx) => (
             <div
               key={idx}
               className="relative flex-shrink-0 w-full h-full"
@@ -63,7 +65,7 @@ export function KurtiCarousel() {
             >
               <Image
                 src={src}
-                alt={alt}
+                alt={"alt"}
                 fill
                 className="object-cover"
                 priority={idx === 0}
@@ -79,24 +81,16 @@ export function KurtiCarousel() {
         </div>
       </div>
 
-      {/* Pagination as real links */}
+      {/* Pagination */}
       <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 z-20">
-        {slides.map(({ src }, idx) => (
-          <a
+        {slides.map((_, idx) => (
+          <button
             key={idx}
-            href={src.src}
-            target="_blank"
-            rel="noopener noreferrer"
             onClick={() => goTo(idx)}
-            className={`
-              block
-              h-2
-              rounded-full
-              transition-all
-              duration-300
-              ${idx === current ? "w-6 bg-primary" : "w-2 bg-secondary/30"}
-            `}
-            aria-label={`Open image ${idx + 1} and go to slide ${idx + 1}`}
+            className={`block h-2 rounded-full transition-all duration-300 cursor-pointer ${
+              idx === current ? "w-6 bg-primary" : "w-2 bg-secondary/30"
+            }`}
+            aria-label={`Go to slide ${idx + 1}`}
           />
         ))}
       </div>
