@@ -5,7 +5,6 @@ import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Provider from "./providers";
 import { authOptions } from "@/components/lib/auth";
-import Providers from "@/components/providers";
 import Navbar from "@/components/Nav/Navbar";
 
 const poppins = Poppins({
