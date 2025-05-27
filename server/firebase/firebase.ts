@@ -49,11 +49,6 @@ db = getFirestore(app);
 storage = getStorage(app);
 auth = getAuth(app);
 
-// Configure Firestore settings if needed
-db.settings({
-  ignoreUndefinedProperties: true,
-});
-
 // Export core services and utilities
 export { db, storage, auth, FieldValue };
 export type { Firestore, Storage, Auth };

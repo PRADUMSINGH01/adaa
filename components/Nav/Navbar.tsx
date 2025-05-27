@@ -1,9 +1,16 @@
+"use client";
 import { FiMenu, FiHeart, FiShoppingCart, FiUser } from "react-icons/fi";
+import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/app/(Images)/logo.png";
 import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
+
 export default function Navbar() {
+  const { data: session } = useSession();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
   return (
     <nav className="bg-neutral text-dark shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -72,12 +79,65 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <Link
-              href={"/User"}
-              className="hover:text-secondary transition-colors"
-            >
-              <FiUser className="w-6 h-6" />
-            </Link>
+            {session ? (
+              <div
+                className="relative"
+                onMouseEnter={() => setIsUserMenuOpen(true)}
+                onMouseLeave={() => setIsUserMenuOpen(false)}
+              >
+                <button className="hover:text-secondary transition-colors">
+                  <FiUser className="w-6 h-6" />
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-neutral text-dark shadow-lg rounded-lg p-4">
+                    {/* User Info */}
+                    <div className="flex items-center gap-4 mb-4">
+                      <Image
+                        src={session.user?.image || "/default-avatar.png"}
+                        alt="User Avatar"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                      <div>
+                        <p className="font-semibold">{session.user?.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {session.user?.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <Link
+                      href="/account"
+                      className="block py-2 px-2 hover:bg-primary hover:text-white rounded transition-colors"
+                    >
+                      Account
+                    </Link>
+                    <Link
+                      href="/address"
+                      className="block py-2 px-2 hover:bg-primary hover:text-white rounded transition-colors mt-2"
+                    >
+                      Address
+                    </Link>
+                    <button
+                      onClick={() => signOut()}
+                      className="w-full text-left py-2 px-2 hover:bg-primary hover:text-white rounded transition-colors mt-2"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/User"
+                className="hover:text-secondary transition-colors"
+              >
+                <FiUser className="w-6 h-6" />
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -1,34 +1,53 @@
 // middleware.ts
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = new URL(request.url);
-  const session = request.cookies.get("session")?.value;
+// The same secret you set in NextAuth options
+const secret = process.env.NEXTAUTH_SECRET;
 
-  // Public paths
-  const publicPaths = ["/Login", "/signup", "/"];
-  if (publicPaths.includes(pathname)) {
+/**
+ * Middleware to protect routes and verify NextAuth JWT
+ */
+export async function middleware(req: NextRequest) {
+  // Get NextAuth JWT token (will be null if not valid/absent)
+  const token = await getToken({
+    req,
+    secret,
+    secureCookie: process.env.NODE_ENV === "production",
+  });
+
+  const { pathname } = req.nextUrl;
+
+  // Define which paths are public
+  const publicPaths = [
+    "/",
+    "/Login",
+    "/error",
+    "/api/auth/(.*)",
+    "/_next/(.*)",
+    "/favicon.ico",
+  ];
+
+  // If the request matches a public path, continue
+  if (publicPaths.some((path) => new RegExp(`^${path}$`).test(pathname))) {
     return NextResponse.next();
   }
 
-  // Verify session through API route
-  try {
-    const verifyRes = await fetch(new URL("/api/auth/verify", request.url), {
-      headers: {
-        Cookie: `session=${session}`,
-      },
-    });
-
-    if (!verifyRes.ok) throw new Error("Unauthorized");
-
-    return NextResponse.next();
-  } catch (error) {
-    const response = NextResponse.redirect(new URL("/Login", request.url));
-    response.cookies.delete("session");
-    return response;
+  // For any other route, require authentication
+  if (!token) {
+    // Redirect to login page, preserve callbackUrl
+    const loginUrl = req.nextUrl.clone();
+    loginUrl.pathname = "/Login";
+    loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
+
+  // Token exists, allow request
+  return NextResponse.next();
 }
 
+// Apply middleware to all routes except static and public
 export const config = {
-  matcher: ["/User/:path*"],
+  matcher: ["/User"],
 };
