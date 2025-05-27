@@ -3,6 +3,7 @@
 import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Loading from "@/app/loading";
 
 interface WishlistItem {
   id: string;
@@ -22,8 +23,7 @@ export default function UserWishlist() {
         const res = await fetch("/api/GetUser"); // Changed to more appropriate endpoint
         if (!res.ok) throw new Error("Failed to fetch wishlist");
         const data = await res.json();
-        console.log(data.wishList, "-----");
-        setWishlist(data.wishlist); // Assuming API returns { wishlist: [...] }
+        setWishlist(data.wishList); // Assuming API returns { wishlist: [...] }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load wishlist"
@@ -52,11 +52,7 @@ export default function UserWishlist() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
