@@ -9,7 +9,7 @@ export function WelcomeAlert() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [showWelcomeAlert, setShowWelcomeAlert] = useState(true);
+  const [showWelcomeAlert, setShowWelcomeAlert] = useState(false);
 
   // Get callback URL from query parameters or default to home
   const callbackUrl = searchParams.get("callbackUrl") || "/";

@@ -5,13 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/components/lib/auth";
 import { FieldValue } from "firebase-admin/firestore";
 
-interface Product {
-  productId: string;
-  name: string;
-  price: number;
-  image: string;
-  // Add other product properties as needed
-}
+import { wishlist } from "@/server/types";
 
 export async function POST(request: Request) {
   try {
@@ -29,8 +23,8 @@ export async function POST(request: Request) {
     }
 
     // Validate request body
-    const productData: Product = await request.json();
-    if (!productData.productId || !productData.name || !productData.price) {
+    const productData: wishlist = await request.json();
+    if (!productData.id || !productData.name || !productData.price) {
       return NextResponse.json(
         { error: "Missing required product fields" },
         { status: 400 }
@@ -42,7 +36,7 @@ export async function POST(request: Request) {
       .collection("Users")
       .doc(userEmail)
       .collection("WishList")
-      .doc(productData.productId);
+      .doc(String(productData.id));
 
     await wishlistRef.set(
       {

@@ -17,7 +17,7 @@ async function addToWishlist(product: wishlist) {
     return data;
   } catch (error) {
     console.error("Error:", error);
-    // Handle error in UI
+    window.location.href = "/Login";
   }
 }
 export default addToWishlist;
