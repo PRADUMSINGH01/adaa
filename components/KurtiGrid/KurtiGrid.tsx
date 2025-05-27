@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { FiHeart, FiEye, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";
+import addToWishlist from "@/server/AddWishlist";
 import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -16,7 +17,7 @@ import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
 import hero3 from "@/app/(Images)/banners/summerr.png";
 import hero4 from "@/app/(Images)/banners/summerrrr.png";
 import { KurtiCarousel } from "./KurtiCaru";
-// import { fetchLatestKurties } from "@/server/FetchKurti";
+// import { fetchLatestKurties } fromr "@/server/FetchKurti";
 
 // type Product = {
 //   images: StaticImageData[];
@@ -57,8 +58,6 @@ export default function KurtiGrid() {
     }
     fetchKurti();
   }, []);
-  console.log(kurtis, "Kurti");
-  const handleWishlist = (id: number) => console.log(`Wishlist: ${id}`);
   const handleQuickView = (id: number) => {
     const product = kurtis.find((k) => k.id === id);
     setSelectedProduct(product || null);
@@ -150,7 +149,7 @@ export default function KurtiGrid() {
 
                 {/* Quick Actions */}
                 <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <IconButton onClick={() => handleWishlist(kurti.id)}>
+                  <IconButton onClick={() => addToWishlist(kurti)}>
                     <FiHeart className="h-4 w-4 lg:h-5 lg:w-5" />
                   </IconButton>
                   <IconButton onClick={() => handleQuickView(kurti.id)}>

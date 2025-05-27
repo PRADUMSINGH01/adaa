@@ -6,13 +6,18 @@ export interface CartItem {
   productId: number;
   name: string;
   price: number;
-  image: string[];
+  image: string;
   color: string;
   size: string;
   quantity: number;
   addedAt: number; // Timestamp
 }
-
+export interface wishlist {
+  id: number; // Unique item ID
+  name: string;
+  price: string;
+  images: string[];
+}
 export interface Product {
   id: number; // Unique item ID
   rating: number;

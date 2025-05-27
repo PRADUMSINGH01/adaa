@@ -89,7 +89,7 @@ export default function UserWishlist() {
                 >
                   <div className="relative aspect-square">
                     <Image
-                      src={item.image}
+                      src={item.image[0]}
                       alt={item.name}
                       fill
                       className="object-cover"
@@ -101,7 +101,7 @@ export default function UserWishlist() {
                       {item.name}
                     </h3>
                     <p className="text-primary font-semibold">
-                      ${item.price.toFixed(2)}
+                      {item.price.toFixed(2)}
                     </p>
                     <div className="flex gap-4 mt-3">
                       <button
