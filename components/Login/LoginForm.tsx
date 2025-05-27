@@ -1,14 +1,20 @@
 "use client";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
+
 import { FaGithub } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
 import { signIn } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { WelcomeAlert } from "../Alerts/LoginAlert";
 
 export default function LoginPage() {
   const path = usePathname();
+
   return (
     <div className="min-h-screen bg-neutral p-4">
+      <WelcomeAlert />
+
       <div className="max-w-md mx-auto mt-12">
         <h1 className="font-playfair text-3xl font-bold text-dark text-center mb-8">
           Welcome Back
@@ -68,8 +74,11 @@ export default function LoginPage() {
                   callbackUrl: path || "/",
                 })
               }
+              className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
             >
-              google
+              <FcGoogle className="w-6 h-6 text-[#4285F4]" />{" "}
+              {/* Google icon */}
+              <span className="font-poppins text-dark">Google</span>
             </button>
             <button className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
               <FaGithub className="w-6 h-6" />

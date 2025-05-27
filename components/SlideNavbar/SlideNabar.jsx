@@ -53,7 +53,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="hidden md:flex bg-neutral text-dark shadow-sm sticky top-20 z-50">
+    <nav className="hidden md:flex bg-neutral text-dark shadow-sm sticky top-20 z-10">
       <div className="container mx-auto px-4">
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center justify-between h-16">

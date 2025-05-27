@@ -1,5 +1,14 @@
 "use client";
-import { FiMenu, FiHeart, FiShoppingCart, FiUser, FiSettings, FiMapPin, FiLogOut } from "react-icons/fi";import { useSession, signOut } from "next-auth/react";
+import {
+  FiMenu,
+  FiHeart,
+  FiShoppingCart,
+  FiUser,
+  FiSettings,
+  FiMapPin,
+  FiLogOut,
+} from "react-icons/fi";
+import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +17,8 @@ import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
 
 export default function Navbar() {
   const { data: session } = useSession();
+  // const session = { user: { name: "pradum", email: "hs", image: "/" } };
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -97,105 +108,132 @@ export default function Navbar() {
             </Link>
             {/* Wishlist and Cart icons unchanged */}
             {session ? (
-  <div
-    ref={menuRef}
-    className="relative"
-    onMouseEnter={handleMenuOpen}
-    onMouseLeave={handleMenuClose}
-    onFocus={handleMenuOpen}
-    onBlur={handleMenuClose}
-  >
-    <button
-      className="flex items-center gap-2 transition-colors hover:text-secondary focus:outline-none"
-      aria-expanded={isUserMenuOpen}
-      aria-haspopup="true"
-    >
-      {/* Avatar Button */}
-      <div className="relative h-8 w-8 overflow-visible">
-        <Image
-          src={session.user?.image || '/images/default-avatar.svg'}
-          alt="User avatar"
-          fill
-          className="rounded-full object-cover border border-primary/10"
-          sizes="32px"
-          priority
-        />
-      </div>
-      <span className="text-sm font-medium">{session.user?.name}</span>
-    </button>
+              <div
+                ref={menuRef}
+                className="relative"
+                onMouseEnter={handleMenuOpen}
+                onMouseLeave={handleMenuClose}
+                onFocus={handleMenuOpen}
+                onBlur={handleMenuClose}
+              >
+                <button
+                  className="flex items-center gap-2 transition-colors hover:text-secondary focus:outline-none"
+                  aria-expanded={isUserMenuOpen}
+                  aria-haspopup="true"
+                >
+                  {/* Avatar Button */}
+                  <div className="relative h-8 w-8 overflow-visible">
+                    <Image
+                      src={session.user?.image || "/images/default-avatar.svg"}
+                      alt="User avatar"
+                      fill
+                      className="rounded-full object-cover border border-primary/10"
+                      sizes="32px"
+                      priority
+                    />
+                  </div>
+                  <span className="text-sm font-medium">
+                    {session.user?.name}
+                  </span>
+                </button>
 
-    {/* Dropdown Menu */}
-    <div
-      className={`absolute right-0 top-full z-[1000] mt-3 w-64 origin-top-right rounded-xl bg-white shadow-xl transition-[opacity,transform] duration-200 ${
-        isUserMenuOpen
-          ? 'opacity-100 visible scale-100'
-          : 'opacity-0 invisible scale-95'
-      }`}
-      role="menu"
-    >
-      {/* Menu Content */}
-      <div className="p-4 space-y-4">
-        {/* User Info Section */}
-        <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 shrink-0">
-            <Image
-              src={session.user?.image || '/images/default-avatar.svg'}
-              alt="User avatar"
-              fill
-              className="rounded-full object-cover border border-primary/10"
-              sizes="40px"
-              priority
-            />
-          </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-medium text-dark truncate">{session.user?.name}</p>
-            <p className="text-xs text-dark/75 truncate">{session.user?.email}</p>
-          </div>
-        </div>
+                {/* Dropdown Menu */}
+                <div
+                  className={`absolute right-0 top-full z-[1000] mt-6 w-64 origin-top-right rounded-xl bg-white shadow-xl transition-[opacity,transform] duration-200 ${
+                    isUserMenuOpen
+                      ? "opacity-100 visible scale-100"
+                      : "opacity-0 invisible scale-95"
+                  }`}
+                  role="menu"
+                >
+                  {/* Menu Content */}
+                  <div className="p-4 space-y-4">
+                    {/* User Info Section */}
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-10 w-10 shrink-0">
+                        <Image
+                          src={session.user?.image || "Avatar"}
+                          alt="User avatar"
+                          fill
+                          className="rounded-full object-cover border border-primary/10"
+                          sizes="40px"
+                          priority
+                        />
+                      </div>
+                      <div className="overflow-hidden">
+                        <p className="text-sm font-medium text-dark truncate">
+                          {session.user?.name}
+                        </p>
+                        <p className="text-xs text-dark/75 truncate">
+                          {session.user?.email}
+                        </p>
+                      </div>
+                    </div>
 
-        {/* Menu Items */}
-        <nav className="space-y-2 border-t border-primary/10 pt-4">
-          <Link
-            href="/account"
-            className="flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
-            role="menuitem"
-          >
-            <FiSettings className="h-4 w-4 text-primary shrink-0" />
-            <span>Account Settings</span>
-          </Link>
-          <Link
-            href="/address"
-            className="flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
-            role="menuitem"
-          >
-            <FiMapPin className="h-4 w-4 text-primary shrink-0" />
-            <span>Address Book</span>
-          </Link>
-          <button
-            onClick={() => signOut()}
-            className="w-full flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
-            role="menuitem"
-          >
-            <FiLogOut className="h-4 w-4 text-accent shrink-0" />
-            <span>Sign Out</span>
-          </button>
-        </nav>
-      </div>
-    </div>
-  </div>
-) : (
-  <Link
-    href="/login"
-    className="flex items-center gap-2 transition-colors hover:text-secondary"
-  >
-    <div className="h-8 w-8 flex items-center justify-center">
-      <FiUser className="h-5 w-5" />
-    </div>
-    <span className="text-sm font-medium">Sign In</span>
-  </Link>
-)}
-        
-        
+                    {/* Menu Items */}
+                    <nav className="space-y-2 border-t border-primary/10 pt-4">
+                      <Link
+                        href="/account"
+                        className="flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
+                        role="menuitem"
+                      >
+                        <FiSettings className="h-4 w-4 text-primary shrink-0" />
+                        <span>Account Settings</span>
+                      </Link>
+                      <Link
+                        href="/address"
+                        className="flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
+                        role="menuitem"
+                      >
+                        <FiMapPin className="h-4 w-4 text-primary shrink-0" />
+                        <span>Address Book</span>
+                      </Link>
+                      <button
+                        onClick={() => signOut()}
+                        className="w-full flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
+                        role="menuitem"
+                      >
+                        <FiLogOut className="h-4 w-4 text-accent shrink-0" />
+                        <span>Sign Out</span>
+                      </button>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link
+                href="/Login"
+                className="group flex items-center gap-2 transition-all duration-300 hover:bg-primary/10 px-4 py-2 rounded-xl relative"
+              >
+                {/* Main Button Content */}
+                <div className="relative">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover:bg-primary/20">
+                    <FiUser className="h-5 w-5 text-primary transition-all duration-300 group-hover:scale-110" />
+                  </div>
+
+                  {/* Professional Alert Badge */}
+                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center">
+                    <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/30 opacity-75 duration-1000" />
+                    <div className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-semibold text-white shadow-sm transition-all duration-300 group-hover:scale-125">
+                      <span className="mt-px">!</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text Content */}
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-medium text-dark/90">
+                    Welcome back!
+                  </span>
+                  <span className="text-[15px] font-semibold text-primary transition-all duration-300 group-hover:tracking-wide">
+                    Sign In
+                    <span className="ml-2 inline-block translate-x-0 transition-all duration-300 group-hover:translate-x-1">
+                      &rarr;
+                    </span>
+                  </span>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </div>
