@@ -1,31 +1,73 @@
 "use client";
 
 import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-export default function UserWishlist() {
-  const [wishlist, setWishlist] = useState([
-    {
-      id: 1,
-      name: "Floral Embroidered Kurti",
-      price: 1499,
-      image: "/",
-      size: "M",
-      color: "Red",
-    },
-    {
-      id: 2,
-      name: "Chikankari Cotton Kurti",
-      price: 1299,
-      image: "/",
-      size: "L",
-      color: "White",
-    },
-  ]);
 
-  const removeItem = (id: number) => {
-    setWishlist((prev) => prev.filter((item) => item.id !== id));
+interface WishlistItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+}
+
+export default function UserWishlist() {
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchWishlist() {
+      try {
+        const res = await fetch("/api/GetUser"); // Changed to more appropriate endpoint
+        if (!res.ok) throw new Error("Failed to fetch wishlist");
+        const data = await res.json();
+        console.log(data.wishList, "-----");
+        setWishlist(data.wishlist); // Assuming API returns { wishlist: [...] }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to load wishlist"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchWishlist();
+  }, []); // Added empty dependency array
+
+  const removeItem = async (id: string) => {
+    try {
+      const response = await fetch(`/api/wishlist/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to remove item");
+
+      setWishlist((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      console.error("Error removing item:", err);
+      alert("Failed to remove item. Please try again.");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-neutral p-8 flex items-center justify-center">
+        <div className="text-center text-red-500">
+          <p>Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral p-4 md:p-8">
@@ -47,34 +89,38 @@ export default function UserWishlist() {
               {wishlist.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white rounded-xl shadow-sm overflow-hidden"
+                  className="bg-white rounded-xl shadow-sm overflow-hidden transition-transform hover:scale-105"
                 >
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={400}
-                    height={400}
-                    className="w-full h-56 object-cover"
-                  />
+                  <div className="relative aspect-square">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                   <div className="p-4 space-y-2">
-                    <h3 className="font-poppins font-medium text-dark text-lg">
+                    <h3 className="font-poppins font-medium text-dark text-lg truncate">
                       {item.name}
                     </h3>
-                    <p className="text-primary font-semibold">{item.price}</p>
+                    <p className="text-primary font-semibold">
+                      ${item.price.toFixed(2)}
+                    </p>
                     <div className="flex gap-4 mt-3">
                       <button
-                        onClick={() => console.log("added")}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-poppins text-sm"
+                        onClick={() => console.log("Add to cart:", item.id)}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-poppins text-sm transition-colors"
                       >
                         <FiShoppingCart />
                         Add to Cart
                       </button>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 font-poppins text-sm"
+                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                        aria-label="Remove item"
                       >
-                        <FiTrash2 />
-                        Remove
+                        <FiTrash2 className="text-lg" />
                       </button>
                     </div>
                   </div>
