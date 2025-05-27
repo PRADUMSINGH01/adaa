@@ -15,10 +15,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user UID from Firebase Auth
+    // Get user document reference
     const userEmail = session.user.email;
-    const user = await db.collection("Users").doc(userEmail).get();
-    if (!user.exists) {
+    const userRef = db.collection("Users").doc(userEmail);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
@@ -31,21 +33,32 @@ export async function POST(request: Request) {
       );
     }
 
-    // Add product to wishlist subcollection
-    const wishlistRef = db
-      .collection("Users")
-      .doc(userEmail)
-      .collection("WishList")
-      .doc(String(productData.id));
+    // Transaction to safely update wishlist
+    await db.runTransaction(async (transaction) => {
+      const userData = (await transaction.get(userRef)).data()!;
+      const currentWishlist = userData.wishlist || [];
 
-    await wishlistRef.set(
-      {
-        ...productData,
-        addedAt: FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
-    console.log(productData);
+      // Check for existing product
+      if (
+        currentWishlist.some((item: wishlist) => item.id === productData.id)
+      ) {
+        throw new Error("Product already in wishlist");
+      }
+
+      // Add new product with timestamp
+      transaction.update(userRef, {
+        wishlist: [
+          ...currentWishlist,
+          {
+            id: productData.id,
+            name: productData.name,
+            image: productData.images,
+            addedAt: FieldValue.serverTimestamp(),
+          },
+        ],
+      });
+    });
+
     return NextResponse.json(
       { success: true, product: productData },
       { status: 201 }
@@ -53,8 +66,11 @@ export async function POST(request: Request) {
   } catch (error: unknown) {
     console.error("Error adding to wishlist:", error);
 
-    // Handle Firestore errors
+    // Handle specific errors
     if (error instanceof Error) {
+      if (error.message === "Product already in wishlist") {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
