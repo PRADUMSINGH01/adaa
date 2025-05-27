@@ -76,3 +76,13 @@ declare module "next-auth/jwt" {
     accessToken?: string;
   }
 }
+
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+  }
+
+  interface User {
+    // Add more fields if needed
+  }
+}

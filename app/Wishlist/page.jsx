@@ -1,5 +1,10 @@
 import Wishlist from "@/components/wishlist/wishlist";
+import AuthWrapper from "@/components/AuthWrap/AuthWrapper";
 const page = () => {
-  return <Wishlist />;
+  return (
+    <AuthWrapper>
+      <Wishlist />;
+    </AuthWrapper>
+  );
 };
 export default page;

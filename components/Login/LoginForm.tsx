@@ -2,8 +2,11 @@
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
-import GoogleSignInButton from "../GoogleSignInButton";
+import { signIn } from "next-auth/react";
+import { usePathname } from "next/navigation";
+
 export default function LoginPage() {
+  const path = usePathname();
   return (
     <div className="min-h-screen bg-neutral p-4">
       <div className="max-w-md mx-auto mt-12">
@@ -59,8 +62,15 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <GoogleSignInButton />
-
+            <button
+              onClick={() =>
+                signIn("google", {
+                  callbackUrl: path || "/",
+                })
+              }
+            >
+              google
+            </button>
             <button className="w-full p-3 bg-white border rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
               <FaGithub className="w-6 h-6" />
               <span className="font-poppins text-dark">GitHub</span>
