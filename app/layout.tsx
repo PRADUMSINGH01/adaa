@@ -32,9 +32,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    // ✅ You must include <html>…
     <html lang="en">
-      {/* ✅ …and <body> */}
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
         <Provider session={session}>
           <Navbar />
