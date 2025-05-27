@@ -36,14 +36,12 @@ export default async function RootLayout({
     // ✅ You must include <html>…
     <html lang="en">
       {/* ✅ …and <body> */}
-      <Provider session={session}>
-        <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
-          <Providers>
-            <Navbar />
-            {children}
-          </Providers>
-        </body>
-      </Provider>
+      <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
+        <Provider session={session}>
+          <Navbar />
+          {children}
+        </Provider>
+      </body>
     </html>
   );
 }
