@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     // ✅ You must include <html>…
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       {/* ✅ …and <body> */}
       <Provider session={session}>
         <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
