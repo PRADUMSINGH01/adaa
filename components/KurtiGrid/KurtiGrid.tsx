@@ -2,9 +2,10 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
-import { FiHeart, FiEye, FiX } from "react-icons/fi";
+import { FiEye, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";
-import addToWishlist from "@/server/AddWishlist";
+
+import WishListButton from "../wishlist/WishListButton";
 import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -149,11 +150,12 @@ export default function KurtiGrid() {
 
                 {/* Quick Actions */}
                 <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <IconButton onClick={() => addToWishlist(kurti)}>
-                    <FiHeart className="h-4 w-4 lg:h-5 lg:w-5" />
+                  <IconButton onClick={() => console.log()}>
+                    <WishListButton product={kurti}></WishListButton>
                   </IconButton>
+
                   <IconButton onClick={() => handleQuickView(kurti.id)}>
-                    <FiEye className="h-4 w-4 lg:h-5 lg:w-5" />
+                    <FiEye className="h-5 w-5 lg:h-6 lg:w-8 " />
                   </IconButton>
                 </div>
 

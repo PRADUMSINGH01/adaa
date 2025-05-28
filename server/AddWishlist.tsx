@@ -13,9 +13,10 @@ async function addToWishlist(product: wishlist) {
       throw new Error("Failed to add to wishlist");
     }
 
-    return { success: true };
+    return { success: true, msg: "Product added " };
   } catch (error) {
     console.error("Error:", error);
+    return { success: false, msg: "Product not added " };
   }
 }
 export default addToWishlist;
