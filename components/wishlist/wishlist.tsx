@@ -23,7 +23,7 @@ const UserWishlist: React.FC = () => {
         const res = await fetch("/api/GetUser/", { cache: "no-store" });
         if (!res.ok) throw new Error("Could not fetch wishlist.");
 
-        const { wishlist: items } = await res.json();
+        const { wishList: items } = await res.json();
         setWishlist(items);
       } catch (err: unknown) {
         setError(

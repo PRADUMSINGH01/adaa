@@ -20,8 +20,10 @@ export default async function Home() {
   return (
     <>
       <SlideNavbar />
-      <BannerSlider />
-      <ResponsiveImageGrid />
+      <div className="relative">
+        <BannerSlider />
+        <ResponsiveImageGrid />
+      </div>
       <CategorySlider />
 
       <KurtiGrid />

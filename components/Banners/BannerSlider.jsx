@@ -72,7 +72,7 @@ const HeroSlider = () => {
 
   return (
     <section
-      className="relative w-full bg-gray-100"
+      className="relative w-full bg-gray-100 z-10"
       style={{ height: calculateHeight() }}
       onMouseEnter={() => setIsAutoPlaying(true)}
       onMouseLeave={() => setIsAutoPlaying(true)}
