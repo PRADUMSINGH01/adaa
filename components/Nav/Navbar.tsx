@@ -1,6 +1,5 @@
 "use client";
 import {
-  FiMenu,
   FiHeart,
   FiShoppingCart,
   FiUser,
