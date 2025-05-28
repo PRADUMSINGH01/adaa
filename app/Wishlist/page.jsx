@@ -3,7 +3,7 @@ import AuthWrapper from "@/components/AuthWrap/AuthWrapper";
 const page = () => {
   return (
     <AuthWrapper>
-      <Wishlist />;
+      <Wishlist />
     </AuthWrapper>
   );
 };
