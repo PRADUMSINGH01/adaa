@@ -49,7 +49,7 @@ export function WishListAlert() {
                 <span className="text-accent">{session?.user?.name}</span>!
               </h3>
               <p className="text-sm opacity-90 font-medium">
-                You're now securely signed in to your account
+                You&apos;re now securely signed in to your account
               </p>
             </div>
 
