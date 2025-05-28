@@ -45,16 +45,14 @@ export default function Navbar() {
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-between h-16">
           {/* Mobile Menu Button */}
-          <button className="p-2 hover:text-primary transition-colors">
-            <FiMenu className="w-6 h-6" />
-          </button>
+          <button className="p-2 hover:text-primary transition-colors"></button>
 
           {/* Centered Logo */}
           <Link
             href="/"
             className="font-playfair text-2xl font-bold text-primary"
           >
-            <Image src={logo} alt=" " width={100} height={10} priority />
+            <Image src={logo} alt=" " width={100} height={20} priority />
           </Link>
 
           {/* Right Icons */}
@@ -76,12 +74,12 @@ export default function Navbar() {
           </div>
 
           {/* Centered Logo */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center ">
             <Link
               href="/"
-              className="font-playfair text-3xl font-bold text-primary hover:opacity-90 transition-opacity"
+              className="font-playfair text-xl font-bold text-primary overflow-hidden"
             >
-              <Image src={logo} alt=" " width={200} height={20} priority />
+              <Image src={logo} alt=" " width={160} height={10} priority />
             </Link>
           </div>
 
@@ -92,9 +90,7 @@ export default function Navbar() {
               className="hover:text-secondary transition-colors relative"
             >
               <FiHeart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                2
-              </span>
+              {/* <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center"></span> */}
             </Link>
 
             <Link
@@ -102,9 +98,7 @@ export default function Navbar() {
               className="hover:text-secondary transition-colors relative"
             >
               <FiShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                3
-              </span>
+              {/* <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center"></span> */}
             </Link>
             {/* Wishlist and Cart icons unchanged */}
             {session ? (
