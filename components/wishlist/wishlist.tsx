@@ -78,7 +78,7 @@ const UserWishlist: React.FC = () => {
                 >
                   <div className="relative h-64 w-full">
                     <Image
-                      src={item.image}
+                      src={item.image[0]}
                       alt={item.name}
                       fill
                       className="object-cover"

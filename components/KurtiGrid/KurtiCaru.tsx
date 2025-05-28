@@ -14,7 +14,6 @@ export function KurtiCarousel({ images }: { images: string[] }) {
     { src: images[3] },
   ];
   const total = slides.length;
-  console.log(images, "Image");
   const [current, setCurrent] = useState(0);
   const [playing, setPlaying] = useState(true);
   const intervalRef = useRef<number | null>(null);
