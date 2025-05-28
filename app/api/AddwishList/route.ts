@@ -38,24 +38,25 @@ export async function POST(request: Request) {
       const userData = (await transaction.get(userRef)).data()!;
       const currentWishlist = userData.wishlist || [];
 
-      // Check for existing product
       if (
         currentWishlist.some((item: wishlist) => item.id === productData.id)
       ) {
         throw new Error("Product already in wishlist");
       }
 
-      // Add new product with timestamp
+      // Add new product without FieldValue in the array
       transaction.update(userRef, {
-        wishlist: [
+        wishList: [
           ...currentWishlist,
           {
             id: productData.id,
             name: productData.name,
+            price: productData.price,
             image: productData.images,
-            addedAt: FieldValue.serverTimestamp(),
           },
         ],
+        // Add server timestamp at document level
+        updatedAt: FieldValue.serverTimestamp(),
       });
     });
 
@@ -66,7 +67,6 @@ export async function POST(request: Request) {
   } catch (error: unknown) {
     console.error("Error adding to wishlist:", error);
 
-    // Handle specific errors
     if (error instanceof Error) {
       if (error.message === "Product already in wishlist") {
         return NextResponse.json({ error: error.message }, { status: 400 });
