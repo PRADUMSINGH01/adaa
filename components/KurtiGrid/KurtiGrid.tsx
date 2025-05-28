@@ -150,13 +150,14 @@ export default function KurtiGrid() {
 
                 {/* Quick Actions */}
                 <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <IconButton onClick={() => console.log()}>
-                    <WishListButton product={kurti}></WishListButton>
-                  </IconButton>
+                  <WishListButton product={kurti}></WishListButton>
 
-                  <IconButton onClick={() => handleQuickView(kurti.id)}>
-                    <FiEye className="h-5 w-5 lg:h-6 lg:w-8 " />
-                  </IconButton>
+                  <div className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-accent">
+                    <FiEye
+                      className="h-5 w-5  "
+                      onClick={() => handleQuickView(kurti.id)}
+                    />
+                  </div>
                 </div>
 
                 {/* Color Swatches */}
@@ -331,20 +332,20 @@ const Badge = ({
   </span>
 );
 
-const IconButton = ({
-  children,
-  onClick,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className="p-2 bg-light/90 backdrop-blur-sm rounded-full hover:bg-primary transition-all shadow-lg hover:scale-110"
-  >
-    {children}
-  </button>
-);
+// const IconButton = ({
+//   children,
+//   onClick,
+// }: {
+//   children: React.ReactNode;
+//   onClick: () => void;
+// }) => (
+//   <button
+//     onClick={onClick}
+//     className="p-2 bg-light/90 backdrop-blur-sm rounded-full hover:bg-primary transition-all shadow-lg hover:scale-110"
+//   >
+//     {children}
+//   </button>
+// );
 
 const ColorSwatch = ({ color }: { color: string }) => (
   <div className="relative h-6 w-6 rounded-full border-2 border-light shadow-lg transition-transform hover:scale-125">

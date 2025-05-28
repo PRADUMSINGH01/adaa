@@ -91,13 +91,9 @@ const WishListButton = ({ product }: WishListButtonProps) => {
       <button
         onClick={handleClick}
         aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
-        className="p-2 rounded-full transition transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent"
+        className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-primary"
       >
-        <IconButton
-          className={`w-6 h-6 ${
-            liked ? "text-accent animate-bounce" : "text-dark hover:text-accent"
-          }`}
-        />
+        <IconButton className="h-5 w-5  " />
       </button>
 
       {alertMsg &&

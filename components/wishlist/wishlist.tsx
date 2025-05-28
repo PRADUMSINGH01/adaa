@@ -20,7 +20,7 @@ const UserWishlist: React.FC = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("/api/wishlist", { cache: "no-store" });
+        const res = await fetch("/api/GetUser/", { cache: "no-store" });
         if (!res.ok) throw new Error("Could not fetch wishlist.");
 
         const { wishlist: items } = await res.json();
