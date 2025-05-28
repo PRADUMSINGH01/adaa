@@ -72,10 +72,15 @@ const WishListButton = ({ product }: WishListButtonProps) => {
       } else {
         throw new Error(res?.msg || "Could not add to wishlist.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLiked(false);
       setAlertType("error");
-      setAlertMsg(err.message || "Something went wrong. Please try again.");
+
+      if (err instanceof Error) {
+        setAlertMsg(err.message);
+      } else {
+        setAlertMsg("Something went wrong. Please try again.");
+      }
     }
   };
 
