@@ -1,51 +1,131 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ProductFilters from "@/components/Filter/Filter";
 import { FiGrid, FiList, FiShoppingCart, FiHeart, FiEye } from "react-icons/fi";
 import { BsFillLightningFill } from "react-icons/bs";
-import Image from "next/image";
-import kurtiimg from "@/app/(Images)/kurti.png";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice: number;
-  sizes: string[];
-  colors: string[];
-  isNew: boolean;
-}
+import { KurtiCarousel } from "../KurtiGrid/KurtiCaru";
+import { Product } from "@/server/types";
+// Updated Product interface to match filter requirements
+// interface Product {
+//   id: string;
+//   name: string;
+//   price: number;
+//   originalPrice: number;
+//   sizes: string[];
+//   colors: { name: string; hex: string }[];
+//   fabric: string;
+//   isNew: boolean;
+//   isTrending: boolean;
+// }
 
-const products: Product[] = Array.from({ length: 12 }, () => ({
-  id: Math.random().toString(36).substring(2, 9),
-  name: "Minimal Cotton Kurta",
-  price: 2499,
-  originalPrice: 3299,
-  sizes: ["S", "M", "L", "XL", "XXL"],
-  colors: ["#E07A5F", "#D57A7A", "#8A9B6E"],
-  isNew: true,
-}));
+// Generate products with varied properties
+// const generateProducts = (): Product[] => {
+//   const fabrics = ["Cotton", "Silk", "Linen", "Chiffon", "Georgette"];
+//   const colors = [
+//     { name: "Red", hex: "#E07A5F" },
+//     { name: "Blue", hex: "#3D405B" },
+//     { name: "Green", hex: "#8A9B6E" },
+//     { name: "Pink", hex: "#D57A7A" },
+//     { name: "Black", hex: "#4A4A48" },
+//   ];
+
+//   return Array.from({ length: 12 }, (_, i) => {
+//     const fabric = fabrics[i % fabrics.length];
+//     const productColors = [
+//       colors[i % colors.length],
+//       colors[(i + 2) % colors.length],
+//     ];
+
+//     return {
+//       id: Math.random().toString(36).substring(2, 9),
+//       name: `Minimal ${fabric} Kurta ${i + 1}`,
+//       price: 2499 - (i % 5) * 100,
+//       originalPrice: 3299,
+//       sizes: ["S", "M", "L", "XL", "XXL"],
+//       colors: productColors,
+//       fabric,
+//       isNew: i % 3 === 0,
+//       isTrending: i % 4 === 0,
+//     };
+//   });
+// };
 
 export default function ProductGrid({ params }: { params: string }) {
   const [isGridView, setIsGridView] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [priceRange, setPriceRange] = useState(10000);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
+  const [isNew, setIsNew] = useState(false);
+  const [isTrending, setIsTrending] = useState(false);
+
+  useEffect(() => {
+    async function fetchKurti() {
+      const response = await fetch("/api/fetchKurti");
+      const products = await response.json();
+      return setProducts(products);
+    }
+    fetchKurti();
+  }, []);
+  // Apply filters whenever filter states or products change
+  useEffect(() => {
+    const filtered = products.filter((product) => {
+      // Price filter
+      if (product.price > priceRange) return false;
+
+      // Color filter
+      if (selectedColors.length > 0) {
+        const productColorNames = product.colors.map((c) => c);
+        if (
+          !selectedColors.some((color) => productColorNames.includes(color))
+        ) {
+          return false;
+        }
+      }
+
+      // Fabric filter
+      if (
+        selectedFabrics.length > 0 &&
+        !selectedFabrics.includes(product.fabric)
+      ) {
+        return false;
+      }
+
+      // New arrival filter
+      if (isNew && !product.isNew) return false;
+
+      // Trending filter
+      if (isTrending && !product.isTrending) return false;
+
+      return true;
+    });
+
+    setFilteredProducts(filtered);
+  }, [
+    products,
+    priceRange,
+    selectedColors,
+    selectedFabrics,
+    isNew,
+    isTrending,
+  ]);
 
   const handleAddToCart = (productId: string) => {
     console.log(`Added product ${productId} to cart`);
-    // TODO: add cart integration
   };
 
   const handleBuyNow = (productId: string) => {
     console.log(`Buying product ${productId} now`);
-    // TODO: buy now flow
   };
 
   const handleAddToWishlist = (productId: string) => {
     console.log(`Added product ${productId} to wishlist`);
-    // TODO: wishlist integration
   };
 
   const handleViewFullProduct = (productId: string) => {
-    window.open(`/kurti/${productId}`, "_blank", "noopener,noreferrer");
+    window.open(`/Kurti/${productId}`, "_blank", "noopener,noreferrer");
   };
 
   const calculateDiscount = (
@@ -58,17 +138,50 @@ export default function ProductGrid({ params }: { params: string }) {
     return null;
   };
 
+  // Clear all filters
+  const clearAllFilters = useCallback(() => {
+    setPriceRange(10000);
+    setSelectedColors([]);
+    setSelectedFabrics([]);
+    setIsNew(false);
+    setIsTrending(false);
+  }, []);
+
   return (
     <div className="min-h-screen bg-neutral">
       <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
         {/* Mobile Filters */}
         <div className="md:hidden">
-          <ProductFilters />
+          <ProductFilters
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            selectedColors={selectedColors}
+            setSelectedColors={setSelectedColors}
+            selectedFabrics={selectedFabrics}
+            setSelectedFabrics={setSelectedFabrics}
+            isNew={isNew}
+            setIsNew={setIsNew}
+            isTrending={isTrending}
+            setIsTrending={setIsTrending}
+            clearAllFilters={clearAllFilters}
+          />
         </div>
 
         {/* Desktop Sidebar */}
         <aside className="hidden md:block w-full md:w-64 sticky top-20 self-start">
-          <ProductFilters />
+          <ProductFilters
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            selectedColors={selectedColors}
+            setSelectedColors={setSelectedColors}
+            selectedFabrics={selectedFabrics}
+            setSelectedFabrics={setSelectedFabrics}
+            isNew={isNew}
+            setIsNew={setIsNew}
+            isTrending={isTrending}
+            setIsTrending={setIsTrending}
+            clearAllFilters={clearAllFilters}
+          />
         </aside>
 
         {/* Products Section */}
@@ -108,7 +221,7 @@ export default function ProductGrid({ params }: { params: string }) {
                 : "grid-cols-1"
             }`}
           >
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <article
                 key={product.id}
                 className="group bg-light rounded-lg overflow-hidden relative hover:shadow-lg transition-shadow"
@@ -117,12 +230,7 @@ export default function ProductGrid({ params }: { params: string }) {
                   className="relative aspect-square cursor-pointer"
                   onClick={() => handleViewFullProduct(product.id)}
                 >
-                  <Image
-                    src={kurtiimg}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
+                  <KurtiCarousel images={product.images}></KurtiCarousel>
                   {product.isNew && (
                     <span className="absolute top-3 right-3 bg-accent text-white px-2 py-1 rounded-full text-xs">
                       New
@@ -135,27 +243,39 @@ export default function ProductGrid({ params }: { params: string }) {
                   )}
                   <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => handleAddToWishlist(product.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToWishlist(product.id);
+                      }}
                       className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
                       aria-label="Add to wishlist"
                     >
                       <FiHeart className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => handleBuyNow(product.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleBuyNow(product.id);
+                      }}
                       className="flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors text-sm"
                     >
                       <BsFillLightningFill className="w-4 h-4" /> Buy Now
                     </button>
                     <button
-                      onClick={() => handleAddToCart(product.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product.id);
+                      }}
                       className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
                       aria-label="Add to cart"
                     >
                       <FiShoppingCart className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => handleViewFullProduct(product.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewFullProduct(product.id);
+                      }}
                       className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
                       aria-label="View product"
                     >
@@ -198,9 +318,13 @@ export default function ProductGrid({ params }: { params: string }) {
                           key={idx}
                           className="w-4 h-4 rounded-full border border-gray-300"
                           style={{ backgroundColor: color }}
+                          title={color}
                         />
                       ))}
                     </div>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Fabric: {product.fabric}
                   </div>
                 </div>
               </article>

@@ -1,4 +1,4 @@
-const page = () => {
+const page = (product: any) => {
   return <></>;
 };
 

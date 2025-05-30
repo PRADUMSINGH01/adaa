@@ -18,13 +18,14 @@ export interface wishlist {
   price: string;
   images: string[];
 }
+
 export interface Product {
-  id: number; // Unique item ID
+  id: string; // Unique item ID
   rating: number;
   reviews: number;
   name: string;
   price: number;
-  originalPrice?: number;
+  originalPrice: number;
   discountPercentage?: number;
   images: string[];
   sizes: string[];
@@ -40,6 +41,8 @@ export interface Product {
   sku?: string;
   stock: number;
   seo?: object;
+  isNew?: boolean;
+  isTrending?: boolean;
 }
 
 export interface Kurti {

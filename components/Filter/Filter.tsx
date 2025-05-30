@@ -2,12 +2,33 @@
 import { useState, useEffect } from "react";
 import { FiFilter, FiX } from "react-icons/fi";
 
-export default function ProductFilters() {
-  const [priceRange, setPriceRange] = useState<number>(10000);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
-  const [isNew, setIsNew] = useState(false);
-  const [isTrending, setIsTrending] = useState(false);
+interface ProductFiltersProps {
+  priceRange: number;
+  setPriceRange: (value: number) => void;
+  selectedColors: string[];
+  setSelectedColors: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedFabrics: string[];
+  setSelectedFabrics: React.Dispatch<React.SetStateAction<string[]>>;
+  isNew: boolean;
+  setIsNew: (value: boolean) => void;
+  isTrending: boolean;
+  setIsTrending: (value: boolean) => void;
+  clearAllFilters: () => void;
+}
+
+export default function ProductFilters({
+  priceRange,
+  setPriceRange,
+  selectedColors,
+  setSelectedColors,
+  selectedFabrics,
+  setSelectedFabrics,
+  isNew,
+  setIsNew,
+  isTrending,
+  setIsTrending,
+  clearAllFilters,
+}: ProductFiltersProps) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   // Prevent body scroll when mobile filters are open
@@ -40,14 +61,6 @@ export default function ProductFilters() {
         ? prev.filter((f) => f !== fabric)
         : [...prev, fabric]
     );
-  };
-
-  const clearAllFilters = () => {
-    setPriceRange(10000);
-    setSelectedColors([]);
-    setSelectedFabrics([]);
-    setIsNew(false);
-    setIsTrending(false);
   };
 
   return (
