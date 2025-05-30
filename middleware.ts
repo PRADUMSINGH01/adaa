@@ -23,6 +23,7 @@ export async function middleware(req: NextRequest) {
   const publicPaths = [
     "/",
     "/Login",
+
     "/error",
     "/api/auth/(.*)",
     "/_next/(.*)",
@@ -49,5 +50,5 @@ export async function middleware(req: NextRequest) {
 
 // Apply middleware to all routes except static and public
 export const config = {
-  matcher: ["/User"],
+  matcher: ["/User", "/Cart"],
 };

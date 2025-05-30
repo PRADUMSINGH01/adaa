@@ -68,7 +68,7 @@ export function KurtiCarousel({ images }: { images: string[] }) {
                 fill
                 className="object-cover"
                 priority={idx === 0}
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 568px) 80vw, 50vw"
                 onError={(e) => {
                   console.error("Failed to load:", e.currentTarget.src);
                   e.currentTarget.style.display = "none";

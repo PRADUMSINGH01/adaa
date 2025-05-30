@@ -5,8 +5,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 // Import high-quality images (minimum 3840px width recommended for 4K)
 import banner1 from "@/app/(Images)/banners/canvatwo.jpg";
-import banner2 from "@/app/(Images)/banners/canvaOne.png";
-import banner3 from "@/app/(Images)/banners/summerrr.jpg";
+import banner2 from "@/app/(Images)/banners/new.png";
+import banner3 from "@/app/(Images)/banners/canvatwo.jpg";
 import banner4 from "@/app/(Images)/banners/summerrrr.png";
 
 const HeroSlider = () => {
@@ -72,7 +72,7 @@ const HeroSlider = () => {
 
   return (
     <section
-      className="relative w-full bg-gray-100 z-10"
+      className="relative w-full h-full bg-gray-100 z-10"
       style={{ height: calculateHeight() }}
       onMouseEnter={() => setIsAutoPlaying(true)}
       onMouseLeave={() => setIsAutoPlaying(true)}

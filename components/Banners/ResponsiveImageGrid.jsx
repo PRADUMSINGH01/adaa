@@ -2,9 +2,9 @@ import Image from "next/image";
 import summer from "@/app/(Images)/banners/summer.png";
 import bag from "@/app/(Images)/banners/bag.png";
 
-import office from "@/app/(Images)/banners/offcotton.png";
+import office from "@/app/(Images)/banners/new.png";
 
-import party from "@/app/(Images)/banners/summer.png";
+import party from "@/app/(Images)/banners/enthic.png";
 
 const ResponsiveImageGrid = () => {
   const images = [summer, bag, office, party];

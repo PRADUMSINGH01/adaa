@@ -5,9 +5,8 @@ import SlideNavbar from "@/components/SlideNavbar/SlideNabar";
 import BottomNav from "@/components/Nav/BottomNav";
 import ResponsiveImageGrid from "@/components/Banners/ResponsiveImageGrid";
 import BannerSlider from "@/components/Banners/BannerSlider";
-import { addProduct } from "@/server/AddKurti";
+
 export default async function Home() {
-  addProduct();
   return (
     <>
       <SlideNavbar />
@@ -16,8 +15,9 @@ export default async function Home() {
       <ResponsiveImageGrid />
 
       <CategorySlider />
-
-      <KurtiGrid />
+      <div className="">
+        <KurtiGrid />
+      </div>
       <Footer />
       <BottomNav />
     </>

@@ -3,7 +3,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { FiEye, FiX } from "react-icons/fi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import WishListButton from "../wishlist/WishListButton";
 import Image from "next/image";
@@ -13,20 +13,11 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 
 // Import images
-import hero1 from "@/app/(Images)/banners/canvaOne.png";
+import hero1 from "@/app/(Images)/banners/new.png";
 import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
 import hero3 from "@/app/(Images)/banners/summerr.png";
 import hero4 from "@/app/(Images)/banners/summerrrr.png";
 import { KurtiCarousel } from "./KurtiCaru";
-// import { fetchLatestKurties } fromr "@/server/FetchKurti";
-
-// type Product = {
-//   images: StaticImageData[];
-//   title: string;
-//   price: number;
-//   description: string;
-//   sizes: string[];
-// };
 
 type Kurti = {
   id: number;
@@ -46,7 +37,6 @@ type Kurti = {
 export default function KurtiGrid() {
   const [selectedProduct, setSelectedProduct] = useState<Kurti | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
-
   const [kurtis, setKurties] = useState<Kurti[]>([]);
 
   const heroImages = [hero1, hero2, hero3, hero4];
@@ -59,6 +49,7 @@ export default function KurtiGrid() {
     }
     fetchKurti();
   }, []);
+
   const handleQuickView = (id: number) => {
     const product = kurtis.find((k) => k.id === id);
     setSelectedProduct(product || null);
@@ -129,6 +120,11 @@ export default function KurtiGrid() {
 
       {/* Product Grid */}
       <div className="px-4 sm:px-6 lg:px-8">
+        {/* Fixed heading alignment */}
+        <h1 className="text-center text-2xl md:text-[30px] mb-10 text-primary font-poppins font-semibold w-full">
+          Recommended For You
+        </h1>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 lg:gap-8">
           {kurtis.map((kurti) => (
             <article
@@ -154,7 +150,7 @@ export default function KurtiGrid() {
 
                   <div className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-accent">
                     <FiEye
-                      className="h-5 w-5  "
+                      className="h-5 w-5"
                       onClick={() => handleQuickView(kurti.id)}
                     />
                   </div>
@@ -217,29 +213,66 @@ export default function KurtiGrid() {
   );
 }
 
-// QuickView Component
+// QuickView Component with Image Zoom
 function QuickView({ product }: { product: Kurti }) {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [mainImage, setMainImage] = useState(product.images[0]);
+  const [zoomStyle, setZoomStyle] = useState({ backgroundPosition: "0% 0%" });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+
+    // Calculate mouse position relative to container
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    setZoomStyle({ backgroundPosition: `${x}% ${y}%` });
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 lg:p-6">
-      {/* Image Gallery */}
-      <div className="grid grid-cols-2 gap-2 h-64 sm:h-80 lg:h-96">
-        {product.images.map((img, idx) => (
+      {/* Image Gallery with Zoom */}
+      <div className="flex flex-col gap-4">
+        {/* Main image with zoom effect */}
+        <div
+          ref={containerRef}
+          className="relative w-full h-96 overflow-hidden rounded-lg cursor-zoom-in"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={() => setZoomStyle({ backgroundPosition: "center" })}
+        >
           <div
-            key={idx}
-            className="relative overflow-hidden rounded-lg group cursor-zoom-in"
-          >
-            <Image
-              src={img}
-              alt={`Product view ${idx + 1}`}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 640px) 50vw, 30vw"
-            />
-          </div>
-        ))}
+            className="w-full h-full bg-contain bg-no-repeat bg-center transition-all duration-100"
+            style={{
+              backgroundImage: `url(${mainImage})`,
+              ...zoomStyle,
+              backgroundSize: "200%", // Zoom level
+            }}
+          />
+        </div>
+
+        {/* Thumbnails */}
+        <div className="grid grid-cols-4 gap-2">
+          {product.images.map((img, idx) => (
+            <div
+              key={idx}
+              className={`relative h-20 rounded-md overflow-hidden cursor-pointer border-2 transition-all ${
+                mainImage === img ? "border-primary" : "border-transparent"
+              }`}
+              onClick={() => setMainImage(img)}
+            >
+              <Image
+                src={img}
+                alt={`Thumbnail ${idx + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Product Details */}
@@ -304,17 +337,6 @@ function QuickView({ product }: { product: Kurti }) {
   );
 }
 
-// Helper Components (Keep previous implementations with responsive classes)
-// Badge, IconButton, ColorSwatch, PriceDisplay, SizePreview, Star components
-// ... (Same as previous implementation with responsive text sizing and padding)
-
-// Helper function
-const calculateDiscount = (original: string, current: string) => {
-  const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
-  return Math.round(
-    ((cleanPrice(original) - cleanPrice(current)) / cleanPrice(original)) * 100
-  );
-};
 // Helper Components
 const Badge = ({
   color,
@@ -331,21 +353,6 @@ const Badge = ({
     {children}
   </span>
 );
-
-// const IconButton = ({
-//   children,
-//   onClick,
-// }: {
-//   children: React.ReactNode;
-//   onClick: () => void;
-// }) => (
-//   <button
-//     onClick={onClick}
-//     className="p-2 bg-light/90 backdrop-blur-sm rounded-full hover:bg-primary transition-all shadow-lg hover:scale-110"
-//   >
-//     {children}
-//   </button>
-// );
 
 const ColorSwatch = ({ color }: { color: string }) => (
   <div className="relative h-6 w-6 rounded-full border-2 border-light shadow-lg transition-transform hover:scale-125">
@@ -405,10 +412,10 @@ const Star = ({ type }: { type: "full" | "half" | "empty" }) => (
   </svg>
 );
 
-// // Helper function
-// const calculateDiscount = (original: string, current: string) => {
-//   const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
-//   const originalPrice = cleanPrice(original);
-//   const currentPrice = cleanPrice(current);
-//   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
-// };
+// Helper function
+const calculateDiscount = (original: string, current: string) => {
+  const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
+  return Math.round(
+    ((cleanPrice(original) - cleanPrice(current)) / cleanPrice(original)) * 100
+  );
+};

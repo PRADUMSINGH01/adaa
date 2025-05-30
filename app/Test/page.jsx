@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 const page = () => {
   useEffect(() => {
-    fetch("/api/Addkurti/");
+    fetch("https://j288sf-3000.csb.app/api/AddKurti/");
   });
 
   return <></>;
