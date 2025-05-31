@@ -18,9 +18,10 @@ export default function KurtiDetailPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/ProductByID/`);
+        const response = await fetch(`/api/ProductByID/${productId}`);
 
         const result = await response.json();
+        console.log(result);
         setProduct(result);
       } catch (err) {
         setError(
