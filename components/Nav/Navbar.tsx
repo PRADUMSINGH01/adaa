@@ -78,7 +78,7 @@ export default function Navbar() {
               href="/"
               className="font-playfair text-xl font-bold text-primary overflow-hidden"
             >
-              <Image src={logo} alt=" " width={160} height={10} priority />
+              <Image src={logo} alt=" " width={120} height={7} priority />
             </Link>
           </div>
 
