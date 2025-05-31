@@ -18,14 +18,6 @@ import {
 } from "react-icons/fi";
 
 // Theme configuration
-const theme = {
-  primary: "#E07A5F",
-  secondary: "#D57A7A",
-  accent: "#8A9B6E",
-  neutral: "#F5F0E6",
-  dark: "#4A4A48",
-  light: "#F8F5F2",
-};
 
 export interface Product {
   id: string;
@@ -224,7 +216,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       }
     });
 
-    console.log("Added to cart:", newItem);
+    console.log("Added to cart:", cartItems, newItem);
     alert(`${quantity} ${product.name} added to cart!`);
   };
 
@@ -237,7 +229,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       }
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        async () => {
           try {
             // Simulate API call
             await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -255,10 +247,10 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
             resolve(address);
           } catch (error) {
-            reject("Could not retrieve address details");
+            reject(error);
           }
         },
-        (error) => {
+        () => {
           reject("Could not retrieve your location");
         }
       );
@@ -268,9 +260,11 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   // Simulate API call to fetch product details
   const fetchProductDetails = async (productId: string): Promise<Product> => {
     return new Promise((resolve) => {
+      console.log(productId);
       setTimeout(() => {
         resolve({
           ...product,
+
           // Simulate additional details from API
           shippingInfo: "Free shipping for orders above ₹1999",
           returnPolicy: "30 days return policy",

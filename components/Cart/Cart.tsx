@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   FiShoppingCart,
   FiX,
@@ -10,16 +9,6 @@ import {
   FiArrowLeft,
   FiCreditCard,
 } from "react-icons/fi";
-
-// Theme configuration
-const theme = {
-  primary: "#E07A5F",
-  secondary: "#D57A7A",
-  accent: "#8A9B6E",
-  neutral: "#F5F0E6",
-  dark: "#4A4A48",
-  light: "#F8F5F2",
-};
 
 interface CartItem {
   id: string;
@@ -316,7 +305,8 @@ export default function Cart() {
                           Your cart is empty
                         </h3>
                         <p className="text-[#4A4A48]/70 mb-8 text-center">
-                          Looks like you haven't added anything to your cart yet
+                          Looks like you haven&lsquo;t added anything to your
+                          cart yet
                         </p>
                         <button
                           onClick={() => {
