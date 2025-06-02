@@ -4,7 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { FiEye, FiX } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
-import Loading from "@/app/loading";
 import WishListButton from "../wishlist/WishListButton";
 import Image from "next/image";
 import "swiper/css";
