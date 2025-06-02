@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 // Import high-quality images (minimum 3840px width recommended for 4K)
 import banner1 from "@/app/(Images)/banners/canvatwo.jpg";
@@ -16,10 +17,10 @@ const HeroSlider = () => {
 
   // Use different high-quality images for each slide
   const slides = [
-    { img: banner1, alt: "Summer Collection Kurti 1" },
-    { img: banner2, alt: "Summer Collection Kurti 2" },
-    { img: banner3, alt: "Summer Collection Kurti 3" },
-    { img: banner4, alt: "Summer Collection Kurti 4" },
+    { img: banner1, alt: "Summer-Collection-Kurti" },
+    { img: banner2, alt: "Summer-Collection-Kurti-2" },
+    { img: banner3, alt: "Summer-Collection-Kurti-3" },
+    { img: banner4, alt: "Summer-Collection-Kurti-4" },
   ];
 
   // Configuration
@@ -91,28 +92,30 @@ const HeroSlider = () => {
             }`}
             aria-hidden={index !== currentSlide}
           >
-            <div className="relative w-full h-full">
-              <Image
-                src={slide.img}
-                alt={slide.alt}
-                priority={index === 0}
-                quality={90} // Increase image quality
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 100vw"
-                className="object-cover object-center" // Better image cropping
-                style={{
-                  objectPosition: "center top", // Focus on important parts of image
-                }}
-              />
-              {/* Gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
-            </div>
+            <Link
+              href={`/Kurties/${slide.alt}`}
+              className="block w-full h-full cursor-pointer"
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={slide.img}
+                  alt={slide.alt}
+                  priority={index === 0}
+                  quality={90}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 100vw"
+                  className="object-cover object-center"
+                  style={{ objectPosition: "center top" }}
+                />
+                {/* Gradient overlay for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+              </div>
+            </Link>
           </div>
         ))}
       </div>
 
-      {/* Navigation controls */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -130,18 +133,17 @@ const HeroSlider = () => {
         ))}
       </div>
 
-      {/* Arrow buttons */}
-      <div className="absolute inset-0 flex items-center justify-between px-4">
+      <div className="absolute inset-0 flex items-center justify-between px-4 z-20 pointer-events-none">
         <button
           onClick={() => navigate("prev")}
-          className="p-2 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm transition-all shadow-lg hover:scale-105"
+          className="p-2 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm transition-all shadow-lg hover:scale-105 pointer-events-auto"
           aria-label="Previous slide"
         >
           <ChevronLeftIcon className="w-8 h-8 text-gray-900" />
         </button>
         <button
           onClick={() => navigate("next")}
-          className="p-2 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm transition-all shadow-lg hover:scale-105"
+          className="p-2 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm transition-all shadow-lg hover:scale-105 pointer-events-auto"
           aria-label="Next slide"
         >
           <ChevronRightIcon className="w-8 h-8 text-gray-900" />

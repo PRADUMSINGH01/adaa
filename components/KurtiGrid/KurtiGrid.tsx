@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { FiEye, FiX } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
-
+import Loading from "@/app/loading";
 import WishListButton from "../wishlist/WishListButton";
 import Image from "next/image";
 import "swiper/css";
@@ -18,6 +18,7 @@ import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
 import hero3 from "@/app/(Images)/banners/summerr.png";
 import hero4 from "@/app/(Images)/banners/summerrrr.png";
 import { KurtiCarousel } from "./KurtiCaru";
+import Link from "next/link";
 
 type Kurti = {
   id: number;
@@ -38,16 +39,21 @@ export default function KurtiGrid() {
   const [selectedProduct, setSelectedProduct] = useState<Kurti | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [kurtis, setKurties] = useState<Kurti[]>([]);
-
+  const [loading, setloading] = useState(false);
   const heroImages = [hero1, hero2, hero3, hero4];
 
   useEffect(() => {
     async function fetchKurti() {
+      setloading(true);
       const response = await fetch("/api/fetchKurti");
       const products = await response.json();
+      setloading(false);
       return setKurties(products);
     }
     fetchKurti();
+    return () => {
+      setKurties([]);
+    };
   }, []);
 
   const handleQuickView = (id: number) => {
@@ -79,43 +85,45 @@ export default function KurtiGrid() {
     <section className="min-h-screen py-8 md:py-12 lg:py-20 bg-[#F8F5F2]">
       {/* Hero Carousel */}
       <div className="px-4 sm:px-6 lg:px-8 mb-8 md:mb-12 lg:mb-16">
-        <Swiper
-          modules={[Autoplay, Navigation]}
-          spaceBetween={16}
-          loop={true}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
-          navigation={{
-            nextEl: ".hero-button-next",
-            prevEl: ".hero-button-prev",
-          }}
-          breakpoints={{
-            320: { slidesPerView: 1 },
-            640: { slidesPerView: 1.2 },
-            768: { slidesPerView: 1.5 },
-            1024: { slidesPerView: 2 },
-            1280: { slidesPerView: 2.5 },
-          }}
-          className="!pb-12"
-        >
-          {heroImages.map((image, index) => (
-            <SwiperSlide key={index}>
-              <div className="relative aspect-[16/9] mx-2 rounded-xl lg:rounded-2xl overflow-hidden shadow-lg">
-                <Image
-                  src={image}
-                  alt={`Fashion Showcase ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, 80vw"
-                  priority={index === 0}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-dark/40 to-transparent" />
-              </div>
-            </SwiperSlide>
-          ))}
+        <Link href={"/"}>
+          <Swiper
+            modules={[Autoplay, Navigation]}
+            spaceBetween={16}
+            loop={true}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            navigation={{
+              nextEl: ".hero-button-next",
+              prevEl: ".hero-button-prev",
+            }}
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              640: { slidesPerView: 1.2 },
+              768: { slidesPerView: 1.5 },
+              1024: { slidesPerView: 2 },
+              1280: { slidesPerView: 2.5 },
+            }}
+            className="!pb-12"
+          >
+            {heroImages.map((image, index) => (
+              <SwiperSlide key={index}>
+                <div className="relative aspect-[16/9] mx-2 rounded-xl lg:rounded-2xl overflow-hidden shadow-lg">
+                  <Image
+                    src={image}
+                    alt={`Fashion Showcase ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, 80vw"
+                    priority={index === 0}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-dark/40 to-transparent" />
+                </div>
+              </SwiperSlide>
+            ))}
 
-          <div className="hero-button-prev !text-secondary !left-2 lg:!left-4 after:!text-2xl lg:after:!text-3xl" />
-          <div className="hero-button-next !text-secondary !right-2 lg:!right-4 after:!text-2xl lg:after:!text-3xl" />
-        </Swiper>
+            <div className="hero-button-prev !text-secondary !left-2 lg:!left-4 after:!text-2xl lg:after:!text-3xl" />
+            <div className="hero-button-next !text-secondary !right-2 lg:!right-4 after:!text-2xl lg:after:!text-3xl" />
+          </Swiper>
+        </Link>
       </div>
 
       {/* Product Grid */}
@@ -126,75 +134,136 @@ export default function KurtiGrid() {
         </h1>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 lg:gap-8">
-          {kurtis.map((kurti) => (
-            <article
-              key={kurti.id}
-              className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              <div className="relative aspect-[3/4]">
-                <KurtiCarousel images={kurti.images} />
+          {loading
+            ? // Skeleton loader while data is loading
+              Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md animate-pulse"
+                >
+                  {/* Image skeleton */}
+                  <div className="relative aspect-[3/4] bg-gray-200 rounded-t-xl lg:rounded-t-2xl" />
 
-                {/* Status Badges */}
-                <div className="absolute left-2 top-2 flex gap-1 z-20">
-                  {kurti.isNew && <Badge color="primary">New</Badge>}
-                  {kurti.onSale && kurti.originalPrice && (
-                    <Badge color="secondary">
-                      {calculateDiscount(kurti.originalPrice, kurti.price)}% Off
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Quick Actions */}
-                <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <WishListButton product={kurti}></WishListButton>
-
-                  <div className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-accent">
-                    <FiEye
-                      className="h-5 w-5"
-                      onClick={() => handleQuickView(kurti.id)}
-                    />
+                  {/* Badges skeleton */}
+                  <div className="absolute left-2 top-2 flex gap-1 z-20">
+                    <div className="bg-gray-300 rounded-full w-10 h-4" />
+                    <div className="bg-gray-300 rounded-full w-10 h-4" />
                   </div>
-                </div>
 
-                {/* Color Swatches */}
-                {kurti.colorsAvailable && (
+                  {/* Quick actions skeleton */}
+                  <div className="absolute right-2 top-2 flex gap-1 z-20">
+                    <div className="bg-gray-300 rounded-full w-8 h-8" />
+                    <div className="bg-gray-300 rounded-full w-8 h-8" />
+                  </div>
+
+                  {/* Color swatches skeleton */}
                   <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
-                    {kurti.colorsAvailable.map((color) => (
-                      <ColorSwatch key={color} color={color} />
-                    ))}
+                    <div className="bg-gray-300 rounded-full w-6 h-6" />
+                    <div className="bg-gray-300 rounded-full w-6 h-6" />
+                    <div className="bg-gray-300 rounded-full w-6 h-6" />
                   </div>
-                )}
-              </div>
 
-              {/* Product Info */}
-              <div className="p-4 lg:p-6">
-                <div className="mb-2">
-                  {kurti.brand && (
-                    <p className="text-xs lg:text-sm text-secondary uppercase tracking-wide mb-1">
-                      {kurti.brand}
-                    </p>
-                  )}
-                  <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2">
-                    {kurti.name}
-                  </h3>
-                </div>
+                  {/* Product info skeleton */}
+                  <div className="p-4 lg:p-6">
+                    <div className="mb-2">
+                      <div className="bg-gray-300 rounded h-3 w-1/4 mb-2" />
+                      <div className="bg-gray-300 rounded h-4 w-3/4 mb-1" />
+                      <div className="bg-gray-300 rounded h-4 w-full" />
+                    </div>
 
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <PriceDisplay
-                      price={kurti.price}
-                      originalPrice={kurti.originalPrice}
-                    />
-                    {renderStars(kurti.rating)}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-2">
+                          <div className="bg-gray-300 rounded h-4 w-10" />
+                          <div className="bg-gray-300 rounded h-4 w-10" />
+                        </div>
+                        <div className="flex gap-1">
+                          <div className="bg-gray-300 rounded h-4 w-4" />
+                          <div className="bg-gray-300 rounded h-4 w-4" />
+                          <div className="bg-gray-300 rounded h-4 w-4" />
+                          <div className="bg-gray-300 rounded h-4 w-4" />
+                          <div className="bg-gray-300 rounded h-4 w-4" />
+                        </div>
+                      </div>
+                      <div className="bg-gray-300 rounded h-4 w-full" />
+                    </div>
                   </div>
-                  <SizePreview sizes={kurti.sizes} />
                 </div>
-              </div>
-            </article>
-          ))}
+              ))
+            : // Actual product list
+              kurtis.map((kurti) => (
+                <Link href={`/Kurti/${kurti.id}`} key={kurti.id}>
+                  <article className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="relative aspect-[3/4]">
+                      <KurtiCarousel images={kurti.images} />
+
+                      {/* Status Badges */}
+                      <div className="absolute left-2 top-2 flex gap-1 z-20">
+                        {kurti.isNew && <Badge color="primary">New</Badge>}
+                        {kurti.onSale && kurti.originalPrice && (
+                          <Badge color="secondary">
+                            {calculateDiscount(
+                              kurti.originalPrice,
+                              kurti.price
+                            )}
+                            % Off
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Quick Actions */}
+                      <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        <WishListButton product={kurti} />
+                        <div className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-accent">
+                          <FiEye
+                            className="h-5 w-5"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleQuickView(kurti.id);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Color Swatches */}
+                      {kurti.colorsAvailable && (
+                        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
+                          {kurti.colorsAvailable.map((color) => (
+                            <ColorSwatch key={color} color={color} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="p-4 lg:p-6">
+                      <div className="mb-2">
+                        {kurti.brand && (
+                          <p className="text-xs lg:text-sm text-secondary uppercase tracking-wide mb-1">
+                            {kurti.brand}
+                          </p>
+                        )}
+                        <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2">
+                          {kurti.name}
+                        </h3>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center justify-between">
+                          <PriceDisplay
+                            price={kurti.price}
+                            originalPrice={kurti.originalPrice}
+                          />
+                          {renderStars(kurti.rating)}
+                        </div>
+                        <SizePreview sizes={kurti.sizes} />
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              ))}
         </div>
       </div>
-
       {/* QuickView Modal */}
       {isQuickViewOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm">

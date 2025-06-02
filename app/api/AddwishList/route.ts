@@ -9,22 +9,21 @@ import { wishlist } from "@/server/types";
 
 export async function POST(request: Request) {
   try {
-    // Verify authentication
+    // 1. Verify authentication
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user document reference
+    // 2. Fetch user document reference
     const userEmail = session.user.email;
     const userRef = db.collection("Users").doc(userEmail);
     const userDoc = await userRef.get();
-
     if (!userDoc.exists) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Validate request body
+    // 3. Validate request body
     const productData: wishlist = await request.json();
     if (!productData.id || !productData.name || !productData.price) {
       return NextResponse.json(
@@ -33,45 +32,46 @@ export async function POST(request: Request) {
       );
     }
 
-    // Transaction to safely update wishlist
+    // 4. Run a transaction to safely update the wishlist array
     await db.runTransaction(async (transaction) => {
-      const userData = (await transaction.get(userRef)).data()!;
-      const currentWishlist = userData.wishlist || [];
+      const userSnap = await transaction.get(userRef);
+      const userData = userSnap.data() as { wishlist?: wishlist[] } | undefined;
+      const currentWishlist = Array.isArray(userData?.wishlist)
+        ? userData!.wishlist!
+        : [];
 
-      if (
-        currentWishlist.some((item: wishlist) => item.id === productData.id)
-      ) {
+      // 4a. Check if an item with the same `id` already exists
+      if (currentWishlist.some((item) => item.id === productData.id)) {
         throw new Error("Product already in wishlist");
       }
 
-      // Add new product without FieldValue in the array
+      // 4b. Append the new product into the existing array via arrayUnion
       transaction.update(userRef, {
-        wishList: [
-          ...currentWishlist,
-          {
-            id: productData.id,
-            name: productData.name,
-            price: productData.price,
-            image: productData.images,
-          },
-        ],
-        // Add server timestamp at document level
+        // IMPORTANT: field name must match exactly the one you read from (e.g. "wishlist")
+        wishlist: FieldValue.arrayUnion({
+          id: productData.id,
+          name: productData.name,
+          price: productData.price,
+          // If you want to store multiple images, make sure `productData.images` is an array
+          image: productData.images ?? null,
+        }),
         updatedAt: FieldValue.serverTimestamp(),
       });
     });
 
+    // 5. Return success
     return NextResponse.json(
       { success: true, product: productData },
       { status: 201 }
     );
-  } catch (error: unknown) {
-    console.error("Error adding to wishlist:", error);
+  } catch (err) {
+    console.error("Error adding to wishlist:", err);
 
-    if (error instanceof Error) {
-      if (error.message === "Product already in wishlist") {
-        return NextResponse.json({ error: error.message }, { status: 400 });
+    if (err instanceof Error) {
+      if (err.message === "Product already in wishlist") {
+        return NextResponse.json({ error: err.message }, { status: 400 });
       }
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
 
     return NextResponse.json(
