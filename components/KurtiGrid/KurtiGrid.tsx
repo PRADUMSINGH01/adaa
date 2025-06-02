@@ -190,76 +190,76 @@ export default function KurtiGrid() {
                 </div>
               ))
             : // Actual product list
-              kurtis.map((kurti) => (
-                <Link href={`/Kurti/${kurti.id}`} key={kurti.id}>
-                  <article className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="relative aspect-[3/4]">
+              kurtis.map((kurti, index) => (
+                <article
+                  key={index}
+                  className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-[3/4]">
+                    <Link href={`/Kurti/${kurti.id}`} key={index}>
                       <KurtiCarousel images={kurti.images} />
+                    </Link>
 
-                      {/* Status Badges */}
-                      <div className="absolute left-2 top-2 flex gap-1 z-20">
-                        {kurti.isNew && <Badge color="primary">New</Badge>}
-                        {kurti.onSale && kurti.originalPrice && (
-                          <Badge color="secondary">
-                            {calculateDiscount(
-                              kurti.originalPrice,
-                              kurti.price
-                            )}
-                            % Off
-                          </Badge>
-                        )}
-                      </div>
-
-                      {/* Quick Actions */}
-                      <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                        <WishListButton product={kurti} />
-                        <div className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-accent">
-                          <FiEye
-                            className="h-5 w-5"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleQuickView(kurti.id);
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Color Swatches */}
-                      {kurti.colorsAvailable && (
-                        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
-                          {kurti.colorsAvailable.map((color) => (
-                            <ColorSwatch key={color} color={color} />
-                          ))}
-                        </div>
+                    {/* Status Badges */}
+                    <div className="absolute left-2 top-2 flex gap-1 z-20">
+                      {kurti.isNew && <Badge color="primary">New</Badge>}
+                      {kurti.onSale && kurti.originalPrice && (
+                        <Badge color="secondary">
+                          {calculateDiscount(kurti.originalPrice, kurti.price)}%
+                          Off
+                        </Badge>
                       )}
                     </div>
 
-                    {/* Product Info */}
-                    <div className="p-4 lg:p-6">
-                      <div className="mb-2">
-                        {kurti.brand && (
-                          <p className="text-xs lg:text-sm text-secondary uppercase tracking-wide mb-1">
-                            {kurti.brand}
-                          </p>
-                        )}
-                        <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2">
-                          {kurti.name}
-                        </h3>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center justify-between">
-                          <PriceDisplay
-                            price={kurti.price}
-                            originalPrice={kurti.originalPrice}
-                          />
-                          {renderStars(kurti.rating)}
-                        </div>
-                        <SizePreview sizes={kurti.sizes} />
+                    {/* Quick Actions */}
+                    <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                      <WishListButton product={kurti} />
+                      <div className="bg-white/50 rounded-full z-50 cursor-pointer p-2 hover:bg-accent">
+                        <FiEye
+                          className="h-5 w-5"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleQuickView(kurti.id);
+                          }}
+                        />
                       </div>
                     </div>
-                  </article>
-                </Link>
+
+                    {/* Color Swatches */}
+                    {kurti.colorsAvailable && (
+                      <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
+                        {kurti.colorsAvailable.map((color) => (
+                          <ColorSwatch key={color} color={color} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="p-4 lg:p-6">
+                    <div className="mb-2">
+                      {kurti.brand && (
+                        <p className="text-xs lg:text-sm text-secondary uppercase tracking-wide mb-1">
+                          {kurti.brand}
+                        </p>
+                      )}
+                      <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2">
+                        {kurti.name}
+                      </h3>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <PriceDisplay
+                          price={kurti.price}
+                          originalPrice={kurti.originalPrice}
+                        />
+                        {renderStars(kurti.rating)}
+                      </div>
+                      <SizePreview sizes={kurti.sizes} />
+                    </div>
+                  </div>
+                </article>
               ))}
         </div>
       </div>
@@ -335,7 +335,9 @@ function QuickView({ product }: { product: Kurti }) {
             >
               <Image
                 src={img}
-                alt={`Thumbnail ${idx + 1}`}
+                alt={`Thumbnail`}
+                width={400}
+                height={400}
                 className="w-full h-full object-cover"
               />
             </div>

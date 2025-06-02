@@ -70,7 +70,7 @@ const WishListButton = ({ product }: WishListButtonProps) => {
         setAlertType("success");
         setAlertMsg(res.msg);
       } else {
-        throw new Error(res?.msg || "Could not add to wishlist.");
+        setAlertType("error");
       }
     } catch (err: unknown) {
       setLiked(false);
@@ -87,11 +87,11 @@ const WishListButton = ({ product }: WishListButtonProps) => {
   const clearAlert = () => setAlertMsg("");
 
   return (
-    <>
+    <div className="z-60">
       <button
         onClick={handleClick}
         aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
-        className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-primary"
+        className="bg-white/50 rounded-full cursor-pointer p-2 hover:bg-primary z-50"
       >
         <IconButton className="h-5 w-5  " />
       </button>
@@ -105,7 +105,7 @@ const WishListButton = ({ product }: WishListButtonProps) => {
           />,
           document.body
         )}
-    </>
+    </div>
   );
 };
 

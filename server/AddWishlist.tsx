@@ -10,7 +10,7 @@ async function addToWishlist(product: wishlist) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to add to wishlist");
+      return { success: false, msg: "Product not added " };
     }
 
     return { success: true, msg: "Product added " };
