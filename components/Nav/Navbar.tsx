@@ -166,7 +166,7 @@ export default function Navbar() {
                     {/* Menu Items */}
                     <nav className="space-y-2 border-t border-primary/10 pt-4">
                       <Link
-                        href="/account"
+                        href="/User"
                         className="flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
                         role="menuitem"
                       >
@@ -174,21 +174,13 @@ export default function Navbar() {
                         <span>Account Settings</span>
                       </Link>
                       <Link
-                        href="/address"
+                        href="/User"
                         className="flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
                         role="menuitem"
                       >
                         <FiMapPin className="h-4 w-4 text-primary shrink-0" />
                         <span>Address Book</span>
                       </Link>
-                      <button
-                        onClick={() => signOut()}
-                        className="w-full flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
-                        role="menuitem"
-                      >
-                        <FiLogOut className="h-4 w-4 text-accent shrink-0" />
-                        <span>Sign Out</span>
-                      </button>
                     </nav>
                   </div>
                 </div>

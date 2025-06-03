@@ -1,3 +1,4 @@
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
@@ -6,10 +7,18 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize cart from localStorage
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const storedCart = localStorage.getItem("cart");
-    setCart(storedCart ? JSON.parse(storedCart) : []);
+    if (storedCart) {
+      try {
+        setCart(JSON.parse(storedCart));
+      } catch (error) {
+        console.error("Failed to parse cart data", error);
+        localStorage.removeItem("cart");
+      }
+    }
     setIsInitialized(true);
   }, []);
 
@@ -28,7 +37,10 @@ export function CartProvider({ children }) {
       if (existingItem) {
         return prevCart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
+            ? {
+                ...item,
+                quantity: item.quantity + (product.quantity || 1),
+              }
             : item
         );
       }
@@ -42,7 +54,6 @@ export function CartProvider({ children }) {
       ];
     });
   };
-
   // Update item quantity
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) return;

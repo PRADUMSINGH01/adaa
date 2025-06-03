@@ -14,9 +14,12 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 export default function UserDashboard() {
+  const { data: session } = useSession();
   const [activeSection, setActiveSection] = useState("account");
+
   const [orders] = useState([
     {
       id: 1,
@@ -77,9 +80,13 @@ export default function UserDashboard() {
                   {section.title}
                 </button>
               ))}
-              <button className="w-full flex items-center gap-3 p-3 rounded-lg font-poppins text-red-500 hover:bg-red-50 mt-4">
-                <FiLogOut className="text-xl" />
-                Logout
+              <button
+                onClick={() => signOut()}
+                className="w-full flex items-center gap-3 rounded-lg p-2 text-sm transition-colors hover:bg-primary/5"
+                role="menuitem"
+              >
+                <FiLogOut className="h-4 w-4 text-accent shrink-0" />
+                <span>Sign Out</span>
               </button>
             </nav>
           </div>
@@ -97,21 +104,24 @@ export default function UserDashboard() {
                       <label className="block font-poppins text-secondary mb-2">
                         Full Name
                       </label>
-                      <p className="font-poppins text-dark">Priya Sharma</p>
+                      <p className="font-poppins text-dark">
+                        {" "}
+                        {session?.user.name}
+                      </p>
                     </div>
                     <div>
                       <label className="block font-poppins text-secondary mb-2">
                         Email
                       </label>
                       <p className="font-poppins text-dark">
-                        priya@example.com
+                        {session?.user.email}
                       </p>
                     </div>
                     <div>
                       <label className="block font-poppins text-secondary mb-2">
                         Phone Number
                       </label>
-                      <p className="font-poppins text-dark">+91 98765 43210</p>
+                      <p className="font-poppins text-dark">Hidden</p>
                     </div>
                     <div>
                       <label className="block font-poppins text-secondary mb-2">
@@ -193,7 +203,10 @@ export default function UserDashboard() {
             )}
             {activeSection === "returns" && (
               <div className="space-y-6">
-                <h2 className="font-playfair text-3xl font-bold text-dark mb-6" id="returns">
+                <h2
+                  className="font-playfair text-3xl font-bold text-dark mb-6"
+                  id="returns"
+                >
                   Return & Refund Status
                 </h2>
                 <div className="space-y-4">

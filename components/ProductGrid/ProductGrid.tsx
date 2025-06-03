@@ -62,19 +62,9 @@ export default function ProductGrid({ params }: { params: string }) {
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [isNew, setIsNew] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const { addToCart, isInitialized } = useCart();
   const [adding, setAdding] = useState(false);
 
-  useEffect(() => {
-    // Decode and clean up the search term from params
-    const decodedParams = decodeURIComponent(params);
-    const cleanSearchTerm = decodedParams
-      .replace(/\s+/g, " ")
-      .trim()
-      .toLowerCase();
-    setSearchTerm(cleanSearchTerm);
-  }, [params]);
   useEffect(() => {
     async function fetchKurti() {
       const response = await fetch("/api/fetchKurti");
@@ -94,8 +84,7 @@ export default function ProductGrid({ params }: { params: string }) {
       selectedColors.length === 0 &&
       selectedFabrics.length === 0 &&
       !isNew &&
-      !isTrending &&
-      !searchTerm
+      !isTrending
     ) {
       setFilteredProducts(products);
       return;
@@ -127,18 +116,6 @@ export default function ProductGrid({ params }: { params: string }) {
       // Trending filter
       if (isTrending && !product.isTrending) return false;
 
-      // Search filter
-      if (searchTerm) {
-        const term = deslugify(searchTerm);
-
-        const matchesSearch =
-          product.name.includes(term) ||
-          product.fabric.includes(term) ||
-          product.colors.some((color) => color.includes(term));
-
-        if (!matchesSearch) return false;
-      }
-
       return true;
     });
 
@@ -150,7 +127,6 @@ export default function ProductGrid({ params }: { params: string }) {
     selectedFabrics,
     isNew,
     isTrending,
-    searchTerm,
   ]);
 
   const handleAddToCart = (product: CartItem) => {
@@ -159,7 +135,8 @@ export default function ProductGrid({ params }: { params: string }) {
 
     setAdding(true);
     addToCart({
-      id: product.id,
+      ...product,
+      quantity: 1, // Ensure quantity is always set
     });
 
     // Visual feedback
@@ -316,6 +293,7 @@ export default function ProductGrid({ params }: { params: string }) {
                         e.stopPropagation();
                         handleAddToCart(product);
                       }}
+                      disabled={adding || !isInitialized}
                       className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
                       aria-label="Add to cart"
                     >

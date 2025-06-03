@@ -16,6 +16,7 @@ import {
   FiMapPin,
   FiEdit2,
 } from "react-icons/fi";
+import { useCart } from "@/app/CartContext";
 
 // Theme configuration
 
@@ -121,6 +122,8 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
     formatted: "",
   });
   const [isLoading, setIsLoading] = useState(true);
+  const { addToCart, isInitialized } = useCart();
+  const [adding, setAdding] = useState(false);
 
   // Simulate loading delay
   useEffect(() => {
@@ -186,6 +189,8 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       return;
     }
 
+    if (!isInitialized) return;
+
     const newItem: CartItem = {
       productId: product.id,
       name: product.name,
@@ -218,6 +223,11 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
     console.log("Added to cart:", cartItems, newItem);
     alert(`${quantity} ${product.name} added to cart!`);
+    setAdding(true);
+    addToCart({
+      ...newItem,
+    });
+    setTimeout(() => setAdding(false), 500);
   };
 
   // Get user's approximate address using browser geolocation
@@ -599,7 +609,13 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
           <div className="flex flex-wrap gap-4 pt-4">
             <button
               onClick={handleAddToCart}
-              disabled={!selectedSize || !selectedColor || product.stock === 0}
+              disabled={
+                !selectedSize ||
+                !selectedColor ||
+                product.stock === 0 ||
+                adding ||
+                !isInitialized
+              }
               className="flex items-center gap-2 px-8 py-3.5 bg-[#E07A5F] text-white rounded-lg hover:bg-[#D06A4F] transition-colors disabled:opacity-70 font-medium"
             >
               <FiShoppingCart className="w-5 h-5" />
