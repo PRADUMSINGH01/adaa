@@ -1,7 +1,7 @@
 // src/components/AddressSelector.tsx
 "use client";
 import React, { useState } from "react";
-import { FiMapPin, FiPlus, FiEdit2, FiCheck, FiTrash2 } from "react-icons/fi";
+import { FiMapPin, FiCheck } from "react-icons/fi";
 
 interface Address {
   id: string;
@@ -30,12 +30,6 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
   onSetDefault,
   selectedAddressId,
 }) => {
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-
-  const cancelDelete = () => {
-    setConfirmDeleteId(null);
-  };
-
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

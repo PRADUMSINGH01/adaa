@@ -75,9 +75,9 @@ export default function ProductGrid({ params }: { params: string }) {
   }, []);
   // Apply filters whenever filter states or products change
   useEffect(() => {
-    function deslugify(text: string) {
-      return text.replace(/-/g, " ").toLowerCase();
-    }
+    // function deslugify(text: string) {
+    //   return text.replace(/-/g, " ").toLowerCase();
+    // }
 
     if (
       !priceRange &&

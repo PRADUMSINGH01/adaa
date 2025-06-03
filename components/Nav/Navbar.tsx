@@ -5,9 +5,8 @@ import {
   FiUser,
   FiSettings,
   FiMapPin,
-  FiLogOut,
 } from "react-icons/fi";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";

@@ -1,9 +1,7 @@
 // src/app/Checkout/address/page.tsx
 "use client";
 import React, { useState } from "react";
-import { FiArrowLeft, FiMapPin } from "react-icons/fi";
-import Link from "next/link";
-import AddressSelector from "./AddressSelector";
+import { FiMapPin } from "react-icons/fi";
 
 // Sample address data
 const initialAddresses = [
@@ -33,22 +31,6 @@ const initialAddresses = [
 
 const AddressPage = () => {
   const [addresses, setAddresses] = useState(initialAddresses);
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    initialAddresses[0].id
-  );
-
-  const handleSelectAddress = (address: (typeof initialAddresses)[0]) => {
-    setSelectedAddressId(address.id);
-  };
-
-  const handleSetDefault = (id: string) => {
-    setAddresses(
-      addresses.map((address) => ({
-        ...address,
-        isDefault: address.id === id,
-      }))
-    );
-  };
 
   return (
     <div className="min-h-screen bg-[#F5F0E6] font-poppins text-[#4A4A48]">
