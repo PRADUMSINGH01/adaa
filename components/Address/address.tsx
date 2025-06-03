@@ -1,33 +1,7 @@
 // src/app/Checkout/address/page.tsx
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { FiMapPin } from "react-icons/fi";
-
-// Sample address data
-const initialAddresses = [
-  {
-    id: "1",
-    name: "John Doe",
-    address: "123 Main Street",
-    city: "New York",
-    state: "NY",
-    zip: "10001",
-    country: "United States",
-    phone: "(555) 123-4567",
-    isDefault: true,
-  },
-  {
-    id: "2",
-    name: "John Doe (Work)",
-    address: "456 Business Ave",
-    city: "Brooklyn",
-    state: "NY",
-    zip: "11201",
-    country: "United States",
-    phone: "(555) 987-6543",
-    isDefault: false,
-  },
-];
 
 const AddressPage = () => {
   return (
