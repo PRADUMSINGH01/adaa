@@ -51,6 +51,8 @@ import { Product } from "@/server/types";
 //   });
 // };
 
+import { useCart } from "@/app/CartContext";
+import { CartItem } from "@/server/types";
 export default function ProductGrid({ params }: { params: string }) {
   const [isGridView, setIsGridView] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -60,7 +62,19 @@ export default function ProductGrid({ params }: { params: string }) {
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [isNew, setIsNew] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { addToCart, isInitialized } = useCart();
+  const [adding, setAdding] = useState(false);
 
+  useEffect(() => {
+    // Decode and clean up the search term from params
+    const decodedParams = decodeURIComponent(params);
+    const cleanSearchTerm = decodedParams
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+    setSearchTerm(cleanSearchTerm);
+  }, [params]);
   useEffect(() => {
     async function fetchKurti() {
       const response = await fetch("/api/fetchKurti");
@@ -71,18 +85,32 @@ export default function ProductGrid({ params }: { params: string }) {
   }, []);
   // Apply filters whenever filter states or products change
   useEffect(() => {
+    function deslugify(text: string) {
+      return text.replace(/-/g, " ").toLowerCase();
+    }
+
+    if (
+      !priceRange &&
+      selectedColors.length === 0 &&
+      selectedFabrics.length === 0 &&
+      !isNew &&
+      !isTrending &&
+      !searchTerm
+    ) {
+      setFilteredProducts(products);
+      return;
+    }
+
     const filtered = products.filter((product) => {
       // Price filter
-      if (product.price > priceRange) return false;
+      if (priceRange && product.price > priceRange) return false;
 
       // Color filter
-      if (selectedColors.length > 0) {
-        const productColorNames = product.colors.map((c) => c);
-        if (
-          !selectedColors.some((color) => productColorNames.includes(color))
-        ) {
-          return false;
-        }
+      if (
+        selectedColors.length > 0 &&
+        !product.colors.some((color) => selectedColors.includes(color))
+      ) {
+        return false;
       }
 
       // Fabric filter
@@ -99,6 +127,18 @@ export default function ProductGrid({ params }: { params: string }) {
       // Trending filter
       if (isTrending && !product.isTrending) return false;
 
+      // Search filter
+      if (searchTerm) {
+        const term = deslugify(searchTerm);
+
+        const matchesSearch =
+          product.name.includes(term) ||
+          product.fabric.includes(term) ||
+          product.colors.some((color) => color.includes(term));
+
+        if (!matchesSearch) return false;
+      }
+
       return true;
     });
 
@@ -110,10 +150,20 @@ export default function ProductGrid({ params }: { params: string }) {
     selectedFabrics,
     isNew,
     isTrending,
+    searchTerm,
   ]);
 
-  const handleAddToCart = (productId: string) => {
-    console.log(`Added product ${productId} to cart`);
+  const handleAddToCart = (product: CartItem) => {
+    console.log(`Added product ${product.id} to cart`);
+    if (!isInitialized) return;
+
+    setAdding(true);
+    addToCart({
+      id: product.id,
+    });
+
+    // Visual feedback
+    setTimeout(() => setAdding(false), 500);
   };
 
   const handleBuyNow = (productId: string) => {
@@ -264,7 +314,7 @@ export default function ProductGrid({ params }: { params: string }) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(product.id);
+                        handleAddToCart(product);
                       }}
                       className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
                       aria-label="Add to cart"

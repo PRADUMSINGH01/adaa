@@ -1,16 +1,7 @@
 // types.ts
 import { StaticImageData } from "next/image";
-
 export interface CartItem {
-  id: number; // Unique item ID
-  productId: number;
-  name: string;
-  price: number;
-  image: string;
-  color: string;
-  size: string;
-  quantity: number;
-  addedAt: number; // Timestamp
+  id: string; // Product ID
 }
 export interface wishlist {
   id: number; // Unique item ID

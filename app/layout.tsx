@@ -6,6 +6,7 @@ import "./globals.css";
 import Provider from "./providers";
 import { authOptions } from "@/components/lib/auth";
 import Navbar from "@/components/Nav/Navbar";
+import { CartProvider } from "./CartContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -35,8 +36,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
         <Provider session={session}>
-          <Navbar />
-          {children}
+          <CartProvider>
+            <Navbar />
+            {children}
+          </CartProvider>
         </Provider>
       </body>
     </html>

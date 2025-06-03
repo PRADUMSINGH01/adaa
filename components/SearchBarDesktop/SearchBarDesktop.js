@@ -10,7 +10,13 @@ const SearchBarDesktop = () => {
     event.preventDefault();
     if (searchTerm.trim()) {
       console.log("search term ", searchTerm);
-      router.push(`/Kurties/${encodeURIComponent(searchTerm)}`);
+      function slugify(text) {
+        return text
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
+      }
+      router.push(`/Kurties/${slugify(searchTerm)}`);
     }
   };
 
