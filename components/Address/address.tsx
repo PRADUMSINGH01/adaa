@@ -30,8 +30,6 @@ const initialAddresses = [
 ];
 
 const AddressPage = () => {
-  const [addresses, setAddresses] = useState(initialAddresses);
-
   return (
     <div className="min-h-screen bg-[#F5F0E6] font-poppins text-[#4A4A48]">
       <main className="container mx-auto px-4 py-8 max-w-4xl">

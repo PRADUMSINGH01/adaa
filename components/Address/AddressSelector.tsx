@@ -1,6 +1,6 @@
 // src/components/AddressSelector.tsx
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { FiMapPin, FiCheck } from "react-icons/fi";
 
 interface Address {
