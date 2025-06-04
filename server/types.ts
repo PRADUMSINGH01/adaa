@@ -1,10 +1,19 @@
 // types.ts
 import { StaticImageData } from "next/image";
+
+export interface Orders {
+  OrderId: string;
+  ProductName: string;
+  Status: string;
+  Quantity: number;
+  OrderPlaced: number;
+}
+
 export interface CartItem {
   id: string; // Product ID
 }
 export interface wishlist {
-  id: number; // Unique item ID
+  id: string; // Unique item ID
   name: string;
   price: string;
   images: string[];
@@ -12,12 +21,10 @@ export interface wishlist {
 
 export interface Address {
   name: string;
-  Number: number;
+  phone: number;
   Address: string;
   city: string;
-
   landmark: string;
-
   pincode: number;
 }
 
@@ -48,7 +55,7 @@ export interface Product {
 }
 
 export interface Kurti {
-  id: number;
+  id: string;
   name: string;
   price: string;
   originalPrice?: string; // For showing a slash-through price on sale items

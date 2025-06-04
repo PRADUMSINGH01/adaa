@@ -13,6 +13,8 @@ import {
   FiMessageSquare,
   FiChevronDown,
 } from "react-icons/fi";
+import { useUserData } from "@/components/Context/UserContext";
+
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -20,21 +22,7 @@ import Link from "next/link";
 export default function UserDashboard() {
   const { data: session } = useSession();
   const [activeSection, setActiveSection] = useState("account");
-
-  const [orders] = useState([
-    {
-      id: 1,
-      product: "Floral Print Kurta",
-      status: "Delivered",
-      date: "2024-03-15",
-    },
-    {
-      id: 2,
-      product: "Embroidered Silk Kurta",
-      status: "Processing",
-      date: "2024-03-20",
-    },
-  ]);
+  const { userData } = useUserData();
 
   const sections = [
     { id: "account", icon: <FiUser />, title: "Account Details" },
@@ -44,6 +32,12 @@ export default function UserDashboard() {
     { id: "refunds", icon: <FiDollarSign />, title: "Refund Status" },
     { id: "support", icon: <FiHelpCircle />, title: "Customer Service" },
   ];
+
+  const HandleDeleteAddress = async (index: number) => {
+    await fetch(`/api/Address/Delete_Address?index=${index}`, {
+      method: "DELETE",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-neutral p-4 md:p-8">
@@ -99,6 +93,7 @@ export default function UserDashboard() {
                 <h2 className="font-playfair text-3xl font-bold text-dark mb-6">
                   Account Details
                 </h2>
+
                 <div className="bg-white p-6 rounded-xl shadow-sm">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -137,74 +132,346 @@ export default function UserDashboard() {
                 </div>
               </div>
             )}
+
             {activeSection === "address" && (
               <div className="space-y-6">
-                <h2 className="font-playfair text-3xl font-bold text-dark mb-6">
-                  Saved Addresses
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <h3 className="font-poppins font-medium text-dark mb-4">
-                      Home Address
-                    </h3>
-                    <p className="text-secondary">123 Kurta Lane</p>
-                    <p className="text-secondary">Fashion District, Mumbai</p>
-                    <p className="text-secondary">Maharashtra - 400001</p>
-                    <div className="mt-4 flex gap-3">
-                      <button className="text-primary font-poppins hover:text-primary/80">
-                        Edit
-                      </button>
-                      <button className="text-red-500 font-poppins hover:text-red-600">
-                        Remove
-                      </button>
-                    </div>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <h2 className="font-playfair text-lg md:text-3xl font-bold text-dark ">
+                    Saved Addresses
+                  </h2>
+
                   <Link
-                    href={"/User/Add-Address"}
-                    className="border-2 border-dashed border-primary text-primary p-6 rounded-xl hover:bg-light transition-colors"
+                    href="/User/Add-Address"
+                    className="flex py-4 px-2 text-sm md:w-3xl  justify-center font-poppins font-medium rounded-lg transition duration-300"
+                    style={{
+                      backgroundColor: "#E07A5F",
+                      color: "#F8F5F2",
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#D57A7A")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#E07A5F")
+                    }
                   >
                     Add New Address
                   </Link>
                 </div>
+
+                {userData &&
+                userData?.Address &&
+                userData.Address.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {userData.Address.map((item, index) => (
+                      <div
+                        key={index}
+                        className="relative bg-white rounded-xl shadow-sm border border-[#F5F0E6] overflow-hidden transition-all duration-300 hover:shadow-md"
+                      >
+                        <div className="p-6">
+                          {/* Address Type Badge */}
+
+                          <h3
+                            className="font-playfair text-xl font-bold mb-4"
+                            style={{ color: "#4A4A48" }}
+                          >
+                            {item.name}
+                          </h3>
+
+                          <div
+                            className="space-y-2 font-poppins"
+                            style={{ color: "#4A4A48" }}
+                          >
+                            <p className="flex items-start">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="#8A9B6E"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              <span>{item.Address}</span>
+                            </p>
+
+                            <p className="flex items-start">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="#8A9B6E"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                />
+                              </svg>
+                              <span>{item.phone || "Phone not provided"}</span>
+                            </p>
+
+                            <p className="flex">
+                              <span className="font-medium min-w-[80px]">
+                                City:
+                              </span>
+                              <span>{item.city}</span>
+                            </p>
+
+                            <p className="flex">
+                              <span className="font-medium min-w-[80px]">
+                                Pincode:
+                              </span>
+                              <span>{item.pincode}</span>
+                            </p>
+
+                            {item.landmark && (
+                              <p className="flex">
+                                <span className="font-medium min-w-[90px]">
+                                  Landmark:
+                                </span>
+                                <span>{item.landmark}</span>
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="mt-6 flex gap-3 border-t border-[#F5F0E6] pt-4">
+                            <button
+                              className="font-poppins text-sm px-4 py-2 rounded-lg transition-colors"
+                              style={{
+                                backgroundColor: "#F8F5F2",
+                                color: "#4A4A48",
+                                border: "1px solid #D57A7A",
+                              }}
+                              onMouseOver={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "#F5F0E6")
+                              }
+                              onMouseOut={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "#F8F5F2")
+                              }
+                            >
+                              Edit
+                            </button>
+
+                            <button
+                              onClick={() => HandleDeleteAddress(index)}
+                              className="font-poppins text-sm px-4 py-2 rounded-lg transition-colors flex items-center"
+                              style={{
+                                backgroundColor: "#F8F5F2",
+                                color: "#D57A7A",
+                                border: "1px solid #D57A7A",
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  "#F5F0E6";
+                                e.currentTarget.style.color = "#C06A6A";
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  "#F8F5F2";
+                                e.currentTarget.style.color = "#D57A7A";
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4 mr-1"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className="text-center py-12 rounded-xl"
+                    style={{ backgroundColor: "#F5F0E6" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-16 w-16 mx-auto mb-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="#4A4A48"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+
+                    <h3
+                      className="text-xl font-semibold mb-2"
+                      style={{
+                        fontFamily: '"Playfair Display", serif',
+                        color: "#4A4A48",
+                      }}
+                    >
+                      No Saved Addresses
+                    </h3>
+
+                    <p
+                      className="max-w-md mx-auto mb-6"
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        color: "#4A4A48",
+                      }}
+                    >
+                      You haven&apos;t saved any addresses yet. Add your first
+                      address to get started.
+                    </p>
+
+                    <Link
+                      href="/User/Add-Address"
+                      className="inline-block py-3 px-8 font-poppins font-medium rounded-lg transition duration-300"
+                      style={{
+                        backgroundColor: "#E07A5F",
+                        color: "#F8F5F2",
+                      }}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#D57A7A")
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E07A5F")
+                      }
+                    >
+                      Add New Address
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
-            {activeSection === "orders" && (
+
+            {/* {activeSection === "orders" && (
               <div className="space-y-6">
                 <h2 className="font-playfair text-3xl font-bold text-dark mb-6">
                   Order History
                 </h2>
-                <div className="space-y-4">
-                  {orders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="bg-white p-6 rounded-xl shadow-sm"
+
+                {userData?.Orders && userData.Orders.length > 0 ? (
+                  <div className="space-y-4">
+                    {userData.Orders.map((order) => (
+                      <div
+                        key={order.OrderId}
+                        className="bg-white p-6 rounded-xl shadow-sm border border-[#F5F0E6] transition-all hover:shadow-md"
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="font-poppins font-medium text-dark text-lg">
+                            {order.ProductName}
+                          </h3>
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                              order.Status === "Delivered"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {order.Status}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm text-[#4A4A48] font-poppins">
+                          <p>
+                            <span className="font-medium">Order #</span>{" "}
+                            {order.OrderId}
+                          </p>
+                          <p>{order.OrderPlaced}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className="text-center py-12 rounded-xl"
+                    style={{ backgroundColor: "#F5F0E6" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-16 w-16 mx-auto mb-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="#4A4A48"
                     >
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-poppins font-medium text-dark">
-                          {order.product}
-                        </h3>
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm ${
-                            order.status === "Delivered"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-secondary">
-                        <p>Order #{order.id}</p>
-                        <p>{order.date}</p>
-                      </div>
-                      <button className="mt-4 text-primary font-poppins hover:text-primary/80">
-                        View Details
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M3 3h18M9 3v18M15 3v18"
+                      />
+                    </svg>
+                    <h3
+                      className="text-xl font-semibold mb-2"
+                      style={{
+                        fontFamily: '"Playfair Display", serif',
+                        color: "#4A4A48",
+                      }}
+                    >
+                      No Orders Found
+                    </h3>
+                    <p
+                      className="max-w-md mx-auto mb-6"
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        color: "#4A4A48",
+                      }}
+                    >
+                      You haven&apos;t placed any orders yet. Explore our
+                      collections and make your first purchase!
+                    </p>
+                    <Link
+                      href="/"
+                      className="inline-block py-3 px-8 font-poppins font-medium rounded-lg transition duration-300"
+                      style={{
+                        backgroundColor: "#E07A5F",
+                        color: "#F8F5F2",
+                      }}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#D57A7A")
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E07A5F")
+                      }
+                    >
+                      Shop Now
+                    </Link>
+                  </div>
+                )}
               </div>
-            )}
+            )} */}
+
             {activeSection === "returns" && (
               <div className="space-y-6">
                 <h2

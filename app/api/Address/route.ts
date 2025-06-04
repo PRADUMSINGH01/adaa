@@ -9,13 +9,11 @@ import { Address } from "@/server/types";
 
 export async function POST(request: Request) {
   try {
-    // 1. Verify authentication
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 2. Fetch user document reference
     const userEmail = session.user.email;
     const userRef = db.collection("Users").doc(userEmail);
     const userDoc = await userRef.get();
@@ -23,16 +21,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // 3. Validate request body
     const productData: Address = await request.json();
-    if (!productData.pincode || !productData.name || !productData.Address) {
+    console.log(productData);
+    if (!productData.pincode || !productData.landmark) {
       return NextResponse.json(
         { error: "Missing required product fields" },
         { status: 400 }
       );
     }
 
-    // 4. Run a transaction to safely update the wishlist array
     await db.runTransaction(async (transaction) => {
       const userSnap = await transaction.get(userRef);
       const userData = userSnap.data() as { Address?: Address[] } | undefined;
@@ -51,11 +48,10 @@ export async function POST(request: Request) {
       }
 
       transaction.update(userRef, {
-        // IMPORTANT: field name must match exactly the one you read from (e.g. "wishlist")
         Address: FieldValue.arrayUnion({
           name: productData.name,
-          phone: productData.Number,
-          address: productData.Address,
+          phone: productData.phone,
+          Address: productData.Address,
           city: productData.city,
           landmark: productData.landmark,
           pincode: productData.pincode,
@@ -64,7 +60,6 @@ export async function POST(request: Request) {
       });
     });
 
-    // 5. Return success
     return NextResponse.json(
       { success: true, product: productData },
       { status: 201 }

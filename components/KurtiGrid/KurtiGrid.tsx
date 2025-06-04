@@ -20,7 +20,7 @@ import { KurtiCarousel } from "./KurtiCaru";
 import Link from "next/link";
 
 type Kurti = {
-  id: number;
+  id: string;
   name: string;
   price: string;
   originalPrice?: string;
@@ -55,7 +55,7 @@ export default function KurtiGrid() {
     };
   }, []);
 
-  const handleQuickView = (id: number) => {
+  const handleQuickView = (id: string) => {
     const product = kurtis.find((k) => k.id === id);
     setSelectedProduct(product || null);
     setIsQuickViewOpen(true);

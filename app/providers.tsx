@@ -25,7 +25,7 @@ interface ProvidersProps {
 
 export default function Providers({ children, session }: ProvidersProps) {
   return (
-    <SessionProvider session={session} >
+    <SessionProvider session={session}>
       <div className={`${poppins.variable} ${playfair.variable}`}>
         {children}
       </div>

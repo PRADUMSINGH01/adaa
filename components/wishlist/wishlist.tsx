@@ -1,58 +1,18 @@
 "use client";
 
 import { FiHeart, FiTrash2, FiShoppingCart } from "react-icons/fi";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Loading from "@/app/loading";
-
-interface WishlistItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-}
+import { useUserData } from "@/components/Context/UserContext";
 
 const UserWishlist: React.FC = () => {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/GetUser/", { cache: "no-store" });
-        if (!res.ok) throw new Error("Could not fetch wishlist.");
-
-        const { wishList: items } = await res.json();
-        setWishlist(items);
-      } catch (err: unknown) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load your wishlist."
-        );
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const { userData, loading } = useUserData();
 
   const removeItem = async (id: string) => {
-    try {
-      const res = await fetch(`/api/wishlist/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Could not remove item.");
-      setWishlist((prev) => prev.filter((item) => item.id !== id));
-    } catch (err: unknown) {
-      console.error(err);
-      alert(err instanceof Error ? err.message : "Error removing item.");
-    }
+    console.log(id);
   };
 
   if (loading) return <Loading />;
-  if (error)
-    return (
-      <div className="min-h-screen bg-neutral p-8 flex items-center justify-center">
-        <p className="text-red-500 font-poppins">{error}</p>
-      </div>
-    );
 
   return (
     <section className="min-h-screen bg-neutral p-6 md:p-10">
@@ -65,20 +25,20 @@ const UserWishlist: React.FC = () => {
         </header>
 
         <div className="p-6">
-          {wishlist.length === 0 ? (
+          {userData.wishlist.length === 0 ? (
             <p className="font-poppins text-secondary text-center">
               Your wishlist is empty.
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {wishlist.map((item) => (
+              {userData.wishlist.map((item) => (
                 <div
                   key={item.id}
                   className="bg-white rounded-xl shadow-md overflow-hidden transform transition hover:scale-105"
                 >
                   <div className="relative h-64 w-full">
                     <Image
-                      src={item.image[0]}
+                      src={item.images[0]}
                       alt={item.name}
                       fill
                       className="object-cover"
@@ -92,7 +52,7 @@ const UserWishlist: React.FC = () => {
                         {item.name}
                       </h2>
                       <p className="mt-2 font-playfair text-xl text-primary">
-                        ₹{item.price.toFixed(2)}
+                        ₹{item.price}
                       </p>
                     </div>
 

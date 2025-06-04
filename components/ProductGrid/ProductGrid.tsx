@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import ProductFilters from "@/components/Filter/Filter";
-import { FiGrid, FiList, FiShoppingCart, FiHeart, FiEye } from "react-icons/fi";
+import { FiGrid, FiList, FiHeart, FiEye } from "react-icons/fi";
 import { BsFillLightningFill } from "react-icons/bs";
 
 import { KurtiCarousel } from "../KurtiGrid/KurtiCaru";
-import { Product } from "@/server/types";
+//import { Product } from "@/server/types";
 // Updated Product interface to match filter requirements
 // interface Product {
 //   id: string;
@@ -51,8 +51,31 @@ import { Product } from "@/server/types";
 //   });
 // };
 
-import { useCart } from "@/app/CartContext";
-import { CartItem } from "@/server/types";
+export interface Product {
+  id: string;
+  rating: number;
+  reviews: number;
+  name: string;
+  price: number;
+  originalPrice: number;
+  discountPercentage?: number;
+  images: string[];
+  sizes: string[];
+  colors: string[];
+  description: string;
+  careInstructions?: string;
+  fabric: string;
+  shippingInfo?: string;
+  returnPolicy?: string;
+  details: string[];
+  brand: string;
+  category?: string;
+  sku?: string;
+  stock: number;
+  isNew?: boolean;
+  isTrending?: boolean;
+}
+
 export default function ProductGrid({ params }: { params: string }) {
   const [isGridView, setIsGridView] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -62,8 +85,6 @@ export default function ProductGrid({ params }: { params: string }) {
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [isNew, setIsNew] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
-  const { addToCart, isInitialized } = useCart();
-  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     async function fetchKurti() {
@@ -128,20 +149,6 @@ export default function ProductGrid({ params }: { params: string }) {
     isNew,
     isTrending,
   ]);
-
-  const handleAddToCart = (product: CartItem) => {
-    console.log(`Added product ${product.id} to cart`);
-    if (!isInitialized) return;
-
-    setAdding(true);
-    addToCart({
-      ...product,
-      quantity: 1, // Ensure quantity is always set
-    });
-
-    // Visual feedback
-    setTimeout(() => setAdding(false), 500);
-  };
 
   const handleBuyNow = (productId: string) => {
     console.log(`Buying product ${productId} now`);
@@ -268,7 +275,7 @@ export default function ProductGrid({ params }: { params: string }) {
                       {calculateDiscount(product.originalPrice, product.price)}
                     </span>
                   )}
-                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0  bg-black bg-opacity-30 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -288,17 +295,7 @@ export default function ProductGrid({ params }: { params: string }) {
                     >
                       <BsFillLightningFill className="w-4 h-4" /> Buy Now
                     </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart(product);
-                      }}
-                      disabled={adding || !isInitialized}
-                      className="p-2 bg-white rounded-full text-dark hover:text-primary transition-colors"
-                      aria-label="Add to cart"
-                    >
-                      <FiShoppingCart className="w-5 h-5" />
-                    </button>
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
