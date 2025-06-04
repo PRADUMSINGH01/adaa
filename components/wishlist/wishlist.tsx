@@ -23,9 +23,8 @@ const UserWishlist: React.FC = () => {
             My Wishlist
           </h1>
         </header>
-
         <div className="p-6">
-          {userData.wishlist.length === 0 ? (
+          {!userData?.wishlist || userData.wishlist.length === 0 ? (
             <p className="font-poppins text-secondary text-center">
               Your wishlist is empty.
             </p>
