@@ -17,7 +17,7 @@ const Footer = () => {
             </p>
             <div className="mt-6">
               <a
-                href="/about"
+                href="/about_Us"
                 className="inline-block bg-primary text-neutral font-poppins py-2 px-5 rounded-md hover:bg-secondary transition duration-300 text-sm"
               >
                 Learn More
@@ -30,23 +30,32 @@ const Footer = () => {
             <h3 className="font-playfair text-xl mb-6">Shop</h3>
             <ul className="font-poppins text-sm">
               <li className="mb-3">
-                <a href="/dresses" className="text-neutral hover:text-primary">
+                <a
+                  href="/Kurties/dresses"
+                  className="text-neutral hover:text-primary"
+                >
                   Dresses
                 </a>
               </li>
               <li className="mb-3">
-                <a href="/tops" className="text-neutral hover:text-primary">
+                <a
+                  href="/Kurties/tops"
+                  className="text-neutral hover:text-primary"
+                >
                   Tops
                 </a>
               </li>
               <li className="mb-3">
-                <a href="/bottoms" className="text-neutral hover:text-primary">
+                <a
+                  href="/Kurties/bottoms"
+                  className="text-neutral hover:text-primary"
+                >
                   Bottoms
                 </a>
               </li>
               <li className="mb-3">
                 <a
-                  href="/outerwear"
+                  href="/Kurties/outerwear"
                   className="text-neutral hover:text-primary"
                 >
                   Outerwear
@@ -54,7 +63,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="/accessories"
+                  href="/Kurties/accessories"
                   className="text-neutral hover:text-primary"
                 >
                   Accessories
@@ -73,16 +82,13 @@ const Footer = () => {
                 </a>
               </li>
               <li className="mb-3">
-                <a
-                  href="/track-order"
-                  className="text-neutral hover:text-primary"
-                >
+                <a href="/User" className="text-neutral hover:text-primary">
                   Track Your Order
                 </a>
               </li>
               <li className="mb-3">
-                <a href="/returns" className="text-neutral hover:text-primary">
-                  Returns & Exchanges
+                <a href="/Terms" className="text-neutral hover:text-primary">
+                  Terms and Conditions
                 </a>
               </li>
               <li>
@@ -121,7 +127,10 @@ const Footer = () => {
               </a>
               {/* Add more social media icons */}
             </div>
-            <p className="font-poppins text-sm">Jaipur, Rajasthan, India</p>
+            <p className="font-poppins text-sm">
+              {" "}
+              Plot No. 57 Biluo Near Laal bagh Jaipur, Rajasthan, India
+            </p>
           </div>
 
           {/* Fifth Column: Newsletter Signup */}
@@ -147,19 +156,24 @@ const Footer = () => {
         {/* Bottom Section with Copyright and Payment Icons */}
         <div className="mt-12 py-6 border-t border-neutral/20 flex flex-col md:flex-row items-center justify-between text-center md:text-left font-poppins text-xs">
           <p>
-            &copy; {new Date().getFullYear()} Your Brand Name. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} navaa.in. All rights reserved.
           </p>
-          <div className="mt-4 md:mt-0 flex space-x-4">
-            {/* Payment Method Icons (Replace with your actual icons) */}
-            <img src="/path/to/visa.png" alt="Visa" className="h-6" />
+          <div className="mt-4 md:mt-0 flex space-x-4 items-center">
             <img
-              src="/path/to/mastercard.png"
-              alt="Mastercard"
-              className="h-6"
+              src="https://img.icons8.com/color/48/visa.png"
+              alt="Visa"
+              className="h-6 w-auto"
             />
-            <img src="/path/to/paypal.png" alt="PayPal" className="h-6" />
-            {/* Add more payment icons */}
+            <img
+              src="https://img.icons8.com/color/48/mastercard-logo.png"
+              alt="Mastercard"
+              className="h-6 w-auto"
+            />
+            <img
+              src="https://img.icons8.com/color/48/paypal.png"
+              alt="PayPal"
+              className="h-6 w-auto"
+            />
           </div>
         </div>
       </div>
