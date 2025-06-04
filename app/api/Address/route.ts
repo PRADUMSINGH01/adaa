@@ -35,10 +35,20 @@ export async function POST(request: Request) {
     // 4. Run a transaction to safely update the wishlist array
     await db.runTransaction(async (transaction) => {
       const userSnap = await transaction.get(userRef);
-      const userData = userSnap.data() as { wishlist?: Address[] } | undefined;
-      const currentWishlist = Array.isArray(userData?.wishlist)
-        ? userData!.wishlist!
+      const userData = userSnap.data() as { Address?: Address[] } | undefined;
+      const currentWishlist = Array.isArray(userData?.Address)
+        ? userData!.Address!
         : [];
+
+      if (
+        currentWishlist.some(
+          (item) =>
+            item.landmark === productData.landmark &&
+            item.pincode === productData.pincode
+        )
+      ) {
+        throw new Error("Address already in list");
+      }
 
       transaction.update(userRef, {
         // IMPORTANT: field name must match exactly the one you read from (e.g. "wishlist")
