@@ -1,31 +1,21 @@
-// server/addAddressToUser.ts
-import firebase from 'firebase/compat/app';  
-import 'firebase/compat/firestore';
-import { db } from './firebase/firebase';  
-
-export interface Address {
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-}
-
-export async function addAddressToUser(
-  userId: string,
-  address: Address
-): Promise<void> {
+import { Address } from "./types";
+export async function Add_Address(Address: Address) {
   try {
-    const userRef = db.collection('users').doc(userId);
-
-    await userRef.update({
-      // FieldValue.arrayUnion for v8
-      addresses: firebase.firestore.FieldValue.arrayUnion(address),
+    const response = await fetch("/api/Address/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(Address),
     });
 
-    console.log(`Address added successfully for user: ${userId}`);
-  } catch (err) {
-    console.error(`Failed to add address for user: ${userId}`, err);
-    throw new Error('Could not add address to user');
+    if (!response.ok) {
+      return { success: false, msg: "Product not added " };
+    }
+
+    return { success: true, msg: "Product added " };
+  } catch (error) {
+    console.error("Error:", error);
+    return { success: false, msg: "Product not added " };
   }
 }

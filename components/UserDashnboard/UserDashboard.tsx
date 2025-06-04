@@ -15,6 +15,7 @@ import {
 } from "react-icons/fi";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import Link from "next/link";
 
 export default function UserDashboard() {
   const { data: session } = useSession();
@@ -158,9 +159,12 @@ export default function UserDashboard() {
                       </button>
                     </div>
                   </div>
-                  <button className="border-2 border-dashed border-primary text-primary p-6 rounded-xl hover:bg-light transition-colors">
+                  <Link
+                    href={"/User/Add-Address"}
+                    className="border-2 border-dashed border-primary text-primary p-6 rounded-xl hover:bg-light transition-colors"
+                  >
                     Add New Address
-                  </button>
+                  </Link>
                 </div>
               </div>
             )}

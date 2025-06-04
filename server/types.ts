@@ -10,6 +10,17 @@ export interface wishlist {
   images: string[];
 }
 
+export interface Address {
+  name: string;
+  Number: number;
+  Address: string;
+  city: string;
+
+  landmark: string;
+
+  pincode: number;
+}
+
 export interface Product {
   id: string; // Unique item ID
   rating: number;

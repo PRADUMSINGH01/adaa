@@ -50,5 +50,5 @@ export async function middleware(req: NextRequest) {
 
 // Apply middleware to all routes except static and public
 export const config = {
-  matcher: ["/User", "/Cart"],
+  matcher: [],
 };
