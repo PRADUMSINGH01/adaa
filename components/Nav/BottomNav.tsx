@@ -22,7 +22,7 @@ const BottomNan = () => {
 
         {/* New Arrivals */}
         <Link
-          href="/new"
+          href="/New"
           className="flex flex-col items-center text-dark hover:text-primary transition-colors"
         >
           <FiStar className="w-6 h-6" />

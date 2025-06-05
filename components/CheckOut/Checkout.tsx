@@ -1,183 +1,95 @@
-// components/Checkout.tsx
 "use client";
 
-import { useState } from "react";
-import { FiMapPin, FiTruck, FiCreditCard } from "react-icons/fi";
-import Image from "next/image";
-type CartItem = {
-  id: number;
+import React, { useEffect } from "react";
+
+// Define Razorpay types to avoid using 'any'
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
   name: string;
-  price: number;
-  quantity: number;
-  image: string;
-};
+  description: string;
+  image?: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  theme: {
+    color: string;
+  };
+}
 
-type Address = {
-  id: number;
-  label: string;
-  addressLine: string;
-  city: string;
-  state: string;
-  pincode: string;
-  phone: string;
-};
+interface RazorpayInstance {
+  open: () => void;
+}
 
-export default function Checkout() {
-  // Sample saved addresses; replace with data from your user auth/profile
-  const addresses: Address[] = [
-    {
-      id: 1,
-      label: "Home",
-      addressLine: "123 Kurta Lane",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-      phone: "+91 98765 43210",
-    },
-    {
-      id: 2,
-      label: "Office",
-      addressLine: "456 Fashion Street",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400002",
-      phone: "+91 91234 56789",
-    },
-  ];
+declare global {
+  interface Window {
+    Razorpay: {
+      new (options: RazorpayOptions): RazorpayInstance;
+    };
+  }
+}
 
-  const [selectedAddressId, setSelectedAddressId] = useState<number>(
-    addresses[0].id
-  );
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
 
-  // Sample cart items; replace with your cart state or context
-  const cartItems: CartItem[] = [
-    {
-      id: 1,
-      name: "Floral Cotton Kurti",
-      price: 999,
-      quantity: 1,
-      image: "/images/kurti1.jpg",
-    },
-    {
-      id: 2,
-      name: "Silk Embroidered Kurti",
-      price: 1299,
-      quantity: 2,
-      image: "/images/kurti2.jpg",
-    },
-  ];
+const RazorpayButton = () => {
+  const loadRazorpay = () => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const shippingFee = 100;
-  const total = subtotal + shippingFee;
+  useEffect(() => {
+    loadRazorpay();
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const selectedAddress = addresses.find(
-      (addr) => addr.id === selectedAddressId
-    );
-    // TODO: send cartItems + selectedAddress to backend & trigger payment flow
-    alert(
-      `Order placed!\nShip to: ${selectedAddress?.label}, ${selectedAddress?.addressLine}, ${selectedAddress?.city}`
-    );
+  const handlePayment = async () => {
+    const res = await fetch("/api/Payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: 500 }),
+    });
+
+    const data = await res.json();
+
+    const options: RazorpayOptions = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+      amount: data.amount,
+      currency: "INR",
+      name: "Your Company",
+      description: "Test Transaction",
+      image: "/logo.png",
+      order_id: data.id,
+      handler: async function (response: RazorpayResponse) {
+        const verifyRes = await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(response),
+        });
+        const verifyData = await verifyRes.json();
+        alert(verifyData.message);
+      },
+      theme: {
+        color: "#E07A5F",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   return (
-    <div className="min-h-screen bg-neutral p-4 md:p-8">
-      <div className="max-w-5xl mx-auto bg-light rounded-xl shadow-lg overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          {/* Address Selection */}
-          <form onSubmit={handleSubmit} className="flex-1 p-6 space-y-6">
-            <h2 className="font-playfair text-2xl font-bold text-dark flex items-center gap-2">
-              <FiMapPin className="text-primary" /> Select Shipping Address
-            </h2>
-
-            <div className="space-y-4">
-              {addresses.map((addr) => (
-                <label
-                  key={addr.id}
-                  className="flex items-start gap-3 bg-white p-4 rounded-lg shadow-sm cursor-pointer"
-                >
-                  <input
-                    type="radio"
-                    name="address"
-                    value={addr.id}
-                    checked={selectedAddressId === addr.id}
-                    onChange={() => setSelectedAddressId(addr.id)}
-                    className="mt-1 w-4 h-4"
-                  />
-                  <div>
-                    <p className="font-poppins text-dark font-medium">
-                      {addr.label}
-                    </p>
-                    <p className="text-secondary text-sm">
-                      {addr.addressLine}, {addr.city}, {addr.state} -{" "}
-                      {addr.pincode}
-                    </p>
-                    <p className="text-secondary text-sm">{addr.phone}</p>
-                  </div>
-                </label>
-              ))}
-            </div>
-
-            <button
-              type="submit"
-              className="mt-4 w-full flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-poppins hover:bg-primary/90"
-            >
-              <FiCreditCard />
-              Place Order & Pay Now
-            </button>
-          </form>
-
-          {/* Order Summary */}
-          <div className="w-full md:w-80 bg-white border-l p-6 space-y-6">
-            <h2 className="font-playfair text-2xl font-bold text-dark flex items-center gap-2">
-              <FiTruck className="text-primary" /> Order Summary
-            </h2>
-            <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex items-center gap-4">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={400}
-                    height={100}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
-                  <div className="flex-1">
-                    <p className="font-poppins font-medium text-dark">
-                      {item.name}
-                    </p>
-                    <p className="text-secondary text-sm">
-                      ₹{item.price} × {item.quantity}
-                    </p>
-                  </div>
-                  <p className="font-poppins font-semibold text-dark">
-                    ₹{item.price * item.quantity}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between font-poppins text-secondary">
-                <span>Subtotal</span>
-                <span>₹{subtotal}</span>
-              </div>
-              <div className="flex justify-between font-poppins text-secondary">
-                <span>Shipping</span>
-                <span>₹{shippingFee}</span>
-              </div>
-              <div className="flex justify-between font-poppins text-dark text-lg font-semibold">
-                <span>Total</span>
-                <span>₹{total}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <button
+      onClick={handlePayment}
+      className="bg-[#E07A5F] hover:bg-[#D57A7A] text-[#F8F5F2] font-poppins py-2 px-6 rounded-2xl shadow-md transition-all"
+    >
+      Pay ₹500
+    </button>
   );
-}
+};
+
+export default RazorpayButton;

@@ -41,11 +41,26 @@ export default function Navbar() {
     <nav className="bg-neutral text-dark shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         {/* Mobile Navigation */}
-        <div className="md:hidden flex items-center justify-between h-16">
+        <div className="md:hidden w-full  flex items-center justify-between h-16">
           {/* Mobile Menu Button */}
-          <button className="p-2 hover:text-primary transition-colors"></button>
 
           {/* Centered Logo */}
+          {/* <Link
+            href="/"
+            className="font-playfair text-2xl font-bold text-primary"
+          >
+            <Image src={logo} alt=" " width={100} height={20} priority />
+          </Link> */}
+
+          {/* Right Icons */}
+          <Link
+            href={"/Wishlist"}
+            className="p-2 hover:text-secondary text-center flex flex-col justify-center items-center"
+          >
+            <FiHeart className="w-5 h-5" />
+            <span className="text-sm">Wishlist</span>
+          </Link>
+
           <Link
             href="/"
             className="font-playfair text-2xl font-bold text-primary"
@@ -53,15 +68,13 @@ export default function Navbar() {
             <Image src={logo} alt=" " width={100} height={20} priority />
           </Link>
 
-          {/* Right Icons */}
-          <div className="flex items-center gap-3">
-            <Link href={"/Wishlist"} className="p-2 hover:text-secondary">
-              <FiHeart className="w-5 h-5" />
-            </Link>
-            <Link href={"/Cart"} className="p-2 hover:text-secondary">
-              <FiShoppingCart className="w-5 h-5" />
-            </Link>
-          </div>
+          <Link
+            href={"/Cart"}
+            className="p-2 hover:text-secondary flex flex-col items-center"
+          >
+            <FiShoppingCart className="w-5 h-5" />
+            <span className="text-sm">Cart</span>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}

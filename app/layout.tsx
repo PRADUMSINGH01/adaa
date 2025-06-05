@@ -21,7 +21,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "KurtiKraft - Elegant Women's Kurtis",
+  title: "Navaa.store - Elegant Women's Kurtis",
   description:
     "Discover handcrafted designer kurtis blending traditional craftsmanship with modern style",
 };
