@@ -85,12 +85,12 @@ export default function Navbar() {
           </div>
 
           {/* Centered Logo */}
-          <div className="flex-1 flex justify-center ">
+          <div className=" flex justify-center items-center  h-20 overflow-hidden ">
             <Link
               href="/"
-              className="font-playfair text-xl font-bold text-primary overflow-hidden"
+              className="font-playfair text-xl font-bold text-primary  "
             >
-              <Image src={logo} alt=" " width={120} height={7} priority />
+              <Image src={logo} alt=" " width={120} height={10} priority />
             </Link>
           </div>
 
@@ -98,9 +98,10 @@ export default function Navbar() {
           <div className="flex-1 flex items-center justify-end gap-6">
             <Link
               href={"/Wishlist"}
-              className="hover:text-secondary transition-colors relative"
+              className="hover:text-secondary transition-colors relative flex flex-col items-center"
             >
               <FiHeart className="w-6 h-6" />
+              <span className=""> Wishlist</span>
               {/* <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center"></span> */}
             </Link>
 
@@ -109,6 +110,7 @@ export default function Navbar() {
               className="hover:text-secondary transition-colors relative"
             >
               <FiShoppingCart className="w-6 h-6" />
+              <span className=""> Cart</span>
               {/* <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center"></span> */}
             </Link>
             {/* Wishlist and Cart icons unchanged */}
