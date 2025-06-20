@@ -11,8 +11,6 @@ import Kurti from "@/app/(Images)/kurti.png";
 import cottonkurtiimage from "@/app/(Images)/cotton.png";
 import office from "@/app/(Images)/office.png";
 import party from "@/app/(Images)/party.png";
-import printed from "@/app/(Images)/printed.png";
-import embro from "@/app/(Images)/embro.png";
 
 const categories = [
   { name: "Office wear", url: "Office-wear", image: office },
