@@ -16,11 +16,9 @@ import embro from "@/app/(Images)/embro.png";
 
 const categories = [
   { name: "Office wear", url: "Office-wear", image: office },
-  { name: "Cotton Kurtis", url: "Cotton-Kurties", image: cottonkurtiimage },
-  { name: "Party Wear", url: "Party-Kurties", image: party },
-  { name: "Casual Wear", url: "Casual-Kurties", image: Kurti },
-  { name: "Printed", url: "Printed-Kurties", image: printed },
-  { name: "Embroidered", url: "Embroidered-Kurties", image: embro },
+  { name: "Tops", url: "Tops", image: cottonkurtiimage },
+  { name: "Cotton kurti", url: "Cotton-Kurties", image: party },
+  { name: "short kurti", url: "short-Kurties", image: Kurti },
 ];
 
 export default function CategorySlider() {
