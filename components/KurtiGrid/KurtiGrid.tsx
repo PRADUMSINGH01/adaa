@@ -11,7 +11,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
 
-// Import images
 import hero1 from "@/app/(Images)/banners/new.png";
 import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
 import hero3 from "@/app/(Images)/banners/summerr.png";
@@ -38,16 +37,21 @@ export default function KurtiGrid() {
   const [selectedProduct, setSelectedProduct] = useState<Kurti | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [kurtis, setKurties] = useState<Kurti[]>([]);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const heroImages = [hero1, hero2, hero3, hero4];
 
   useEffect(() => {
     async function fetchKurti() {
-      setloading(true);
-      const response = await fetch("/api/fetchKurti");
-      const products = await response.json();
-      setloading(false);
-      return setKurties(products);
+      setLoading(true);
+      try {
+        const response = await fetch("/api/fetchKurti");
+        const products = await response.json();
+        setKurties(products);
+      } catch (err) {
+        console.error("Error fetching kurtis:", err);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchKurti();
     return () => {
@@ -56,9 +60,17 @@ export default function KurtiGrid() {
   }, []);
 
   const handleQuickView = (id: string) => {
-    const product = kurtis.find((k) => k.id === id);
-    setSelectedProduct(product || null);
+    const product = kurtis.find((k) => k.id === id) || null;
+    setSelectedProduct(product);
     setIsQuickViewOpen(true);
+    // Optionally disable background scroll:
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeQuickView = () => {
+    setIsQuickViewOpen(false);
+    setSelectedProduct(null);
+    document.body.style.overflow = ""; // restore
   };
 
   const renderStars = (rating?: number) => {
@@ -81,72 +93,79 @@ export default function KurtiGrid() {
   };
 
   return (
-    <section className="min-h-screen py-8 md:py-12 lg:py-20 bg-[#F8F5F2]">
-      {/* Hero Carousel */}
-      <div className="px-4 sm:px-6 lg:px-8 mb-8 md:mb-12 lg:mb-16">
-        <Link href={"/"}>
-          <Swiper
-            modules={[Autoplay, Navigation]}
-            spaceBetween={16}
-            loop={true}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            navigation={{
-              nextEl: ".hero-button-next",
-              prevEl: ".hero-button-prev",
-            }}
-            breakpoints={{
-              320: { slidesPerView: 1 },
-              640: { slidesPerView: 1.2 },
-              768: { slidesPerView: 1.5 },
-              1024: { slidesPerView: 2 },
-              1280: { slidesPerView: 2.5 },
-            }}
-            className="!pb-12"
-          >
-            {heroImages.map((image, index) => (
-              <SwiperSlide key={index}>
-                <div className="relative aspect-[16/9] mx-2 rounded-xl lg:rounded-2xl overflow-hidden shadow-lg">
-                  <Image
-                    src={image}
-                    alt={`Fashion Showcase ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 100vw, 80vw"
-                    priority={index === 0}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-dark/40 to-transparent" />
-                </div>
-              </SwiperSlide>
-            ))}
+    <section className="bg-[#F8F5F2] py-8 md:py-12 lg:py-20">
+      {/* Container */}
+      <div className="mx-auto w-full px-4">
+        {/* Hero Carousel */}
+        <div className="mb-8 md:mb-12 lg:mb-16">
+          <Link href={"/"}>
+            <Swiper
+              modules={[Autoplay, Navigation]}
+              spaceBetween={16}
+              loop={true}
+              autoplay={{ delay: 5000, disableOnInteraction: false }}
+              navigation={{
+                nextEl: ".hero-button-next",
+                prevEl: ".hero-button-prev",
+              }}
+              breakpoints={{
+                320: { slidesPerView: 1 },
+                640: { slidesPerView: 1.2 },
+                768: { slidesPerView: 1.5 },
+                1024: { slidesPerView: 2 },
+                1280: { slidesPerView: 2.5 },
+              }}
+              className="!pb-12"
+            >
+              {heroImages.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <div className="relative aspect-[16/9] mx-2 rounded-2xl overflow-hidden shadow-lg">
+                    <Image
+                      src={image}
+                      alt={`Fashion Showcase ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, 80vw"
+                      priority={index === 0}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-dark/40 to-transparent" />
+                  </div>
+                </SwiperSlide>
+              ))}
 
-            <div className="hero-button-prev !text-secondary !left-2 lg:!left-4 after:!text-2xl lg:after:!text-3xl" />
-            <div className="hero-button-next !text-secondary !right-2 lg:!right-4 after:!text-2xl lg:after:!text-3xl" />
-          </Swiper>
-        </Link>
-      </div>
+              <button
+                className="hero-button-prev !text-secondary !left-2 lg:!left-4 after:!text-2xl lg:after:!text-3xl absolute top-1/2 -translate-y-1/2 z-20 bg-white/50 hover:bg-white/70 rounded-full p-1"
+                aria-label="Previous hero slide"
+              />
+              <button
+                className="hero-button-next !text-secondary !right-2 lg:!right-4 after:!text-2xl lg:after:!text-3xl absolute top-1/2 -translate-y-1/2 z-20 bg-white/50 hover:bg-white/70 rounded-full p-1"
+                aria-label="Next hero slide"
+              />
+            </Swiper>
+          </Link>
+        </div>
 
-      {/* Product Grid */}
-      <div className="px-4 sm:px-6 lg:px-8">
-        {/* Fixed heading alignment */}
-        <h1 className="text-center text-2xl md:text-[30px] mb-10 text-primary font-poppins font-semibold w-full">
+        {/* Heading */}
+        <h1 className="text-center text-2xl md:text-3xl mb-10 text-primary font-poppins font-semibold">
           Recommended For You
         </h1>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 lg:gap-8">
+        {/* Product Grid */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 lg:gap-8">
           {loading
-            ? // Skeleton loader while data is loading
+            ? // Skeleton loader
               Array.from({ length: 8 }).map((_, index) => (
                 <div
                   key={index}
-                  className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md animate-pulse"
+                  className="group relative bg-white rounded-2xl shadow animate-pulse"
                 >
                   {/* Image skeleton */}
-                  <div className="relative aspect-[3/4] bg-gray-200 rounded-t-xl lg:rounded-t-2xl" />
+                  <div className="relative aspect-[3/4] bg-gray-200 rounded-t-2xl" />
 
                   {/* Badges skeleton */}
                   <div className="absolute left-2 top-2 flex gap-1 z-20">
-                    <div className="bg-gray-300 rounded-full w-10 h-4" />
-                    <div className="bg-gray-300 rounded-full w-10 h-4" />
+                    <div className="bg-gray-300 rounded-full w-12 h-5" />
+                    <div className="bg-gray-300 rounded-full w-12 h-5" />
                   </div>
 
                   {/* Quick actions skeleton */}
@@ -177,11 +196,12 @@ export default function KurtiGrid() {
                           <div className="bg-gray-300 rounded h-4 w-10" />
                         </div>
                         <div className="flex gap-1">
-                          <div className="bg-gray-300 rounded h-4 w-4" />
-                          <div className="bg-gray-300 rounded h-4 w-4" />
-                          <div className="bg-gray-300 rounded h-4 w-4" />
-                          <div className="bg-gray-300 rounded h-4 w-4" />
-                          <div className="bg-gray-300 rounded h-4 w-4" />
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="bg-gray-300 rounded h-4 w-4"
+                            />
+                          ))}
                         </div>
                       </div>
                       <div className="bg-gray-300 rounded h-4 w-full" />
@@ -190,18 +210,19 @@ export default function KurtiGrid() {
                 </div>
               ))
             : // Actual product list
-              kurtis.map((kurti, index) => (
+              kurtis.map((kurti) => (
                 <article
-                  key={index}
-                  className="group relative bg-white rounded-xl lg:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  key={kurti.id}
+                  className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
                 >
-                  <div className="relative aspect-[3/4]">
-                    <Link href={`/Kurti/${kurti.id}`} key={index}>
+                  {/* Image & badges */}
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl">
+                    <Link href={`/Kurti/${kurti.id}`} key={kurti.id}>
                       <KurtiCarousel images={kurti.images} />
                     </Link>
 
                     {/* Status Badges */}
-                    <div className="absolute left-2 top-2 flex gap-1 z-20">
+                    <div className="absolute left-2 top-2 flex flex-wrap gap-1 z-20">
                       {kurti.isNew && <Badge color="primary">New</Badge>}
                       {kurti.onSale && kurti.originalPrice && (
                         <Badge color="secondary">
@@ -212,27 +233,34 @@ export default function KurtiGrid() {
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                      <WishListButton product={kurti} />
-                      <div className="bg-white/50 rounded-full z-50 cursor-pointer p-2 hover:bg-accent">
-                        <FiEye
-                          className="h-5 w-5"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleQuickView(kurti.id);
-                          }}
-                        />
-                      </div>
+                    <div className="absolute right-2 top-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                      <button
+                        aria-label="Add to wishlist"
+                        className="bg-white/80 p-2 rounded-full hover:bg-accent transition"
+                      >
+                        <WishListButton product={kurti} />
+                      </button>
+                      <button
+                        aria-label="Quick view"
+                        className="bg-white/80 p-2 rounded-full hover:bg-accent transition"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleQuickView(kurti.id);
+                        }}
+                      >
+                        <FiEye className="h-5 w-5 text-dark" />
+                      </button>
                     </div>
 
                     {/* Color Swatches */}
-                    {kurti.colorsAvailable && (
-                      <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
-                        {kurti.colorsAvailable.map((color) => (
-                          <ColorSwatch key={color} color={color} />
-                        ))}
-                      </div>
-                    )}
+                    {kurti.colorsAvailable &&
+                      kurti.colorsAvailable.length > 0 && (
+                        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
+                          {kurti.colorsAvailable.map((color) => (
+                            <ColorSwatch key={color} color={color} />
+                          ))}
+                        </div>
+                      )}
                   </div>
 
                   {/* Product Info */}
@@ -256,24 +284,28 @@ export default function KurtiGrid() {
                         />
                         {renderStars(kurti.rating)}
                       </div>
-                      <SizePreview sizes={kurti.sizes} />
                     </div>
                   </div>
                 </article>
               ))}
         </div>
       </div>
+
       {/* QuickView Modal */}
       {isQuickViewOpen && selectedProduct && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-xl max-w-4xl w-full h-[90vh] overflow-y-auto relative animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-fade-in">
             <button
-              onClick={() => setIsQuickViewOpen(false)}
-              className="sticky top-2 right-2 z-50 p-2 bg-white/90 rounded-full hover:bg-gray-100 transition-all shadow-lg ml-auto m-2"
+              onClick={closeQuickView}
+              className="absolute top-3 right-3 z-50 p-2 bg-white/90 rounded-full hover:bg-gray-100 transition shadow"
+              aria-label="Close quick view"
             >
-              <FiX className="h-6 w-6" />
+              <FiX className="h-6 w-6 text-dark" />
             </button>
-            <QuickView product={selectedProduct} />
+            <QuickView
+              product={selectedProduct}
+              closeQuickView={closeQuickView}
+            />
           </div>
         </div>
       )}
@@ -282,34 +314,33 @@ export default function KurtiGrid() {
 }
 
 // QuickView Component with Image Zoom
-function QuickView({ product }: { product: Kurti }) {
-  const [selectedSize, setSelectedSize] = useState("");
+function QuickView({
+  product,
+}: {
+  product: Kurti;
+  closeQuickView: () => void;
+}) {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(product.images[0]);
-  const [zoomStyle, setZoomStyle] = useState({ backgroundPosition: "0% 0%" });
+  const [zoomStyle, setZoomStyle] = useState({ backgroundPosition: "center" });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
 
-    const container = containerRef.current;
-    const rect = container.getBoundingClientRect();
-
-    // Calculate mouse position relative to container
+    const rect = containerRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-
     setZoomStyle({ backgroundPosition: `${x}% ${y}%` });
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 lg:p-6">
-      {/* Image Gallery with Zoom */}
+      {/* Left: Image Gallery */}
       <div className="flex flex-col gap-4">
-        {/* Main image with zoom effect */}
         <div
           ref={containerRef}
-          className="relative w-full h-96 overflow-hidden rounded-lg cursor-zoom-in"
+          className="relative w-full h-80 md:h-96 overflow-hidden rounded-lg cursor-zoom-in bg-gray-100"
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setZoomStyle({ backgroundPosition: "center" })}
         >
@@ -318,75 +349,64 @@ function QuickView({ product }: { product: Kurti }) {
             style={{
               backgroundImage: `url(${mainImage})`,
               ...zoomStyle,
-              backgroundSize: "200%", // Zoom level
+              backgroundSize: "200%",
             }}
           />
         </div>
-
-        {/* Thumbnails */}
         <div className="grid grid-cols-4 gap-2">
           {product.images.map((img, idx) => (
-            <div
+            <button
               key={idx}
-              className={`relative h-20 rounded-md overflow-hidden cursor-pointer border-2 transition-all ${
-                mainImage === img ? "border-primary" : "border-transparent"
+              className={`relative h-20 rounded-md overflow-hidden border-2 transition ${
+                mainImage === img
+                  ? "border-primary"
+                  : "border-transparent hover:border-secondary/70"
               }`}
               onClick={() => setMainImage(img)}
+              aria-label={`Select image ${idx + 1}`}
             >
               <Image
                 src={img}
-                alt={`Thumbnail`}
+                alt={`Thumbnail ${idx + 1}`}
                 width={400}
                 height={400}
                 className="w-full h-full object-cover"
               />
-            </div>
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Product Details */}
-      <div className="flex flex-col gap-3 lg:gap-4">
-        <h1 className="text-2xl lg:text-3xl font-bold">{product.name}</h1>
-        <p className="text-lg lg:text-xl text-primary">{product.price}</p>
+      {/* Right: Details */}
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl lg:text-3xl font-bold text-dark">
+          {product.name}
+        </h1>
+        <p className="text-xl lg:text-2xl font-semibold text-primary">
+          {product.price}
+        </p>
         <p className="text-gray-600 text-sm lg:text-base">
           {product.description}
         </p>
 
-        {/* Size Selection */}
-        <div className="mt-2">
-          <h3 className="text-base lg:text-lg font-semibold">Select Size</h3>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {product.sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                className={`px-3 py-1 text-sm lg:text-base rounded-md border ${
-                  selectedSize === size
-                    ? "bg-primary text-white border-primary"
-                    : "bg-white text-gray-700 border-gray-300"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Quantity Selector */}
         <div className="mt-2">
-          <h3 className="text-base lg:text-lg font-semibold">Quantity</h3>
+          <h3 className="text-base lg:text-lg font-semibold text-dark">
+            Quantity
+          </h3>
           <div className="flex items-center gap-2 mt-1">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="px-2 py-1 border rounded-md text-sm lg:text-base"
+              className="px-3 py-1 border rounded-md text-base hover:bg-gray-100 transition"
+              aria-label="Decrease quantity"
             >
               -
             </button>
-            <span className="px-3 py-1">{quantity}</span>
+            <span className="px-4 py-1 text-base">{quantity}</span>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="px-2 py-1 border rounded-md text-sm lg:text-base"
+              className="px-3 py-1 border rounded-md text-base hover:bg-gray-100 transition"
+              aria-label="Increase quantity"
             >
               +
             </button>
@@ -394,11 +414,11 @@ function QuickView({ product }: { product: Kurti }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-4 flex flex-col gap-2">
-          <button className="bg-primary text-white py-2 lg:py-3 rounded-md hover:bg-primary-dark text-sm lg:text-base">
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+          <button className="flex-1 bg-primary text-white py-3 rounded-md hover:bg-primary-dark transition text-base">
             Buy Now
           </button>
-          <button className="bg-secondary text-white py-2 lg:py-3 rounded-md hover:bg-secondary-dark text-sm lg:text-base">
+          <button className="flex-1 bg-secondary text-white py-3 rounded-md hover:bg-secondary-dark transition text-base">
             Add to Cart
           </button>
         </div>
@@ -416,16 +436,16 @@ const Badge = ({
   children: React.ReactNode;
 }) => (
   <span
-    className={`px-3 py-1 text-xs uppercase tracking-wide rounded-full shadow-md font-poppins ${
-      color === "primary" ? "bg-primary" : "bg-secondary"
-    } text-light`}
+    className={`px-2 py-1 text-xs uppercase tracking-wide rounded-full shadow font-poppins ${
+      color === "primary" ? "bg-primary text-white" : "bg-secondary text-white"
+    }`}
   >
     {children}
   </span>
 );
 
 const ColorSwatch = ({ color }: { color: string }) => (
-  <div className="relative h-6 w-6 rounded-full border-2 border-light shadow-lg transition-transform hover:scale-125">
+  <div className="relative h-6 w-6 rounded-full border-2 border-white shadow transition-transform hover:scale-110">
     <span
       className="absolute inset-0 rounded-full"
       style={{ backgroundColor: color }}
@@ -441,30 +461,14 @@ const PriceDisplay = ({
   originalPrice?: string;
 }) => (
   <div className="flex items-baseline gap-2">
-    <span className="font-poppins text-xl font-bold text-primary">{price}</span>
+    <span className="font-poppins text-lg lg:text-xl font-bold text-primary">
+      {price}
+    </span>
     {originalPrice && (
-      <span className="font-poppins text-sm text-secondary/80 line-through">
+      <span className="font-poppins text-sm text-secondary/70 line-through">
         {originalPrice}
       </span>
     )}
-  </div>
-);
-
-const SizePreview = ({ sizes }: { sizes: string[] }) => (
-  <div className="flex items-center gap-2">
-    <span className="font-poppins text-sm text-secondary">Sizes:</span>
-    <div className="flex gap-1">
-      {sizes.length > 0
-        ? sizes.map((size) => (
-            <span
-              key={size}
-              className="px-2 py-1 text-xs bg-light border border-secondary/20 rounded-md"
-            >
-              {size}
-            </span>
-          ))
-        : ""}
-    </div>
   </div>
 );
 
@@ -482,10 +486,11 @@ const Star = ({ type }: { type: "full" | "half" | "empty" }) => (
   </svg>
 );
 
-// Helper function
 const calculateDiscount = (original: string, current: string) => {
-  const cleanPrice = (price: string) => parseInt(price.replace(/\D/g, ""), 10);
-  return Math.round(
-    ((cleanPrice(original) - cleanPrice(current)) / cleanPrice(original)) * 100
-  );
+  const cleanPrice = (price: string) =>
+    parseFloat(price.replace(/[^0-9.]/g, "")) || 0;
+  const orig = cleanPrice(original);
+  const curr = cleanPrice(current);
+  if (orig <= 0) return 0;
+  return Math.round(((orig - curr) / orig) * 100);
 };
