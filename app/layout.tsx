@@ -8,7 +8,7 @@ import { authOptions } from "@/components/lib/auth";
 import Navbar from "@/components/Nav/Navbar";
 import { CartProvider } from "./CartContext";
 import { UserProvider } from "@/components/Context/UserContext";
-
+import { Analytics } from "@vercel/analytics/next";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
@@ -41,6 +41,7 @@ export default async function RootLayout({
             <CartProvider>
               <Navbar />
               {children}
+              <Analytics />
             </CartProvider>
           </UserProvider>
         </Provider>
