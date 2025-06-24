@@ -31,6 +31,7 @@ export function CartProvider({ children }) {
 
   // Add item to cart (with quantity merge)
   const addToCart = (product) => {
+    console.log(product, "from to cart ----");
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
 

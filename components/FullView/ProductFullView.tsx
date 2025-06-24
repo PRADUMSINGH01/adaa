@@ -139,6 +139,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
         quantity,
         image: product.images[0],
       };
+      console.log(newItem);
       addToCart(newItem);
       setLiveMessage(`${quantity} ${product.name} added to cart.`);
       setToastType("success");

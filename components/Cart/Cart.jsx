@@ -270,9 +270,9 @@ const CartPage = () => {
                     <div className="col-span-2 text-right">Total</div>
                   </div>
 
-                  {cart.map((item) => (
+                  {cart.map((item, index) => (
                     <div
-                      key={item.id}
+                      key={index}
                       className="border-b last:border-b-0 transition-all duration-300 hover:bg-gray-50/30"
                     >
                       <div className="p-3 sm:p-4 grid grid-cols-12 gap-x-3 sm:gap-x-4 items-center">
