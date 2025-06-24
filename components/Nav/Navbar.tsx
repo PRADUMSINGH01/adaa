@@ -12,10 +12,12 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "@/app/(Images)/logo.png";
 import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
+import { useCart } from "@/app/CartContext"; // Adjust path as needed
 
 export default function Navbar() {
   const { data: session } = useSession();
   // const session = { user: { name: "pradum", email: "hs", image: "/" } };
+  const { itemCount } = useCart();
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -69,11 +71,21 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href={"/Cart"}
-            className="p-2 hover:text-secondary flex flex-col items-center"
+            href="/Cart"
+            className="hover:text-secondary transition-colors relative flex flex-col items-center"
           >
-            <FiShoppingCart className="w-5 h-5" />
+            {/* Cart Icon */}
+            <FiShoppingCart className="w-6 h-6" />
+
+            {/* Label */}
             <span className="text-sm">Cart</span>
+
+            {/* Count Badge */}
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-2 bg-accent text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-semibold shadow-sm">
+                {itemCount}
+              </span>
+            )}
           </Link>
         </div>
 
@@ -106,13 +118,23 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href={"/Cart"}
-              className="hover:text-secondary transition-colors relative"
+              href="/Cart"
+              className="hover:text-secondary transition-colors relative flex flex-col items-center"
             >
+              {/* Cart Icon */}
               <FiShoppingCart className="w-6 h-6" />
-              <span className=""> Cart</span>
-              {/* <span className="absolute -top-1 -right-1 bg-accent text-white text-xs w-4 h-4 rounded-full flex items-center justify-center"></span> */}
+
+              {/* Label */}
+              <span className="text-sm">Cart</span>
+
+              {/* Count Badge */}
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-accent text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-semibold shadow-sm">
+                  {itemCount}
+                </span>
+              )}
             </Link>
+
             {/* Wishlist and Cart icons unchanged */}
             {session ? (
               <div
