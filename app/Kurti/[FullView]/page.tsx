@@ -11,7 +11,6 @@ export default function KurtiDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -19,9 +18,7 @@ export default function KurtiDetailPage() {
         setError(null);
 
         const response = await fetch(`/api/ProductByID/${productId}`);
-
         const result = await response.json();
-
         setProduct(result);
       } catch (err) {
         setError(

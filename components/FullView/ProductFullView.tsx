@@ -42,36 +42,36 @@ export interface Product {
   isNew?: boolean;
 }
 
-// Props: either product is fully passed, or id to fetch. Here we assume product prop.
+// Props: product is fully provided
 interface ProductDetailViewProps {
   product: Product;
 }
-const tabs = ["description", "care", "reviews"] as const; // 'as const' makes it a readonly tuple of string literals
+
+const tabs = ["description", "care", "reviews"] as const;
 
 export default function ProductDetailView({ product }: ProductDetailViewProps) {
   const router = useRouter();
-  // Loading state: if needed. If product is always provided, skip loading.
-  const [isLoading, setIsLoading] = useState(false); // assume data ready
   // Image gallery
   const [selectedImage, setSelectedImage] = useState(0);
   const imageRef = useRef<HTMLDivElement>(null);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Selections & actions
+  // Initialize from product.sizes/colors; if arrays are empty, default to empty string
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
   const [isBuying, setIsBuying] = useState(false);
   const { addToCart, isInitialized } = useCart();
+
   // Tabs
-  const [activeTab, setActiveTab] = useState<
-    "description" | "care" | "reviews"
-  >("description");
+  const [activeTab, setActiveTab] = useState<"description" | "care" | "reviews">("description");
+
   // Live region message
   const [liveMessage, setLiveMessage] = useState("");
-  type TabKey = (typeof tabs)[number]; // "overview" | "details" | "reviews"
 
   // Accessibility: trap focus in modal, close on Escape
   useEffect(() => {
@@ -101,9 +101,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
     return Array.from({ length: 5 }).map((_, i) => (
       <FiStar
         key={i}
-        className={`w-4 h-4 ${
-          i < rounded ? "text-yellow-400 fill-current" : "text-gray-300"
-        }`}
+        className={`w-4 h-4 ${i < rounded ? "text-yellow-400 fill-current" : "text-gray-300"}`}
         aria-hidden="true"
       />
     ));
@@ -134,7 +132,6 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       image: product.images[0],
     };
     addToCart(newItem);
-    // Show toast via live region
     setLiveMessage(`${quantity} ${product.name} added to cart.`);
     setTimeout(() => setAdding(false), 500);
   };
@@ -151,13 +148,10 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
     }
     setIsBuying(true);
     try {
-      // Example: redirect to checkout page with query params
       router.push(
-        `/checkout?productId=${encodeURIComponent(
-          product.id
-        )}&size=${encodeURIComponent(selectedSize)}&color=${encodeURIComponent(
-          selectedColor
-        )}&qty=${quantity}`
+        `/checkout?productId=${encodeURIComponent(product.id)}&size=${encodeURIComponent(
+          selectedSize
+        )}&color=${encodeURIComponent(selectedColor)}&qty=${quantity}`
       );
     } catch (err) {
       console.error(err);
@@ -170,8 +164,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   // Zoom handlers
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!imageRef.current) return;
-    const { left, top, width, height } =
-      imageRef.current.getBoundingClientRect();
+    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
     setZoomPosition({ x, y });
@@ -198,16 +191,10 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
   // Wishlist handler placeholder
   const handleWishlist = () => {
-    // e.g., if logged in, add to wishlist; else prompt login
     setLiveMessage("Wishlist feature coming soon.");
   };
 
-  if (isLoading) {
-    return <div className="container mx-auto px-4 py-8 max-w-7xl"></div>;
-  } else {
-    setIsLoading(false);
-  }
-
+  // --- RENDER ---
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl min-h-screen">
       {/* Live region for announcements */}
@@ -216,21 +203,15 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
       </div>
 
       {/* Breadcrumb */}
-      <nav
-        className="mb-4 text-sm text-gray-600 font-poppins"
-        aria-label="Breadcrumb"
-      >
+      <nav className="mb-4 text-sm text-gray-600 font-poppins" aria-label="Breadcrumb">
         <ol className="flex items-center flex-wrap gap-1 md:gap-2">
-          <>
+          <li>
             <Link href="/" className="hover:text-[#E07A5F]">
               Home
             </Link>
-          </>
+          </li>
           <li>
-            <FiChevronRight
-              className="w-3 h-3 text-gray-400 mx-1"
-              aria-hidden="true"
-            />
+            <FiChevronRight className="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" />
           </li>
           {product.category && (
             <>
@@ -243,17 +224,11 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                 </a>
               </li>
               <li>
-                <FiChevronRight
-                  className="w-3 h-3 text-gray-400 mx-1"
-                  aria-hidden="true"
-                />
+                <FiChevronRight className="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" />
               </li>
             </>
           )}
-          <li
-            className="text-gray-800 font-medium truncate max-w-[120px] md:max-w-none"
-            aria-current="page"
-          >
+          <li className="text-gray-800 font-medium truncate max-w-[120px] md:max-w-none" aria-current="page">
             {product.name}
           </li>
         </ol>
@@ -270,9 +245,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                 key={index}
                 onClick={() => setSelectedImage(index)}
                 className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 overflow-hidden rounded-lg transition-all focus:outline-none focus:ring-2 ${
-                  selectedImage === index
-                    ? "ring-2 ring-[#E07A5F]"
-                    : "ring-1 ring-gray-300 hover:ring-gray-400"
+                  selectedImage === index ? "ring-2 ring-[#E07A5F]" : "ring-1 ring-gray-300 hover:ring-gray-400"
                 }`}
                 aria-label={`Select image ${index + 1}`}
               >
@@ -345,21 +318,12 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             </h1>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <div className="flex items-center">
-                <div
-                  className="flex"
-                  aria-label={`Rating: ${product.rating} out of 5`}
-                >
+                <div className="flex" aria-label={`Rating: ${product.rating} out of 5`}>
                   {stars}
                 </div>
-                <span className="ml-2 text-gray-600 text-sm">
-                  ({product.reviews} reviews)
-                </span>
+                <span className="ml-2 text-gray-600 text-sm">({product.reviews} reviews)</span>
               </div>
-              {product.sku && (
-                <span className="text-gray-500 text-sm">
-                  SKU: {product.sku}
-                </span>
-              )}
+              {product.sku && <span className="text-gray-500 text-sm">SKU: {product.sku}</span>}
             </div>
           </div>
 
@@ -382,16 +346,12 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                   <span className="text-lg text-gray-500 line-through">
                     ₹{product.originalPrice.toLocaleString()}
                   </span>
-                  <span className="text-[#E07A5F] font-medium">
-                    {discount}% OFF
-                  </span>
+                  <span className="text-[#E07A5F] font-medium">{discount}% OFF</span>
                 </>
               )}
             </div>
             {product.stock > 0 ? (
-              <div className="text-green-600 font-medium">
-                In Stock ({product.stock} available)
-              </div>
+              <div className="text-green-600 font-medium">In Stock ({product.stock} available)</div>
             ) : (
               <div className="text-red-600 font-medium">Out of Stock</div>
             )}
@@ -403,10 +363,8 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               <h3 className="font-medium text-gray-800">Color:</h3>
               <div className="flex flex-wrap gap-2">
                 {product.colors.map((color, i) => {
-                  // For very light colors, add border
                   const isLight =
-                    /^#?([fF]{6}|[Ff]{3})$/.test(color) ||
-                    color.toLowerCase() === "white";
+                    /^#?([fF]{6}|[Ff]{3})$/.test(color) || color.toLowerCase() === "white";
                   return (
                     <button
                       key={i}
@@ -439,7 +397,6 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                 <button
                   className="text-[#E07A5F] text-sm hover:underline"
                   onClick={() => {
-                    // open size guide modal or new page
                     setLiveMessage("Size guide coming soon.");
                   }}
                 >
@@ -476,13 +433,9 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               >
                 <FiMinus className="w-4 h-4" />
               </button>
-              <span className="px-4 py-2 text-gray-800 w-12 text-center">
-                {quantity}
-              </span>
+              <span className="px-4 py-2 text-gray-800 w-12 text-center">{quantity}</span>
               <button
-                onClick={() =>
-                  setQuantity((p) => Math.min(product.stock, p + 1))
-                }
+                onClick={() => setQuantity((p) => Math.min(product.stock, p + 1))}
                 className="px-3 py-2 border-l border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 disabled={quantity >= product.stock}
                 aria-label="Increase quantity"
@@ -510,12 +463,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             </button>
             <button
               onClick={handleBuyNow}
-              disabled={
-                !selectedSize ||
-                !selectedColor ||
-                product.stock === 0 ||
-                isBuying
-              }
+              disabled={!selectedSize || !selectedColor || product.stock === 0 || isBuying}
               className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-70 font-medium flex-1 min-w-[150px]"
             >
               {isBuying ? (
@@ -574,8 +522,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               <div>
                 <h4 className="font-medium text-gray-800">Free Shipping</h4>
                 <p className="text-gray-600 text-sm">
-                  {product.shippingInfo ||
-                    "Free shipping on orders above ₹1999"}
+                  {product.shippingInfo || "Free shipping on orders above ₹1999"}
                 </p>
               </div>
             </div>
@@ -609,7 +556,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               return (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab as TabKey)}
+                  onClick={() => setActiveTab(tab as typeof tabs[number])}
                   className={`py-3 px-5 font-medium text-sm md:text-base transition-colors whitespace-nowrap ${
                     activeTab === tab
                       ? "text-[#E07A5F] border-b-2 border-[#E07A5F]"
@@ -681,13 +628,9 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                 <div className="flex mr-3">{stars}</div>
                 <span className="text-gray-600">{product.rating} out of 5</span>
               </div>
-              <p className="text-gray-600 mb-4">
-                {product.reviews} customer reviews
-              </p>
+              <p className="text-gray-600 mb-4">{product.reviews} customer reviews</p>
               {/* TODO: fetch and render individual reviews */}
-              <p className="text-gray-500 italic">
-                Reviews will be displayed here.
-              </p>
+              <p className="text-gray-500 italic">Reviews will be displayed here.</p>
             </div>
           )}
         </div>
@@ -750,9 +693,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={`w-10 h-10 rounded overflow-hidden transition-opacity flex-shrink-0 focus:outline-none focus:ring-2 ${
-                    selectedImage === i
-                      ? "opacity-100 ring-2 ring-white"
-                      : "opacity-60 hover:opacity-80"
+                    selectedImage === i ? "opacity-100 ring-2 ring-white" : "opacity-60 hover:opacity-80"
                   }`}
                   aria-label={`Select image ${i + 1}`}
                 >
@@ -773,5 +714,3 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
     </div>
   );
 }
-
-// Note: Also include SkeletonLoader component as before or adjust as needed.
