@@ -31,30 +31,45 @@ export function CartProvider({ children }) {
 
   // Add item to cart (with quantity merge)
   const addToCart = (product) => {
-    console.log(product, "from to cart ----");
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+      // Destructure variant attributes from incoming product
+      const { id, size, color, quantity: incomingQty } = product;
+      const qtyToAdd = incomingQty || 1;
 
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + (product.quantity || 1),
-              }
-            : item
-        );
+      // Find index of an existing cart item that matches id + size + color
+      const existingIndex = prevCart.findIndex(
+        (item) =>
+          item.id === id &&
+          // If your cart items also store size/color, compare them:
+          item.size === size &&
+          item.color === color
+      );
+
+      if (existingIndex !== -1) {
+        // Found an existing matching variant: increment quantity
+        return prevCart.map((item, idx) => {
+          if (idx === existingIndex) {
+            return {
+              ...item,
+              quantity: (item.quantity || 0) + qtyToAdd,
+            };
+          }
+          return item;
+        });
       }
 
+      // No matching variant found: add as a new entry
       return [
         ...prevCart,
         {
           ...product,
-          quantity: product.quantity || 1,
+          // Ensure we store quantity explicitly
+          quantity: qtyToAdd,
         },
       ];
     });
   };
+
   // Update item quantity
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) return;

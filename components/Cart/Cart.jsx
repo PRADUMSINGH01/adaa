@@ -133,7 +133,7 @@ const CartPage = () => {
 
               <div className="w-full">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {userData && userData.Address.length > 0 ? (
+                  {userData && userData?.Address?.length > 0 ? (
                     userData.Address.map((address, index) => (
                       <div
                         key={index}
