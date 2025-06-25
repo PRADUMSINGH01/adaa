@@ -82,10 +82,14 @@ export function CartProvider({ children }) {
   };
 
   // Remove item from cart
-  const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  const removeFromCart = (productId, size, color) => {
+    setCart((prevCart) =>
+      prevCart.filter(
+        (item) =>
+          !(item.id === productId && item.size === size && item.color === color)
+      )
+    );
   };
-
   // Clear entire cart
   const clearCart = () => setCart([]);
 

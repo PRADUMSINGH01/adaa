@@ -310,7 +310,9 @@ const CartPage = () => {
                             )}
                           </div>
                           <button
-                            onClick={() => removeFromCart(item.id)}
+                            onClick={() =>
+                              removeFromCart(item.id, item.size, item.color)
+                            }
                             className="hidden sm:block ml-auto text-gray-400 hover:text-red-500 transition-colors p-1"
                             aria-label="Remove item"
                           >
@@ -324,7 +326,7 @@ const CartPage = () => {
                             Price
                           </span>
                           <span className="text-xs sm:text-sm font-medium">
-                            ${item.price.toFixed(2)}
+                            {item.price.toFixed(2)}
                           </span>
                         </div>
 
@@ -369,7 +371,7 @@ const CartPage = () => {
                             Total
                           </span>
                           <span className="font-semibold text-xs sm:text-sm">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            {(item.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
 
@@ -485,13 +487,13 @@ const CartPage = () => {
                   <div className="space-y-2 text-xs sm:text-sm">
                     <div className="flex justify-between">
                       <span>Subtotal ({itemCount} items)</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>{subtotal.toFixed(2)}</span>
                     </div>
 
                     {discount > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>Discount</span>
-                        <span>-${discount.toFixed(2)}</span>
+                        <span>-{discount.toFixed(2)}</span>
                       </div>
                     )}
 
@@ -505,12 +507,12 @@ const CartPage = () => {
                     </div>
                     <div className="flex justify-between">
                       <span>Tax ({(taxRate * 100).toFixed(0)}%)</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span>{tax.toFixed(2)}</span>
                     </div>
                     <div className="border-t pt-3 mt-3 flex justify-between font-bold text-sm sm:text-base text-primary">
                       <span>Order Total</span>
                       <span className="text-base sm:text-lg">
-                        ${total.toFixed(2)}
+                        {total.toFixed(2)}
                       </span>
                     </div>
                   </div>
