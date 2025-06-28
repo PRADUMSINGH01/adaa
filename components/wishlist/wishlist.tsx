@@ -31,7 +31,7 @@ const UserWishlist: React.FC = () => {
     if (!loading && userData?.wishlist) {
       setWishlist(userData?.wishlist);
     }
-  }, [loading, userData]);
+  }, [userData, loading]);
 
   // Function to remove an item from wishlist
   const handleRemoveItem = async (id: string) => {
@@ -46,9 +46,12 @@ const UserWishlist: React.FC = () => {
     try {
       // Call your API to remove from wishlist
       // Adjust the endpoint and method as per your backend
-      const res = await fetch(`/api/wishlist/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `/api/DeleteWishlist/?userId="hs947518@gmail.com"productId=${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!res.ok) {
         throw new Error(`Failed to remove item with id ${id}`);

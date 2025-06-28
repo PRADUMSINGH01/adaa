@@ -53,7 +53,7 @@ export async function POST(request: Request) {
           name: productData.name,
           price: productData.price,
           // If you want to store multiple images, make sure `productData.images` is an array
-          image: productData.images ?? null,
+          images: productData.images ?? null,
         }),
         updatedAt: FieldValue.serverTimestamp(),
       });

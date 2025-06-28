@@ -1,14 +1,12 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import { FiEye, FiX } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
 import WishListButton from "../wishlist/WishListButton";
 import Image from "next/image";
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 import "swiper/css/autoplay";
 
 import hero1 from "@/app/(Images)/banners/new.png";
@@ -63,14 +61,13 @@ export default function KurtiGrid() {
     const product = kurtis.find((k) => k.id === id) || null;
     setSelectedProduct(product);
     setIsQuickViewOpen(true);
-    // Optionally disable background scroll:
     document.body.style.overflow = "hidden";
   };
 
   const closeQuickView = () => {
     setIsQuickViewOpen(false);
     setSelectedProduct(null);
-    document.body.style.overflow = ""; // restore
+    document.body.style.overflow = "";
   };
 
   const renderStars = (rating?: number) => {
@@ -85,7 +82,7 @@ export default function KurtiGrid() {
             }
           />
         ))}
-        <span className="ml-1 text-sm text-secondary">
+        <span className="ml-1 text-xs text-gray-500">
           ({rating.toFixed(1)})
         </span>
       </div>
@@ -93,197 +90,131 @@ export default function KurtiGrid() {
   };
 
   return (
-    <section className="bg-[#F8F5F2] py-8 md:py-12 lg:py-20">
-      {/* Container */}
-      <div className="mx-auto w-full px-4">
-        {/* Hero Carousel */}
-        <div className="mb-8 md:mb-12 lg:mb-16">
-          <Link href={"/"}>
-            <Swiper
-              modules={[Autoplay, Navigation]}
-              spaceBetween={16}
-              loop={true}
-              autoplay={{ delay: 5000, disableOnInteraction: false }}
-              navigation={{
-                nextEl: ".hero-button-next",
-                prevEl: ".hero-button-prev",
-              }}
-              breakpoints={{
-                320: { slidesPerView: 1 },
-                640: { slidesPerView: 1.2 },
-                768: { slidesPerView: 1.5 },
-                1024: { slidesPerView: 2 },
-                1280: { slidesPerView: 2.5 },
-              }}
-              className="!pb-12"
-            >
-              {heroImages.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <div className="relative aspect-[16/9] mx-2 rounded-2xl overflow-hidden shadow-lg">
-                    <Image
-                      src={image}
-                      alt={`Fashion Showcase ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 80vw"
-                      priority={index === 0}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-dark/40 to-transparent" />
-                  </div>
-                </SwiperSlide>
-              ))}
-
-              <button
-                className="hero-button-prev !text-secondary !left-2 lg:!left-4 after:!text-2xl lg:after:!text-3xl absolute top-1/2 -translate-y-1/2 z-20 bg-white/50 hover:bg-white/70 rounded-full p-1"
-                aria-label="Previous hero slide"
-              />
-              <button
-                className="hero-button-next !text-secondary !right-2 lg:!right-4 after:!text-2xl lg:after:!text-3xl absolute top-1/2 -translate-y-1/2 z-20 bg-white/50 hover:bg-white/70 rounded-full p-1"
-                aria-label="Next hero slide"
-              />
-            </Swiper>
-          </Link>
+    <section className="bg-white py-8 md:py-12 lg:py-20">
+      <div className="mx-auto w-full max-w-7xl px-4">
+        <div className="mb-10 md:mb-14">
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={16}
+            loop={true}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              768: { slidesPerView: 1.5 },
+              1024: { slidesPerView: 2 },
+            }}
+            className="!pb-4"
+          >
+            {heroImages.map((image, index) => (
+              <SwiperSlide key={index}>
+                <div className="relative aspect-[16/9] rounded-xl overflow-hidden shadow-sm">
+                  <Image
+                    src={image}
+                    alt={`Fashion Showcase ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, 80vw"
+                    priority={index === 0}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
 
-        {/* Heading */}
-        <h1 className="text-center text-2xl md:text-3xl mb-10 text-primary font-poppins font-semibold">
+        <h1 className="text-center text-2xl md:text-3xl mb-12 text-gray-900 font-sans font-medium">
           Recommended For You
         </h1>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-5 lg:gap-6">
           {loading
-            ? // Skeleton loader
-              Array.from({ length: 8 }).map((_, index) => (
+            ? Array.from({ length: 8 }).map((_, index) => (
                 <div
                   key={index}
-                  className="group relative bg-white rounded-2xl shadow animate-pulse"
+                  className="group relative bg-white rounded-xl shadow-sm animate-pulse"
                 >
-                  {/* Image skeleton */}
-                  <div className="relative aspect-[3/4] bg-gray-200 rounded-t-2xl" />
-
-                  {/* Badges skeleton */}
-                  <div className="absolute left-2 top-2 flex gap-1 z-20">
-                    <div className="bg-gray-300 rounded-full w-12 h-5" />
-                    <div className="bg-gray-300 rounded-full w-12 h-5" />
-                  </div>
-
-                  {/* Quick actions skeleton */}
-                  <div className="absolute right-2 top-2 flex gap-1 z-20">
-                    <div className="bg-gray-300 rounded-full w-8 h-8" />
-                    <div className="bg-gray-300 rounded-full w-8 h-8" />
-                  </div>
-
-                  {/* Color swatches skeleton */}
-                  <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
-                    <div className="bg-gray-300 rounded-full w-6 h-6" />
-                    <div className="bg-gray-300 rounded-full w-6 h-6" />
-                    <div className="bg-gray-300 rounded-full w-6 h-6" />
-                  </div>
-
-                  {/* Product info skeleton */}
-                  <div className="p-4 lg:p-6">
-                    <div className="mb-2">
-                      <div className="bg-gray-300 rounded h-3 w-1/4 mb-2" />
-                      <div className="bg-gray-300 rounded h-4 w-3/4 mb-1" />
-                      <div className="bg-gray-300 rounded h-4 w-full" />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex gap-2">
-                          <div className="bg-gray-300 rounded h-4 w-10" />
-                          <div className="bg-gray-300 rounded h-4 w-10" />
-                        </div>
-                        <div className="flex gap-1">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <div
-                              key={i}
-                              className="bg-gray-300 rounded h-4 w-4"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="bg-gray-300 rounded h-4 w-full" />
-                    </div>
+                  <div className="relative aspect-[3/4] bg-gray-100 rounded-t-xl" />
+                  <div className="p-4">
+                    <div className="h-4 bg-gray-100 rounded mb-3 w-3/4"></div>
+                    <div className="h-3 bg-gray-100 rounded mb-2 w-1/2"></div>
+                    <div className="h-3 bg-gray-100 rounded w-1/3"></div>
                   </div>
                 </div>
               ))
-            : // Actual product list
-              kurtis.map((kurti) => (
+            : kurtis.map((kurti) => (
                 <article
                   key={kurti.id}
-                  className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
+                  className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
                 >
-                  {/* Image & badges */}
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl">
-                    <Link href={`/Kurti/${kurti.id}`} key={kurti.id}>
-                      <KurtiCarousel images={kurti.images} />
-                    </Link>
-
-                    {/* Status Badges */}
-                    <div className="absolute left-2 top-2 flex flex-wrap gap-1 z-20">
-                      {kurti.isNew && <Badge color="primary">New</Badge>}
-                      {kurti.onSale && kurti.originalPrice && (
-                        <Badge color="secondary">
-                          {calculateDiscount(kurti.originalPrice, kurti.price)}%
-                          Off
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="absolute right-2 top-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                  {/* Image container */}
+                  <div className="relative aspect-[3/4]">
+                    {/* Buttons placed above the image link */}
+                    <div className="absolute top-3 right-3 flex gap-2 z-20">
                       <button
                         aria-label="Add to wishlist"
-                        className="bg-white/80 p-2 rounded-full hover:bg-accent transition"
+                        className="bg-white p-1.5 rounded-full hover:bg-gray-50 transition shadow-sm"
                       >
                         <WishListButton product={kurti} />
                       </button>
                       <button
                         aria-label="Quick view"
-                        className="bg-white/80 p-2 rounded-full hover:bg-accent transition"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleQuickView(kurti.id);
-                        }}
+                        className="bg-white p-1.5 rounded-full hover:bg-gray-50 transition shadow-sm"
+                        onClick={() => handleQuickView(kurti.id)}
                       >
-                        <FiEye className="h-5 w-5 text-dark" />
+                        <FiEye className="h-4 w-4 text-gray-600" />
                       </button>
                     </div>
 
-                    {/* Color Swatches */}
-                    {kurti.colorsAvailable &&
-                      kurti.colorsAvailable.length > 0 && (
-                        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 z-20">
-                          {kurti.colorsAvailable.map((color) => (
-                            <ColorSwatch key={color} color={color} />
-                          ))}
-                        </div>
-                      )}
+                    {/* Image link */}
+                    <Link href={`/Kurti/${kurti.id}`} className="block">
+                      <KurtiCarousel images={kurti.images} />
+
+                      {/* Badges */}
+                      <div className="absolute left-3 top-3 flex flex-wrap gap-1 z-10">
+                        {kurti.isNew && <Badge>New</Badge>}
+                        {kurti.onSale && kurti.originalPrice && (
+                          <Badge color="sale">
+                            {calculateDiscount(
+                              kurti.originalPrice,
+                              kurti.price
+                            )}
+                            % Off
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Color swatches */}
+                      {kurti.colorsAvailable &&
+                        kurti.colorsAvailable.length > 0 && (
+                          <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-1 z-10">
+                            {kurti.colorsAvailable.map((color) => (
+                              <ColorSwatch key={color} color={color} />
+                            ))}
+                          </div>
+                        )}
+                    </Link>
                   </div>
 
-                  {/* Product Info */}
-                  <div className="p-4 lg:p-6">
-                    <div className="mb-2">
-                      {kurti.brand && (
-                        <p className="text-xs lg:text-sm text-secondary uppercase tracking-wide mb-1">
-                          {kurti.brand}
-                        </p>
-                      )}
-                      <h3 className="text-base lg:text-lg font-semibold text-dark line-clamp-2">
+                  {/* Product info */}
+                  <div className="p-4">
+                    {kurti.brand && (
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                        {kurti.brand}
+                      </p>
+                    )}
+                    <Link href={`/Kurti/${kurti.id}`}>
+                      <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-2 hover:text-primary transition-colors">
                         {kurti.name}
                       </h3>
-                    </div>
+                    </Link>
 
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <PriceDisplay
-                          price={kurti.price}
-                          originalPrice={kurti.originalPrice}
-                        />
-                        {renderStars(kurti.rating)}
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <PriceDisplay
+                        price={kurti.price}
+                        originalPrice={kurti.originalPrice}
+                      />
+                      {renderStars(kurti.rating)}
                     </div>
                   </div>
                 </article>
@@ -291,16 +222,15 @@ export default function KurtiGrid() {
         </div>
       </div>
 
-      {/* QuickView Modal */}
       {isQuickViewOpen && selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="relative bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeQuickView}
-              className="absolute top-3 right-3 z-50 p-2 bg-white/90 rounded-full hover:bg-gray-100 transition shadow"
+              className="absolute top-4 right-4 z-50 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition"
               aria-label="Close quick view"
             >
-              <FiX className="h-6 w-6 text-dark" />
+              <FiX className="h-5 w-5 text-gray-600" />
             </button>
             <QuickView
               product={selectedProduct}
@@ -313,7 +243,6 @@ export default function KurtiGrid() {
   );
 }
 
-// QuickView Component with Image Zoom
 function QuickView({
   product,
 }: {
@@ -335,12 +264,11 @@ function QuickView({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 lg:p-6">
-      {/* Left: Image Gallery */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
       <div className="flex flex-col gap-4">
         <div
           ref={containerRef}
-          className="relative w-full h-80 md:h-96 overflow-hidden rounded-lg cursor-zoom-in bg-gray-100"
+          className="relative w-full h-80 overflow-hidden rounded-lg bg-gray-50"
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setZoomStyle({ backgroundPosition: "center" })}
         >
@@ -353,17 +281,16 @@ function QuickView({
             }}
           />
         </div>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-3">
           {product.images.map((img, idx) => (
             <button
               key={idx}
-              className={`relative h-20 rounded-md overflow-hidden border-2 transition ${
+              className={`relative h-20 rounded overflow-hidden border transition ${
                 mainImage === img
-                  ? "border-primary"
-                  : "border-transparent hover:border-secondary/70"
+                  ? "border-gray-700"
+                  : "border-transparent hover:border-gray-400"
               }`}
               onClick={() => setMainImage(img)}
-              aria-label={`Select image ${idx + 1}`}
             >
               <Image
                 src={img}
@@ -377,48 +304,52 @@ function QuickView({
         </div>
       </div>
 
-      {/* Right: Details */}
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl lg:text-3xl font-bold text-dark">
-          {product.name}
-        </h1>
-        <p className="text-xl lg:text-2xl font-semibold text-primary">
-          {product.price}
-        </p>
-        <p className="text-gray-600 text-sm lg:text-base">
-          {product.description}
-        </p>
+        <div>
+          <span className="text-xs text-gray-500 uppercase">
+            {product.brand}
+          </span>
+          <h1 className="text-xl lg:text-2xl font-medium text-gray-900 mt-1">
+            {product.name}
+          </h1>
+          <div className="mt-2">
+            <PriceDisplay
+              price={product.price}
+              originalPrice={product.originalPrice}
+              size="lg"
+            />
+          </div>
+        </div>
 
-        {/* Quantity Selector */}
+        <div className="mt-4">
+          <h3 className="text-sm font-medium text-gray-900">Description</h3>
+          <p className="text-gray-600 text-sm mt-1">{product.description}</p>
+        </div>
+
         <div className="mt-2">
-          <h3 className="text-base lg:text-lg font-semibold text-dark">
-            Quantity
-          </h3>
+          <h3 className="text-sm font-medium text-gray-900">Quantity</h3>
           <div className="flex items-center gap-2 mt-1">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="px-3 py-1 border rounded-md text-base hover:bg-gray-100 transition"
-              aria-label="Decrease quantity"
+              className="px-3 py-1 border rounded text-sm hover:bg-gray-50 transition"
             >
               -
             </button>
-            <span className="px-4 py-1 text-base">{quantity}</span>
+            <span className="px-4 py-1 text-sm">{quantity}</span>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="px-3 py-1 border rounded-md text-base hover:bg-gray-100 transition"
-              aria-label="Increase quantity"
+              className="px-3 py-1 border rounded text-sm hover:bg-gray-50 transition"
             >
               +
             </button>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-4 flex flex-col sm:flex-row gap-2">
-          <button className="flex-1 bg-primary text-white py-3 rounded-md hover:bg-primary-dark transition text-base">
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <button className="flex-1 bg-gray-900 text-white py-3 rounded hover:bg-black transition text-sm font-medium">
             Buy Now
           </button>
-          <button className="flex-1 bg-secondary text-white py-3 rounded-md hover:bg-secondary-dark transition text-base">
+          <button className="flex-1 border border-gray-900 py-3 rounded hover:bg-gray-50 transition text-sm font-medium">
             Add to Cart
           </button>
         </div>
@@ -432,12 +363,12 @@ const Badge = ({
   color,
   children,
 }: {
-  color: "primary" | "secondary";
+  color?: "sale";
   children: React.ReactNode;
 }) => (
   <span
-    className={`px-2 py-1 text-xs uppercase tracking-wide rounded-full shadow font-poppins ${
-      color === "primary" ? "bg-primary text-white" : "bg-secondary text-white"
+    className={`px-2 py-1 text-xs uppercase rounded ${
+      color === "sale" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"
     }`}
   >
     {children}
@@ -445,7 +376,7 @@ const Badge = ({
 );
 
 const ColorSwatch = ({ color }: { color: string }) => (
-  <div className="relative h-6 w-6 rounded-full border-2 border-white shadow transition-transform hover:scale-110">
+  <div className="relative h-5 w-5 rounded-full border border-white shadow-sm">
     <span
       className="absolute inset-0 rounded-full"
       style={{ backgroundColor: color }}
@@ -456,16 +387,22 @@ const ColorSwatch = ({ color }: { color: string }) => (
 const PriceDisplay = ({
   price,
   originalPrice,
+  size = "md",
 }: {
   price: string;
   originalPrice?: string;
+  size?: "md" | "lg";
 }) => (
   <div className="flex items-baseline gap-2">
-    <span className="font-poppins text-lg lg:text-xl font-bold text-primary">
+    <span
+      className={`font-medium ${
+        size === "lg" ? "text-xl text-gray-900" : "text-gray-900"
+      }`}
+    >
       {price}
     </span>
     {originalPrice && (
-      <span className="font-poppins text-sm text-secondary/70 line-through">
+      <span className="text-sm text-gray-500 line-through">
         {originalPrice}
       </span>
     )}
@@ -473,7 +410,11 @@ const PriceDisplay = ({
 );
 
 const Star = ({ type }: { type: "full" | "half" | "empty" }) => (
-  <svg className="w-4 h-4 text-accent" viewBox="0 0 20 20" fill="currentColor">
+  <svg
+    className="w-3 h-3 text-yellow-400"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
     {type === "full" && (
       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
     )}
