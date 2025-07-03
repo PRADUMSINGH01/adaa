@@ -61,14 +61,85 @@ const UserWishlist: React.FC = () => {
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white ${
-            notification.type === "success" ? "bg-green-500" : "bg-red-500"
-          } transition-opacity duration-300 animate-fadeIn`}
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg flex items-start space-x-3 transform transition-all duration-300 ${
+            notification.type === "success"
+              ? "bg-[#8A9B6E] border-l-4 border-[#6E7F58]"
+              : "bg-[#D57A7A] border-l-4 border-[#B85C5C]"
+          } ${notification ? "animate-slideIn" : "animate-fadeOut"}`}
+          style={{
+            minWidth: "300px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            fontFamily: "Poppins, sans-serif",
+          }}
         >
-          {notification.message}
+          <div
+            className={`mt-0.5 flex-shrink-0 rounded-full p-1 ${
+              notification.type === "success"
+                ? "bg-[#6E7F58] text-white"
+                : "bg-[#B85C5C] text-white"
+            }`}
+          >
+            {notification.type === "success" ? (
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            )}
+          </div>
+
+          <div className="flex-1">
+            <p className="font-medium text-white text-base">
+              {notification.type === "success" ? "Success!" : "Notice"}
+            </p>
+            <p className="mt-1 text-[#F5F0E6] text-sm">
+              {notification.message}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setNotification(null)}
+            className="text-[#F5F0E6] hover:text-white transition-colors"
+            aria-label="Close notification"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
       )}
-
       <div className="max-w-7xl mx-auto">
         <header className="flex items-center gap-3 mb-6 p-4 bg-white rounded-xl shadow-sm">
           <div className="bg-[#E07A5F]/10 p-2 rounded-full">
