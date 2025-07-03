@@ -5,7 +5,8 @@ import { FiHeart, FiTrash2, FiShoppingCart, FiLoader } from "react-icons/fi";
 import Image from "next/image";
 import Loading from "@/app/loading";
 import { useUserData } from "@/components/Context/UserContext";
-
+import Link from "next/link";
+import items from "razorpay/dist/types/items";
 interface WishlistItem {
   id: string;
   images: string[];
@@ -177,93 +178,68 @@ const UserWishlist: React.FC = () => {
                 key={item.id}
                 className="bg-white rounded-xl shadow-sm border border-[#4A4A48]/10 overflow-hidden flex flex-col transition-all hover:shadow-md"
               >
-                <div className="relative aspect-[3/4] w-full">
-                  <Image
-                    src={item.images[0]}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                  {item.inStock === false && (
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <span className="bg-white/90 px-2 py-1 rounded text-xs font-medium text-[#4A4A48]">
-                        Out of Stock
-                      </span>
-                    </div>
-                  )}
-
-                  {item.discountPrice && (
-                    <span className="absolute top-3 left-3 bg-[#E07A5F] text-white text-xs font-bold px-2 py-1 rounded">
-                      SALE
-                    </span>
-                  )}
-                </div>
-
-                <div className="p-4 flex-grow flex flex-col">
-                  <h3 className="font-medium text-[#4A4A48] line-clamp-2 mb-2 text-sm sm:text-base">
-                    {item.name}
-                  </h3>
-
-                  <div className="mt-auto">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-base sm:text-lg font-bold text-[#4A4A48]">
-                        ₹{item.price}
-                      </span>
-                      {item.discountPrice && (
-                        <span className="text-[#4A4A48]/60 line-through text-sm">
-                          ₹{item.discountPrice}
+                <Link href={item.id}>
+                  <div className="relative aspect-[3/4] w-full">
+                    <Image
+                      src={item.images[0]}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                    {item.inStock === false && (
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <span className="bg-white/90 px-2 py-1 rounded text-xs font-medium text-[#4A4A48]">
+                          Out of Stock
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleAddToCart(item.id)}
-                        disabled={
-                          isProcessing === item.id || item.inStock === false
-                        }
-                        className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-xs sm:text-sm transition ${
-                          isProcessing === item.id
-                            ? "bg-[#E07A5F]/30 text-[#E07A5F] cursor-not-allowed"
-                            : "bg-[#E07A5F] hover:bg-[#C86A50] text-white"
-                        } ${
-                          item.inStock === false
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
-                        {isProcessing === item.id ? (
-                          <FiLoader className="animate-spin" />
-                        ) : (
-                          <>
-                            <FiShoppingCart className="text-sm sm:text-base" />
-                            <span className="hidden sm:inline">
-                              Add to Cart
-                            </span>
-                          </>
-                        )}
-                      </button>
+                    {item.discountPrice && (
+                      <span className="absolute top-3 left-3 bg-[#E07A5F] text-white text-xs font-bold px-2 py-1 rounded">
+                        SALE
+                      </span>
+                    )}
+                  </div>
 
-                      <button
-                        onClick={() => handleRemove(item.id)}
-                        disabled={isProcessing === item.id}
-                        className={`p-2 sm:p-3 rounded-lg transition ${
-                          isProcessing === item.id
-                            ? "bg-[#F5F0E6] text-[#E07A5F] cursor-not-allowed"
-                            : "bg-[#F5F0E6] hover:bg-[#E07A5F] text-[#4A4A48] hover:text-white"
-                        }`}
-                        aria-label="Remove item"
-                      >
-                        {isProcessing === item.id ? (
-                          <FiLoader className="animate-spin" />
-                        ) : (
-                          <FiTrash2 className="text-sm sm:text-base" />
+                  <div className="p-4 flex-grow flex flex-col">
+                    <h3 className="font-medium text-[#4A4A48] line-clamp-2 mb-2 text-sm sm:text-base">
+                      {item.name}
+                    </h3>
+
+                    <div className="mt-auto">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-base sm:text-lg font-bold text-[#4A4A48]">
+                          ₹{item.price}
+                        </span>
+                        {item.discountPrice && (
+                          <span className="text-[#4A4A48]/60 line-through text-sm">
+                            ₹{item.discountPrice}
+                          </span>
                         )}
-                      </button>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleRemove(item.id)}
+                          disabled={isProcessing === item.id}
+                          className={`p-2 sm:p-3 rounded-lg transition ${
+                            isProcessing === item.id
+                              ? "bg-[#F5F0E6] text-[#E07A5F] cursor-not-allowed"
+                              : "bg-[#F5F0E6] hover:bg-[#E07A5F] text-[#4A4A48] hover:text-white"
+                          }`}
+                          aria-label="Remove item"
+                        >
+                          {isProcessing === item.id ? (
+                            <FiLoader className="animate-spin" />
+                          ) : (
+                            <FiTrash2 className="text-sm sm:text-base" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
