@@ -39,7 +39,7 @@ const UserWishlist: React.FC = () => {
     setIsProcessing(id);
     // Simulate API call
     setTimeout(() => {
-      setWishlist(wishlist.filter((item) => item.id !== id));
+      setWishlist(wishlist.filter(item => item.id !== id));
       showNotification("success", "Item removed from wishlist");
       setIsProcessing(null);
     }, 800);

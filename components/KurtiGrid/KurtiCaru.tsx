@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export function KurtiCarousel({ images }: { images?: string[] }) {
   // Normalize images to an array so hooks run unconditionally
@@ -155,20 +154,6 @@ export function KurtiCarousel({ images }: { images?: string[] }) {
       </div>
 
       {/* Prev/Next buttons */}
-      <button
-        onClick={goPrev}
-        aria-label="Previous slide"
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 z-20"
-      >
-        <FiChevronLeft size={20} />
-      </button>
-      <button
-        onClick={goNext}
-        aria-label="Next slide"
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 z-20"
-      >
-        <FiChevronRight size={20} />
-      </button>
 
       {/* Pagination dots */}
       <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 z-20">
