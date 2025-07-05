@@ -29,13 +29,13 @@ export default function Navbar() {
     {
       name: "Collections",
       items: [
-        { name: "New Arrivals", url: "Collections/New-Arrivals" },
-        { name: "Co-ord Sets", url: "Collections/Co-ord-Sets" },
+        { name: "New Arrivals", url: "Kurties/New-Arrivals" },
+        { name: "Co-ord Sets", url: "Kurties/Co-ord-Sets" },
       ],
     },
     {
       name: "Girls",
-      url: "Girls-Collection/Girl",
+      url: "Girls-Collection",
     },
   ];
 
@@ -55,7 +55,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-neutral text-dark shadow-sm w-full z-50">
-      <div className="hidden md:flex items-center justify-center h-16">
+      <div className="text-[8px] md:flex md:text-lg items-center justify-center h-16">
         <div
           className="flex items-center justify-center gap-8"
           ref={dropdownRef}

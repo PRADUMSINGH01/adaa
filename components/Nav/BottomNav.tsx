@@ -40,14 +40,14 @@ const BottomNan = () => {
 
         {/* Refund & Return */}
         <Link
-          href="/User/#Returns"
+          href="/User/#Orders"
           className="flex flex-col items-center text-dark hover:text-primary transition-colors"
         >
           <div className="relative">
             <FiRefreshCw className="w-6 h-6" />
             <FiDollarSign className="w-3 h-3 absolute -top-1 -right-1 bg-accent text-white rounded-full p-0.5" />
           </div>
-          <span className="text-xs mt-1">Returns</span>
+          <span className="text-xs mt-1">Orders</span>
         </Link>
       </div>
     </div>

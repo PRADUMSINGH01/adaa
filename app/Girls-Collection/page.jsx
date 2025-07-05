@@ -1,6 +1,5 @@
 "use client";
-import ComingSoon from "@/components/Alerts/Coming";
-
+import ComingSoon from "../../components/Alerts/Coming";
 const page = () => {
   return <ComingSoon />;
 };

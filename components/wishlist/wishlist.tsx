@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FiHeart, FiTrash2, FiShoppingCart, FiLoader } from "react-icons/fi";
+import { FiHeart, FiTrash2, FiLoader } from "react-icons/fi";
 import Image from "next/image";
 import Loading from "@/app/loading";
 import { useUserData } from "@/components/Context/UserContext";
 import Link from "next/link";
-import items from "razorpay/dist/types/items";
 interface WishlistItem {
   id: string;
   images: string[];
@@ -42,15 +41,6 @@ const UserWishlist: React.FC = () => {
     setTimeout(() => {
       setWishlist(wishlist.filter((item) => item.id !== id));
       showNotification("success", "Item removed from wishlist");
-      setIsProcessing(null);
-    }, 800);
-  };
-
-  const handleAddToCart = (id: string) => {
-    setIsProcessing(id);
-    // Simulate API call
-    setTimeout(() => {
-      showNotification("success", "Item added to cart");
       setIsProcessing(null);
     }, 800);
   };

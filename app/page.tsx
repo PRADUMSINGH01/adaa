@@ -6,6 +6,7 @@ import SlideNavbar from "@/components/SlideNavbar/SlideNabar";
 import BottomNav from "@/components/Nav/BottomNav";
 import ResponsiveImageGrid from "@/components/Banners/ResponsiveImageGrid";
 import BannerSlider from "@/components/Banners/BannerSlider";
+import ProductSlider from "@/components/AllProductSlider/AllproductSlider";
 export default function Home() {
   return (
     <>
@@ -19,6 +20,7 @@ export default function Home() {
         <KurtiGrid />
       </div>
 
+      <ProductSlider />
       <Footer />
       <BottomNav />
     </>

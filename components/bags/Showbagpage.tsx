@@ -989,8 +989,10 @@
 // };
 
 // export default BagsCollection;
+"use client";
+import ComingSoon from "../Alerts/Coming";
 const BagsCollection = () => {
-  return <></>;
+  return <ComingSoon />;
 };
 
 export default BagsCollection;
