@@ -55,7 +55,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-neutral text-dark shadow-sm w-full z-50">
-      <div className="text-[8px] md:flex md:text-lg items-center justify-center h-16">
+      <div className=" hidden text-[8px] md:flex md:text-lg items-center justify-center h-16">
         <div
           className="flex items-center justify-center gap-8"
           ref={dropdownRef}
