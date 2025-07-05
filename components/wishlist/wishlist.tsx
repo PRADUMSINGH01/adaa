@@ -6,6 +6,7 @@ import Image from "next/image";
 import Loading from "@/app/loading";
 import { useUserData } from "@/components/Context/UserContext";
 import Link from "next/link";
+
 interface WishlistItem {
   id: string;
   images: string[];
@@ -52,15 +53,15 @@ const UserWishlist: React.FC = () => {
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg flex items-start space-x-3 transform transition-all duration-300 ${
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg flex items-start space-x-3 ${
             notification.type === "success"
               ? "bg-[#8A9B6E] border-l-4 border-[#6E7F58]"
               : "bg-[#D57A7A] border-l-4 border-[#B85C5C]"
-          } ${notification ? "animate-slideIn" : "animate-fadeOut"}`}
+          }`}
           style={{
             minWidth: "300px",
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-            fontFamily: "Poppins, sans-serif",
+            animation: "slideIn 0.3s ease-out, fadeOut 0.5s ease 2.5s forwards",
           }}
         >
           <div
@@ -131,6 +132,7 @@ const UserWishlist: React.FC = () => {
           </button>
         </div>
       )}
+
       <div className="max-w-7xl mx-auto">
         <header className="flex items-center gap-3 mb-6 p-4 bg-white rounded-xl shadow-sm">
           <div className="bg-[#E07A5F]/10 p-2 rounded-full">
@@ -157,9 +159,11 @@ const UserWishlist: React.FC = () => {
             <p className="text-[#4A4A48]/60 text-center mb-6 max-w-md">
               Start saving your favorite items to see them all in one place
             </p>
-            <button className="bg-[#E07A5F] hover:bg-[#C86A50] text-white px-5 py-2.5 rounded-lg transition font-medium">
-              Continue Shopping
-            </button>
+            <Link href="/products">
+              <button className="bg-[#E07A5F] hover:bg-[#C86A50] text-white px-5 py-2.5 rounded-lg transition font-medium">
+                Continue Shopping
+              </button>
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -168,7 +172,10 @@ const UserWishlist: React.FC = () => {
                 key={item.id}
                 className="bg-white rounded-xl shadow-sm border border-[#4A4A48]/10 overflow-hidden flex flex-col transition-all hover:shadow-md"
               >
-                <Link href={item.id}>
+                <Link
+                  href={`/products/${item.id}`}
+                  className="flex flex-col h-full"
+                >
                   <div className="relative aspect-[3/4] w-full">
                     <Image
                       src={item.images[0]}
@@ -179,7 +186,7 @@ const UserWishlist: React.FC = () => {
                     />
                     {item.inStock === false && (
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                        <span className="bg-white/90 px-2 py-1 rounded text-xs font-medium text-[#4A4A48]">
+                        <span className="bg-[#F5F0E6] px-2 py-1 rounded text-xs font-medium text-[#4A4A48]">
                           Out of Stock
                         </span>
                       </div>
@@ -211,7 +218,10 @@ const UserWishlist: React.FC = () => {
 
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleRemove(item.id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleRemove(item.id);
+                          }}
                           disabled={isProcessing === item.id}
                           className={`p-2 sm:p-3 rounded-lg transition ${
                             isProcessing === item.id
@@ -235,6 +245,43 @@ const UserWishlist: React.FC = () => {
           </div>
         )}
       </div>
+
+      <style jsx global>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(100%);
+            display: none;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .text-sm-responsive {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+          }
+
+          .px-4-responsive {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+        }
+      `}</style>
     </section>
   );
 };
