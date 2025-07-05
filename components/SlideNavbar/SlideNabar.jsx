@@ -38,6 +38,33 @@ export default function Navbar() {
       url: "Girls-Collection",
     },
   ];
+  const mobinavigation = [
+    {
+      name: "Clothing",
+      items: [
+        { name: "Suit Sets", url: "Kurties/Suit-Sets" },
+        { name: "Kurtas & Tops", url: "Kurties/Kurtas-Tops" },
+        { name: "Dresses", url: "Kurties/Dresses" },
+        { name: "Dress Material", url: "Kurties/Dress-Material" },
+        { name: "Bottoms", url: "Bottom/Bottom-wear" },
+      ],
+    },
+    {
+      name: "Accessories",
+      items: [
+        { name: "Jewellery", url: "Accessories/Jewellery" },
+        { name: "Bags", url: "Accessories/Bags" },
+        { name: "Footer wear", url: "Accessories/Footer-wear" },
+      ],
+    },
+    // {
+    //   name: "Collections",
+    //   items: [
+    //     { name: "New Arrivals", url: "Kurties/New-Arrivals" },
+    //     { name: "Co-ord Sets", url: "Kurties/Co-ord-Sets" },
+    //   ],
+    // },
+  ];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -61,6 +88,58 @@ export default function Navbar() {
           ref={dropdownRef}
         >
           {navigation.map((item) => (
+            <div
+              key={item.name}
+              className="relative h-full flex items-center"
+              onMouseEnter={() => item.items && setOpenDropdown(item.name)}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              {item.url ? (
+                <Link
+                  href={item.url}
+                  className="font-poppins font-medium hover:text-secondary transition-colors py-2 px-3"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <button
+                  className="font-poppins font-medium hover:text-secondary transition-colors flex items-center gap-1 py-2 px-3"
+                  onClick={() =>
+                    setOpenDropdown(
+                      openDropdown === item.name ? null : item.name
+                    )
+                  }
+                >
+                  {item.name}
+                  <span className="text-xs ml-1">⌄</span>
+                </button>
+              )}
+
+              {item.items && openDropdown === item.name && (
+                <div className="absolute top-full z-50 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-4 min-w-[200px] mt-1">
+                  {item.items.map((subItem) => (
+                    <Link
+                      key={subItem.name}
+                      href={subItem.url}
+                      className="block py-2 px-4 hover:bg-accent/40 rounded-md transition-colors"
+                      onClick={() => setOpenDropdown(null)}
+                    >
+                      {subItem.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className=" flex text-[14px] md:hidden md:text-lg items-center justify-center h-16  ">
+        <div
+          className="flex items-center justify-center gap-8"
+          ref={dropdownRef}
+        >
+          {mobinavigation.map((item) => (
             <div
               key={item.name}
               className="relative h-full flex items-center"
