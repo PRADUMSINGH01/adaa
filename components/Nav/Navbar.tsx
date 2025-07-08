@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/app/(Images)/logo.png";
+import logo from "@/app/(Images)/logo.jpg";
 import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
 import { useCart } from "@/app/CartContext"; // Adjust path as needed
 
