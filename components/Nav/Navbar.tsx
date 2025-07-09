@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/app/(Images)/logo.jpg";
+import logo from "@/app/(Images)/logo.png";
 import SearchBarDesktop from "@/components/SearchBarDesktop/SearchBarDesktop";
 import { useCart } from "@/app/CartContext"; // Adjust path as needed
 
@@ -40,7 +40,7 @@ export default function Navbar() {
     };
   }, []);
   return (
-    <nav className="bg-neutral text-dark shadow-sm sticky top-0 z-50">
+    <nav className="bg-accent text-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         {/* Mobile Navigation */}
         <div className="md:hidden w-full  flex items-center justify-between h-16">
@@ -224,35 +224,42 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/Login"
-                className="group flex items-center gap-2 transition-all duration-300 hover:bg-primary/10 px-4 py-2 rounded-xl relative"
+                className="
+      group
+      inline-flex items-center
+      gap-3
+      px-5 py-2.5
+      rounded-lg
+      border-2 border-primary
+      bg-transparent
+    
+      transition-colors duration-200
+      hover:bg-primary hover:text-white
+      focus:outline-none focus:ring-2 focus:ring-primary/50
+    "
               >
-                {/* Main Button Content */}
-                <div className="relative">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover:bg-primary/20">
-                    <FiUser className="h-5 w-5 text-primary transition-all duration-300 group-hover:scale-110" />
-                  </div>
+                {/* Icon */}
+                <FiUser className="h-5 w-5 transition-colors duration-200 group-hover:text-white" />
 
-                  {/* Professional Alert Badge */}
-                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center">
-                    <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/30 opacity-75 duration-1000" />
-                    <div className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-semibold text-white shadow-sm transition-all duration-300 group-hover:scale-125">
-                      <span className="mt-px">!</span>
-                    </div>
-                  </div>
-                </div>
+                {/* Text */}
+                <span className="font-poppins font-semibold text-sm transition-colors duration-200 group-hover:text-white">
+                  Sign In
+                </span>
 
-                {/* Text Content */}
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-dark/90">
-                    Welcome back!
-                  </span>
-                  <span className="text-[15px] font-semibold text-primary transition-all duration-300 group-hover:tracking-wide">
-                    Sign In
-                    <span className="ml-2 inline-block translate-x-0 transition-all duration-300 group-hover:translate-x-1">
-                      &rarr;
-                    </span>
-                  </span>
-                </div>
+                {/* Badge */}
+                <span
+                  className="
+        ml-2
+        inline-flex items-center justify-center
+        h-4 w-4
+        rounded-full
+        bg-accent
+        text-[10px] font-bold text-white
+        ring-1 ring-white/50
+      "
+                >
+                  !
+                </span>
               </Link>
             )}
           </div>
