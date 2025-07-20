@@ -46,28 +46,22 @@ const HeroSlider = () => {
   // Slide data with optimized alt text and metadata
   const slides = [
     {
-      img: banner1,
+      img: "https://firebasestorage.googleapis.com/v0/b/adda-fa1b0.firebasestorage.app/o/banner%2Fbanner%20.png?alt=media&token=c5e0fd40-c790-4cf1-b25f-f3b577520599",
       alt: "Summer Collection Kurti - Elegant Traditional Wear",
       title: "Summer Collection",
       description: "Discover our elegant traditional wear collection",
     },
     {
-      img: banner2,
+      img: "https://firebasestorage.googleapis.com/v0/b/adda-fa1b0.firebasestorage.app/o/banner%2Fbottoms%20pants%20.png?alt=media&token=81726ced-0497-4f29-a7fa-2d65dd080d3a",
       alt: "Premium Kurti Collection - Contemporary Designs",
       title: "Premium Collection",
       description: "Contemporary designs for modern lifestyle",
     },
     {
-      img: banner3,
+      img: "https://firebasestorage.googleapis.com/v0/b/adda-fa1b0.firebasestorage.app/o/banner%2Fheadbanner.png?alt=media&token=09e236a7-dd59-4c22-aacd-a63939da1689",
       alt: "Designer Kurti Range - Festive & Casual Wear",
       title: "Designer Range",
       description: "Perfect for festive and casual occasions",
-    },
-    {
-      img: banner4,
-      alt: "Latest Summer Fashion - Comfortable & Stylish",
-      title: "Summer Fashion",
-      description: "Comfortable and stylish summer collection",
     },
   ];
 
@@ -271,12 +265,12 @@ const HeroSlider = () => {
 
                 {/* Content Overlay */}
                 <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 text-white z-20">
-                  <h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-lg">
+                  {/* <h2 className="text-2xl md:text-4xl font-bold mb-2 drop-shadow-lg">
                     {slide.title}
-                  </h2>
-                  <p className="text-sm md:text-lg opacity-90 drop-shadow-md">
+                  </h2> */}
+                  {/* <p className="text-sm md:text-lg opacity-90 drop-shadow-md">
                     {slide.description}
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </Link>

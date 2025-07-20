@@ -9,10 +9,9 @@ import { useState, useEffect } from "react";
 import "swiper/css";
 import "swiper/css/autoplay";
 
-import hero1 from "@/app/(Images)/banners/new.png";
-import hero2 from "@/app/(Images)/banners/canvatwo.jpg";
-import hero3 from "@/app/(Images)/banners/summerr.png";
-import hero4 from "@/app/(Images)/banners/summerrrr.png";
+import hero1 from "@/app/(Images)/banners/b.png";
+import hero2 from "@/app/(Images)/banners/bb.png";
+import hero3 from "@/app/(Images)/banners/bbb.png";
 import { KurtiCarousel } from "./KurtiCaru";
 
 type Kurti = {
@@ -30,7 +29,7 @@ type Kurti = {
 export default function KurtiGrid() {
   const [kurtis, setKurties] = useState<Kurti[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const heroImages = [hero1, hero2, hero3, hero4];
+  const heroImages = [hero1, hero2, hero3];
 
   useEffect(() => {
     setLoading(true);
@@ -43,9 +42,9 @@ export default function KurtiGrid() {
 
   return (
     <section className="bg-neutral py-12 md:py-20 lg:py-28">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4">
         {/* Hero Banner */}
-        <div className="mb-20">
+        <div className="mb-0 p-1 bg-accent">
           <Swiper
             modules={[Autoplay]}
             spaceBetween={20}
@@ -56,7 +55,7 @@ export default function KurtiGrid() {
               768: { slidesPerView: 1.2 },
               1024: { slidesPerView: 1.8 },
             }}
-            className="rounded-3xl overflow-hidden shadow-2xl"
+            className="rounded-xl overflow-hidden shadow-2xl"
           >
             {heroImages.map((src, idx) => (
               <SwiperSlide key={idx}>
@@ -77,16 +76,7 @@ export default function KurtiGrid() {
         </div>
 
         {/* Section Title */}
-        <div className="text-center mb-16">
-          <h2 className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold text-dark mb-4">
-            Recommended For You
-          </h2>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-          <p className="font-poppins text-dark/70 mt-6 text-lg max-w-2xl mx-auto">
-            Discover our curated collection of premium kurtis, handpicked just
-            for you
-          </p>
-        </div>
+        <div className="text-center mb-16"></div>
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -107,7 +97,7 @@ export default function KurtiGrid() {
                   </div>
                 </div>
               ))
-            : kurtis.map((kurti) => (
+            : kurtis.slice(0, 4).map((kurti) => (
                 <div
                   key={kurti.id}
                   className="group bg-light rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
@@ -146,13 +136,6 @@ export default function KurtiGrid() {
                         {kurti.name}
                       </h3>
                     </Link>
-
-                    {/* Brand */}
-                    {kurti.brand && (
-                      <p className="font-poppins text-sm text-dark/60 mb-3 uppercase tracking-wide">
-                        {kurti.brand}
-                      </p>
-                    )}
 
                     {/* Price */}
                     <div className="flex items-baseline justify-between mb-4">
