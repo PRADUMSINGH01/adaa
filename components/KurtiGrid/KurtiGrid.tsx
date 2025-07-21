@@ -16,6 +16,7 @@ import { KurtiCarousel } from "./KurtiCaru";
 
 type Kurti = {
   id: string;
+  Sku: string;
   name: string;
   price: string;
   originalPrice?: string;
@@ -107,7 +108,7 @@ export default function KurtiGrid() {
                       <WishListButton product={kurti} />
                     </div>
 
-                    <Link href={`/Kurti/${kurti.id}`} className="block h-full">
+                    <Link href={`/Kurti/${kurti.Sku}`} className="block h-full">
                       <div className="relative h-full">
                         <KurtiCarousel images={kurti.images} />
                         <div className="absolute inset-0 bg-gradient-to-t from-dark/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

@@ -1,39 +1,57 @@
-"use client";
 import Image from "next/image";
-import summer from "@/app/(Images)/banners/summer.png";
 import Link from "next/link";
-import bag from "@/app/(Images)/banners/bag.png";
 
-import office from "@/app/(Images)/banners/new.png";
+// Banner image imports
+import bag from "@/app/(Images)/couponTwo.png";
+import office from "@/app/(Images)/couponOne.png";
+import party from "@/app/(Images)/couponthree.png";
+import casual from "@/app/(Images)/couponfour.png";
 
-import party from "@/app/(Images)/banners/enthic.png";
+export default function ResponsiveImageGrid() {
+  const images = [bag, office, party, casual];
+  const links = ["New", "Old", "100%", "Casual"];
 
-const ResponsiveImageGrid = () => {
-  const images = [summer, bag, office, party];
-  const links = ["New", "old", "100%", "hello"];
   return (
-    <div className="w-full mx-auto  mt-2">
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {images.map((src, index) => (
-          <div
-            key={index}
-            className="relative aspect-square w-full h-full overflow-hidden  transition-transform duration-300 "
-          >
-            <Link href={`/Kurties/${links[index]}`} className="curser pointer">
+    <div className="relative w-full mx-auto mt-0 px-4 bg-gray-800">
+      {/* Rain overlay */}
+      <div className="pointer-events-none absolute inset-0 " />
+
+      {/* Image grid */}
+      <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-4 py-4">
+        {images.map((src, idx) => (
+          <Link key={idx} href={`/Kurties/${links[idx]}`}>
+            <div className="overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300">
               <Image
                 src={src}
-                alt={`Grid image ${index + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority={index < 2} // Optional: prioritize loading first two images
+                alt={`Banner ${idx + 1}`}
+                width={400}
+                height={400}
+                className="w-full h-full object-contain"
+                priority={idx < 2}
               />
-            </Link>
-          </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
   );
-};
+}
 
-export default ResponsiveImageGrid;
+/* Tailwind config (tailwind.config.js):
+module.exports = {
+  theme: {
+    extend: {
+      keyframes: {
+        rain: {
+          '0%': { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '0 100%' },
+        },
+      },
+      animation: {
+        rain: 'rain 0.7s linear infinite',
+      },
+    },
+  },
+  plugins: [],
+};
+*/
