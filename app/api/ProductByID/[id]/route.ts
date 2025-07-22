@@ -1,35 +1,40 @@
-// app/api/ProductByID/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/firebase/firebase";
 
 export async function GET(request: NextRequest) {
   try {
-    // Extract product ID from URL path
+    // Extract slug from URL path
     const pathSegments = request.nextUrl.pathname.split("/");
-    const productId = pathSegments[pathSegments.length - 1];
+    const slug = decodeURIComponent(pathSegments[pathSegments.length - 1]);
 
-    if (!productId) {
+    if (!slug) {
       return NextResponse.json(
-        { error: "Product ID is required" },
+        { error: "Product slug is required" },
         { status: 400 }
       );
     }
 
-    const docRef = db.collection("Products").doc(productId);
-    const doc = await docRef.get();
+    // Query the collection where slug equals the given slug
+    const querySnapshot = await db
+      .collection("Products")
+      .where("Slug", "==", slug)
+      .limit(1)
+      .get();
 
-    if (!doc.exists) {
+    if (querySnapshot.empty) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
+
+    const doc = querySnapshot.docs[0];
 
     return NextResponse.json({
       id: doc.id,
       ...doc.data(),
     });
   } catch (error) {
-    console.error("Error fetching product:", error);
+    console.error("Error fetching product by slug:", error);
     return NextResponse.json(
-      { error: "Failed to fetch product" },
+      { error: "Failed to fetch product by slug" },
       { status: 500 }
     );
   }
