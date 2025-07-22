@@ -8,6 +8,7 @@ import { FiLoader } from "react-icons/fi";
 export default function KurtiDetailPage() {
   const params = useParams();
   const productId = params.FullView as string;
+  console.log(productId);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

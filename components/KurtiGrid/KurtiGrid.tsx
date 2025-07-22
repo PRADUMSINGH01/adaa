@@ -132,11 +132,9 @@ export default function KurtiGrid() {
                   </div>
 
                   <div className="p-6">
-                    <Link href={`/Kurti/${kurti.id}`}>
-                      <h3 className="font-poppins text-lg font-semibold text-dark mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-200">
-                        {kurti.name}
-                      </h3>
-                    </Link>
+                    <h3 className="font-poppins text-lg font-semibold text-dark mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                      {kurti.name}
+                    </h3>
 
                     {/* Price */}
                     <div className="flex items-baseline justify-between mb-4">

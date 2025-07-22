@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     // Extract slug from URL path
     const pathSegments = request.nextUrl.pathname.split("/");
     const slug = decodeURIComponent(pathSegments[pathSegments.length - 1]);
-
+    console.log(slug, "_----sever");
     if (!slug) {
       return NextResponse.json(
         { error: "Product slug is required" },
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
 
     const doc = querySnapshot.docs[0];
-
+    console.log(doc);
     return NextResponse.json({
       id: doc.id,
       ...doc.data(),
