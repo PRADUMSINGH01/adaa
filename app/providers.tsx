@@ -1,10 +1,10 @@
 // app/providers.tsx
 "use client";
 
-//import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 import { Poppins, Playfair_Display } from "next/font/google";
-//import { Session } from "next-auth";
+import { Session } from "next-auth";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,13 +20,15 @@ const playfair = Playfair_Display({
 
 interface ProvidersProps {
   children: ReactNode;
-  //  session: Session | null;
+  session: Session | null;
 }
 
-export default function Providers({ children }: ProvidersProps) {
+export default function Providers({ children, session }: ProvidersProps) {
   return (
-    //  <SessionProvider session={session}>
-    <div className={`${poppins.variable} ${playfair.variable}`}>{children}</div>
-    // </SessionProvider>
+    <SessionProvider session={session}>
+      <div className={`${poppins.variable} ${playfair.variable}`}>
+        {children}
+      </div>
+    </SessionProvider>
   );
 }

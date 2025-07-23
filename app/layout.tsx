@@ -1,10 +1,10 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-//import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
-//import Provider from "./providers";
-//import { authOptions } from "@/components/lib/auth";
+import Provider from "./providers";
+import { authOptions } from "@/components/lib/auth";
 import Navbar from "@/components/Nav/Navbar";
 import { CartProvider } from "./CartContext";
 import { UserProvider } from "@/components/Context/UserContext";
@@ -31,20 +31,20 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  //const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
-        {/* <Provider session={session}> */}
-        <UserProvider>
-          <CartProvider>
-            <Navbar />
-            {children}
-            <Analytics />
-          </CartProvider>
-        </UserProvider>
-        {/* </Provider> */}
+        <Provider session={session}>
+          <UserProvider>
+            <CartProvider>
+              <Navbar />
+              {children}
+              <Analytics />
+            </CartProvider>
+          </UserProvider>
+        </Provider>
       </body>
     </html>
   );
