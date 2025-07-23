@@ -477,9 +477,9 @@ export default function App() {
               className="flex flex-wrap justify-center gap-x-2 border-b"
               style={{ borderColor: theme.colors.border }}
             >
-              {categories.map((cat) => (
+              {categories.map((cat, index) => (
                 <button
-                  key={cat}
+                  key={index}
                   onClick={() => setCategoryFilter(cat)}
                   className="relative px-3 py-3 text-sm font-medium"
                   style={{
