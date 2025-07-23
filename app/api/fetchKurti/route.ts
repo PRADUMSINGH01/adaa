@@ -11,7 +11,7 @@ export async function GET() {
       id: doc.id,
       ...doc.data(),
     }));
-
+    console.log(products, "products-----");
     return NextResponse.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);

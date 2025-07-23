@@ -98,7 +98,7 @@ export default function KurtiGrid() {
                   </div>
                 </div>
               ))
-            : kurtis.slice(0, 4).map((kurti) => (
+            : kurtis.map((kurti) => (
                 <div
                   key={kurti.id}
                   className="group bg-light rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
