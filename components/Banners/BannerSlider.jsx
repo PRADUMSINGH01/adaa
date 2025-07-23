@@ -5,10 +5,9 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 // Import high-quality images
-import banner1 from "@/app/(Images)/banners/canvatwo.jpg";
-import banner2 from "@/app/(Images)/banners/new.png";
-import banner3 from "@/app/(Images)/banners/canvatwo.jpg";
-import banner4 from "@/app/(Images)/banners/summerrrr.png";
+import banner1 from "@/app/(Images)/banners/banner .png";
+import banner2 from "@/app/(Images)/banners/bottoms pants .png";
+import banner3 from "@/app/(Images)/banners/headbanner.png";
 
 /**
  * Professional Hero Slider Component
@@ -46,19 +45,19 @@ const HeroSlider = () => {
   // Slide data with optimized alt text and metadata
   const slides = [
     {
-      img: "",
+      img: banner1,
       alt: "Summer Collection Kurti - Elegant Traditional Wear",
       title: "Summer Collection",
       description: "Discover our elegant traditional wear collection",
     },
     {
-      img: "",
+      img: banner2,
       alt: "Premium Kurti Collection - Contemporary Designs",
       title: "Premium Collection",
       description: "Contemporary designs for modern lifestyle",
     },
     {
-      img: "",
+      img: banner3,
       alt: "Designer Kurti Range - Festive & Casual Wear",
       title: "Designer Range",
       description: "Perfect for festive and casual occasions",
