@@ -35,7 +35,7 @@ export interface Product {
   shippingInfo?: string;
   returnPolicy?: string;
   details: string[];
-  brand: string;
+  brand?: string;
   category?: string;
   sku?: string;
   stock: number;
