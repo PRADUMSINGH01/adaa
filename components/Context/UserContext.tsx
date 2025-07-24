@@ -9,9 +9,16 @@ import {
 } from "react";
 
 // Define the shape of your user data
+interface Order {
+  userId: string;
+  secureCode: number;
+  amount: number;
+  trackingId: string;
+}
 type UserDataType = {
   wishlist: wishlist[];
   Address: Address[];
+  Orders: Order[];
 };
 
 type UserContextType = {
@@ -25,6 +32,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userData, setUserData] = useState<UserDataType>({
     wishlist: [],
     Address: [],
+    Orders: [],
   });
   const [loading, setLoading] = useState(true);
 

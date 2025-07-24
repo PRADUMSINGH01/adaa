@@ -375,7 +375,7 @@ export default function UserDashboard() {
               </div>
             )}
 
-            {/* {activeSection === "orders" && (
+            {activeSection === "orders" && (
               <div className="space-y-6">
                 <h2 className="font-playfair text-3xl font-bold text-dark mb-6">
                   Order History
@@ -385,14 +385,14 @@ export default function UserDashboard() {
                   <div className="space-y-4">
                     {userData.Orders.map((order) => (
                       <div
-                        key={order.OrderId}
+                        key={order.userId}
                         className="bg-white p-6 rounded-xl shadow-sm border border-[#F5F0E6] transition-all hover:shadow-md"
                       >
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="font-poppins font-medium text-dark text-lg">
-                            {order.ProductName}
+                            {order.userId}
                           </h3>
-                          <span
+                          {/* <span
                             className={`px-3 py-1 rounded-full text-sm font-medium ${
                               order.Status === "Delivered"
                                 ? "bg-green-100 text-green-800"
@@ -400,15 +400,15 @@ export default function UserDashboard() {
                             }`}
                           >
                             {order.Status}
-                          </span>
+                          </span> */}
                         </div>
 
                         <div className="flex items-center justify-between text-sm text-[#4A4A48] font-poppins">
                           <p>
                             <span className="font-medium">Order #</span>{" "}
-                            {order.OrderId}
+                            {order.trackingId}
                           </p>
-                          <p>{order.OrderPlaced}</p>
+                          <p>{order.secureCode}</p>
                         </div>
                       </div>
                     ))}
@@ -470,7 +470,7 @@ export default function UserDashboard() {
                   </div>
                 )}
               </div>
-            )} */}
+            )}
 
             {activeSection === "returns" && (
               <div className="space-y-6">

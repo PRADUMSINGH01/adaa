@@ -55,15 +55,7 @@ declare global {
 const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
   const [sdkReady, setSdkReady] = useState(false);
   const router = useRouter();
-  const {
-    cart,
-    updateQuantity,
-    removeFromCart,
-    totalPrice,
-    itemCount,
-    clearCart,
-    isInitialized,
-  } = useCart();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     if (window.Razorpay) {
