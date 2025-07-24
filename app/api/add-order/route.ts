@@ -17,13 +17,13 @@ export async function POST(request: NextRequest) {
   try {
     const body: AddOrderBody = await request.json();
     const { userId, amount, trackingId } = body;
-
-    if (!userId || typeof amount !== "number" || !trackingId) {
-      return NextResponse.json(
-        { error: "userId, amount (number), and trackingId are required" },
-        { status: 400 }
-      );
-    }
+    console.log(userId, amount, trackingId);
+    // if (!userId || typeof amount !== "number" || !trackingId) {
+    //   return NextResponse.json(
+    //     { error: "userId, amount (number), and trackingId are required" },
+    //     { status: 400 }
+    //   );
+    // }
 
     const newOrder = {
       orderId: db.collection("_").doc().id, // auto-generated ID
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       .collection("Users")
       .doc(userId)
       .update({
-        orders: admin.firestore.FieldValue.arrayUnion(newOrder),
+        Orders: admin.firestore.FieldValue.arrayUnion(newOrder),
       });
 
     return NextResponse.json(

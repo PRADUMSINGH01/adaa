@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
+import { useCart } from "@/app/CartContext"; // Adjust path as needed
+import { useRouter } from "next/navigation";
 interface RazorpayButtonProps {
   price: number;
 }
@@ -53,6 +54,16 @@ declare global {
 
 const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
   const [sdkReady, setSdkReady] = useState(false);
+  const router = useRouter();
+  const {
+    cart,
+    updateQuantity,
+    removeFromCart,
+    totalPrice,
+    itemCount,
+    clearCart,
+    isInitialized,
+  } = useCart();
 
   useEffect(() => {
     if (window.Razorpay) {
@@ -100,9 +111,9 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
 
           const verifyData = await verifyRes.json();
 
-          if (verifyData.success) {
+          if (verifyData.status === "success") {
             // Save order to DB
-            await fetch("/api/add-order", {
+            const res = await fetch("/api/add-order", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -111,9 +122,11 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
                 trackingId: "Your_Tracking_Id",
               }),
             });
+            if (res) {
+              clearCart();
+              router.push("/");
+            }
           }
-
-          alert(verifyData.message || "Payment successful!");
         },
         prefill: {
           name: "",

@@ -93,10 +93,6 @@ const CartPage = () => {
 
   // Sample address data
 
-  const handleOrderID = () => {
-    console.log(cart, "Address", address, "OrderID ");
-  };
-
   return (
     <div className="min-h-screen bg-[#F5F0E6] font-poppins text-[#4A4A48]">
       {/* Updated Header with Progress Bar */}
@@ -520,13 +516,6 @@ const CartPage = () => {
 
                   <div className="mt-6">
                     {/* Link to Address page */}
-
-                    <button
-                      onClick={() => handleOrderID()}
-                      className="w-full block text-center bg-accent text-white py-2.5 sm:py-3 px-4 rounded-lg hover:bg-accent/90 transition-colors font-medium text-sm sm:text-base"
-                    >
-                      Proceed
-                    </button>
 
                     <RazorpayButton price={total.toFixed(2)} />
 
