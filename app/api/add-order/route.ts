@@ -1,13 +1,14 @@
 // app/api/add-order/route.ts
 import { NextRequest, NextResponse } from "next/server";
- import { db } from "@/server/firebase/firebase";
+import { db } from "@/server/firebase/firebase";
+import admin from "firebase-admin";
 interface AddOrderBody {
   userId: string;
   amount: number;
   trackingId: string;
 }
 
-// Generates a random four‑digit string, e.g. "0827"
+// Generates a random four-digit number
 function generateSecureCode(): number {
   return Math.floor(1000 + Math.random() * 9000);
 }
@@ -24,25 +25,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build the new order object
     const newOrder = {
-      orderId: db.collection("_").doc().id,      // auto‑generated ID
+      orderId: db.collection("_").doc().id, // auto-generated ID
       amount,
       trackingId,
       secureCode: generateSecureCode(),
-      placedAt: admin.firestore.Timestamp.now(),
     };
 
-    // Append to the 'orders' array
-    await db.collection("Users")
+    await db
+      .collection("Users")
       .doc(userId)
       .update({
         orders: admin.firestore.FieldValue.arrayUnion(newOrder),
       });
 
-    return NextResponse.json({ success: true, order: newOrder }, { status: 200 });
-  } catch (err: any) {
-    console.error("Error in add-order route:", err);
+    return NextResponse.json(
+      { success: true, order: newOrder },
+      { status: 200 }
+    );
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Error in add-order route:", err.message);
+    } else {
+      console.error("Unknown error in add-order route:", err);
+    }
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

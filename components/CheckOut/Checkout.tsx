@@ -12,18 +12,48 @@ interface RazorpayResponse {
   razorpay_signature: string;
 }
 
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  image?: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  prefill?: {
+    name: string;
+    email: string;
+    contact: string;
+  };
+  theme?: {
+    color: string;
+  };
+  config?: {
+    display: {
+      blocks: {
+        card: {
+          name: string;
+          instruments: { method: string }[];
+        };
+      };
+      sequence: string[];
+      preferences: {
+        show_default_blocks: boolean;
+      };
+    };
+  };
+}
+
 declare global {
   interface Window {
-    Razorpay?: {
-      new (options: any): { open: () => void };
-    };
+    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
   }
 }
 
 const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
   const [sdkReady, setSdkReady] = useState(false);
 
-  // Load Razorpay checkout script
   useEffect(() => {
     if (window.Razorpay) {
       setSdkReady(true);
@@ -43,17 +73,17 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
     }
 
     try {
-      // 1. Create order on server
+      // 1. Create order
       const res = await fetch("/api/Payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: price}),
+        body: JSON.stringify({ amount: price }),
       });
-      if (!res.ok) throw new Error("Failed to create order");
+
+      if (!res.ok) throw new Error("Failed to create Razorpay order");
       const orderData = await res.json();
 
-      // 2. Configure Razorpay checkout
-      const options = {
+      const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
         amount: orderData.amount,
         currency: orderData.currency || "INR",
@@ -62,20 +92,27 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
         image: "/logo.png",
         order_id: orderData.id,
         handler: async (response: RazorpayResponse) => {
-          // 3. Verify on server
           const verifyRes = await fetch("/api/Verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
           });
+
           const verifyData = await verifyRes.json();
-          if(verifyData.success){
-            const AddNewOrder = await fetch('/api/add-order',{
-              method :"POST",
-              headers:{"Content-Type":"application/json"},
-              body:JSON.stringify({userId:"hs947518@gmail.com", amount:500, trackingId:"Your_Tracking_Id"})
-            })
+
+          if (verifyData.success) {
+            // Save order to DB
+            await fetch("/api/add-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: "hs947518@gmail.com",
+                amount: price,
+                trackingId: "Your_Tracking_Id",
+              }),
+            });
           }
+
           alert(verifyData.message || "Payment successful!");
         },
         prefill: {
@@ -86,7 +123,6 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
         theme: {
           color: "#E07A5F",
         },
-        // Only show card payments
         config: {
           display: {
             blocks: {
@@ -103,12 +139,16 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
         },
       };
 
-      // 4. Open checkout
-      const rzp = new (window.Razorpay as any)(options);
+      const rzp = new window.Razorpay!(options);
       rzp.open();
-    } catch (err: any) {
-      console.error("Payment error:", err);
-      alert(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Payment error:", err.message);
+        alert(err.message);
+      } else {
+        console.error("Unknown error:", err);
+        alert("An unexpected error occurred.");
+      }
     }
   };
 
