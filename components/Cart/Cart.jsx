@@ -2,7 +2,8 @@
 "use client";
 import React, { useState } from "react";
 import { useUserData } from "@/components/Context/UserContext";
-
+import { useRouter } from "next/navigation";
+import RazorpayButton from "../CheckOut/Checkout";
 import Link from "next/link";
 import {
   FiShoppingBag,
@@ -20,7 +21,7 @@ import Image from "next/image";
 
 const CartPage = () => {
   const { userData, loading } = useUserData();
-
+  const router = useRouter();
   const {
     cart,
     updateQuantity,
@@ -524,8 +525,10 @@ const CartPage = () => {
                       onClick={() => handleOrderID()}
                       className="w-full block text-center bg-accent text-white py-2.5 sm:py-3 px-4 rounded-lg hover:bg-accent/90 transition-colors font-medium text-sm sm:text-base"
                     >
-                      Proceed to Shipping
+                      Proceed
                     </button>
+
+                    <RazorpayButton price={total.toFixed(2)} />
 
                     <p className="text-center text-xs text-gray-500 mt-3">
                       By placing your order, you agree to our{" "}

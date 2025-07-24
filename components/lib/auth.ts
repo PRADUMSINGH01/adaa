@@ -34,8 +34,8 @@ export const authOptions: NextAuthOptions = {
           image: user.image,
           wishList: [],
           Address: [],
-          Orders: 0,
-          returns: 0,
+          Orders: [],
+          returns: [],
           createdAt: new Date().toISOString(),
         });
       }
