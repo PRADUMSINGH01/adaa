@@ -493,7 +493,7 @@ export default function UserDashboard() {
                               Total:
                             </span>
                             <span className="font-semibold text-gray-900">
-                              ${order.price.toFixed(2)}
+                              ${order.price}
                             </span>
                           </div>
 
