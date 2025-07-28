@@ -1,6 +1,8 @@
 // components/UserDashboard.tsx
 "use client";
 import {
+  FiCheck,
+  FiAlertCircle,
   FiUser,
   FiMapPin,
   FiPhone,
@@ -10,20 +12,26 @@ import {
   FiHelpCircle,
   FiLogOut,
   FiMail,
+  FiX,
   FiMessageSquare,
   FiChevronDown,
 } from "react-icons/fi";
 import { useUserData } from "@/components/Context/UserContext";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 
 export default function UserDashboard() {
   const { data: session } = useSession();
+  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [activeSection, setActiveSection] = useState("account");
   const { userData } = useUserData();
-
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const sections = [
     { id: "account", icon: <FiUser />, title: "Account Details" },
     { id: "address", icon: <FiMapPin />, title: "Address Book" },
@@ -33,16 +41,94 @@ export default function UserDashboard() {
     { id: "support", icon: <FiHelpCircle />, title: "Customer Service" },
   ];
 
-  const HandleDeleteAddress = async (index: number) => {
-    await fetch(`/api/Address/Delete_Address?index=${index}`, {
-      method: "DELETE",
-    });
-  };
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
 
+  const HandleDeleteAddress = async (index: number) => {
+    try {
+      const res = await fetch(`/api/Address/Delete_Address?index=${index}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setAlert({
+          type: "success",
+          message: "Address deleted successfully",
+        });
+
+        // Clear alert after 3 seconds
+        refreshTimeoutRef.current = setTimeout(() => {
+          window.location.reload(); // Full page reload
+        }, 3000);
+      } else {
+        const errorData = await res.json();
+        setAlert({
+          type: "error",
+          message: errorData.error || "Failed to delete address",
+        });
+        setTimeout(() => setAlert(null), 3000);
+      }
+    } catch (error) {
+      console.log(error);
+      setAlert({
+        type: "error",
+        message: "Network error. Please try again.",
+      });
+      setTimeout(() => setAlert(null), 3000);
+    }
+  };
   return (
     <div className="min-h-screen bg-neutral p-4 md:p-8">
+      {alert && (
+        <div
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg flex items-start space-x-3 ${
+            alert.type === "success"
+              ? "bg-[#8A9B6E] border-l-4 border-[#6E7F58]"
+              : "bg-[#D57A7A] border-l-4 border-[#B85C5C]"
+          }`}
+          style={{
+            minWidth: "300px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            animation: "slideIn 0.3s ease-out, fadeOut 0.5s ease 2.5s forwards",
+          }}
+        >
+          <div
+            className={`mt-0.5 flex-shrink-0 rounded-full p-1 ${
+              alert.type === "success"
+                ? "bg-[#6E7F58] text-white"
+                : "bg-[#B85C5C] text-white"
+            }`}
+          >
+            {alert.type === "success" ? (
+              <FiCheck className="h-5 w-5" />
+            ) : (
+              <FiAlertCircle className="h-5 w-5" />
+            )}
+          </div>
+          <div className="flex-1">
+            <p className="font-medium text-white text-base">
+              {alert.type === "success" ? "Success!" : "Error"}
+            </p>
+            <p className="mt-1 text-[#F5F0E6] text-sm">{alert.message}</p>
+          </div>
+          <button
+            onClick={() => setAlert(null)}
+            className="text-[#F5F0E6] hover:text-white transition-colors"
+            aria-label="Close notification"
+          >
+            <FiX className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto bg-light rounded-xl shadow-lg overflow-hidden">
         {/* Mobile Navigation */}
+
         <div className="md:hidden p-4 border-b">
           <select
             value={activeSection}

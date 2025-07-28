@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FiHeart, FiTrash2, FiLoader } from "react-icons/fi";
+import { FiHeart, FiTrash2, FiLoader, FiShoppingCart } from "react-icons/fi";
 import Image from "next/image";
 import Loading from "@/app/loading";
 import { useUserData } from "@/components/Context/UserContext";
@@ -12,17 +12,15 @@ const UserWishlist = () => {
   const router = useRouter();
   const { userData, loading } = useUserData();
   const [wishlist, setWishlist] = useState([]);
-  const [isProcessing, setIsProcessing] = useState(null);
+  const [isProcessing, setIsProcessing] = useState({});
   const [notification, setNotification] = useState(null);
 
-  // Initialize local wishlist from userData
   useEffect(() => {
     if (!loading && userData?.wishlist) {
       setWishlist(userData.wishlist);
     }
   }, [userData, loading]);
 
-  // Listen for any “wishlistUpdated” event to re-fetch fresh data
   useEffect(() => {
     const onWishlistUpdate = () => {
       router.refresh();
@@ -33,27 +31,35 @@ const UserWishlist = () => {
     };
   }, [router]);
 
-  const showNotification = (message) => {
+  const showNotification = (type, message) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 3000);
   };
 
   const handleRemove = async (id) => {
-    setIsProcessing(id);
+    setIsProcessing({ [id]: "removing" });
     try {
-      // ← replace this with your real API call:
       await new Promise((res) => setTimeout(res, 800));
-
-      // remove locally for instant UI feedback
       setWishlist((w) => w.filter((item) => item.id !== id));
       showNotification("success", "Item removed from wishlist");
-
-      // notify any listeners (and this component itself) to re-fetch server data
       window.dispatchEvent(new Event("wishlistUpdated"));
     } catch (err) {
       showNotification("error", "Failed to remove item");
     } finally {
-      setIsProcessing(null);
+      setIsProcessing({});
+    }
+  };
+
+  const handleMoveToCart = async (id) => {
+    setIsProcessing({ [id]: "moving" });
+    try {
+      await new Promise((res) => setTimeout(res, 800));
+      showNotification("success", "Item moved to cart");
+      // In real app, we would call API to move item to cart
+    } catch (err) {
+      showNotification("error", "Failed to move to cart");
+    } finally {
+      setIsProcessing({});
     }
   };
 
@@ -145,71 +151,114 @@ const UserWishlist = () => {
                 key={item.id}
                 className="bg-white rounded-xl shadow-sm border border-[#4A4A48]/10 overflow-hidden flex flex-col transition-all hover:shadow-md"
               >
-                <Link
-                  href={`/products/${item.id}`}
-                  className="flex flex-col h-full"
-                >
-                  <div className="relative aspect-[3/4] w-full">
+                <div className="relative aspect-[3/4] w-full">
+                  <Link href={`/products/${item.sku}`}>
                     <Image
-                      src={item.images[0]}
+                      src={item.images[0] || "/placeholder-image.jpg"}
                       alt={item.name}
                       fill
                       className="object-cover"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     />
-                    {item.inStock === false && (
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                        <span className="bg-[#F5F0E6] px-2 py-1 rounded text-xs font-medium text-[#4A4A48]">
-                          Out of Stock
-                        </span>
-                      </div>
-                    )}
-                    {item.discountPrice && (
-                      <span className="absolute top-3 left-3 bg-[#E07A5F] text-white text-xs font-bold px-2 py-1 rounded">
-                        SALE
+                  </Link>
+                  {item.inStock === false && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <span className="bg-[#F5F0E6] px-2 py-1 rounded text-xs font-medium text-[#4A4A48]">
+                        Out of Stock
                       </span>
-                    )}
+                    </div>
+                  )}
+                  {item.discountPrice && (
+                    <span className="absolute top-3 left-3 bg-[#E07A5F] text-white text-xs font-bold px-2 py-1 rounded">
+                      {Math.round(
+                        ((item.price - item.discountPrice) / item.price) * 100
+                      )}
+                      % OFF
+                    </span>
+                  )}
+                </div>
+
+                <div className="p-4 flex-grow flex flex-col">
+                  <div className="mb-2">
+                    <p className="text-xs text-[#4A4A48]/60 mb-1">
+                      SKU: {item.sku}
+                    </p>
+                    <Link href={`/products/${item.sku}`}>
+                      <h3 className="font-medium text-[#4A4A48] line-clamp-2 hover:text-[#E07A5F] transition-colors">
+                        {item.name}
+                      </h3>
+                    </Link>
                   </div>
 
-                  <div className="p-4 flex-grow flex flex-col">
-                    <h3 className="font-medium text-[#4A4A48] line-clamp-2 mb-2 text-sm sm:text-base">
-                      {item.name}
-                    </h3>
-                    <div className="mt-auto">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-base sm:text-lg font-bold text-[#4A4A48]">
-                          ₹{item.price}
-                        </span>
-                        {item.discountPrice && (
-                          <span className="text-[#4A4A48]/60 line-through text-sm">
-                            ₹{item.discountPrice}
+                  <div className="mt-auto">
+                    <div className="flex items-center gap-2 mb-3">
+                      {item.discountPrice ? (
+                        <>
+                          <span className="text-lg font-bold text-[#4A4A48]">
+                            ₹{item.discountPrice.toLocaleString()}
                           </span>
+                          <span className="text-[#4A4A48]/60 line-through text-sm">
+                            ₹{item.price.toLocaleString()}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-lg font-bold text-[#4A4A48]">
+                          ₹{item.price.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleRemove(item.id);
+                        }}
+                        disabled={isProcessing[item.id]}
+                        className={`p-3 rounded-lg transition flex-1 flex items-center justify-center ${
+                          isProcessing[item.id] === "removing"
+                            ? "bg-[#F5F0E6] text-[#E07A5F]"
+                            : "bg-[#F5F0E6] hover:bg-[#D57A7A] text-[#4A4A48] hover:text-white"
+                        }`}
+                        aria-label="Remove item"
+                      >
+                        {isProcessing[item.id] === "removing" ? (
+                          <FiLoader className="animate-spin" />
+                        ) : (
+                          <FiTrash2 className="text-sm sm:text-base" />
                         )}
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleRemove(item.id);
-                          }}
-                          disabled={isProcessing === item.id}
-                          className={`p-2 sm:p-3 rounded-lg transition ${
-                            isProcessing === item.id
-                              ? "bg-[#F5F0E6] text-[#E07A5F] cursor-not-allowed"
-                              : "bg-[#F5F0E6] hover:bg-[#E07A5F] text-[#4A4A48] hover:text-white"
-                          }`}
-                          aria-label="Remove item"
-                        >
-                          {isProcessing === item.id ? (
-                            <FiLoader className="animate-spin" />
-                          ) : (
-                            <FiTrash2 className="text-sm sm:text-base" />
-                          )}
-                        </button>
-                      </div>
+                        <span className="ml-2 text-xs hidden sm:inline">
+                          Remove
+                        </span>
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleMoveToCart(item.id);
+                        }}
+                        disabled={isProcessing[item.id] || !item.inStock}
+                        className={`p-3 rounded-lg transition flex-1 flex items-center justify-center ${
+                          isProcessing[item.id] === "moving"
+                            ? "bg-[#F5F0E6] text-[#8A9B6E]"
+                            : item.inStock
+                            ? "bg-[#F5F0E6] hover:bg-[#8A9B6E] text-[#4A4A48] hover:text-white"
+                            : "bg-[#F5F0E6] text-[#4A4A48]/30 cursor-not-allowed"
+                        }`}
+                        aria-label="Move to cart"
+                      >
+                        {isProcessing[item.id] === "moving" ? (
+                          <FiLoader className="animate-spin" />
+                        ) : (
+                          <FiShoppingCart className="text-sm sm:text-base" />
+                        )}
+                        <span className="ml-2 text-xs hidden sm:inline">
+                          {item.inStock ? "Move to Cart" : "Unavailable"}
+                        </span>
+                      </button>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
             ))}
           </div>

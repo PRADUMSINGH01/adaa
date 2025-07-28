@@ -204,69 +204,75 @@ const CartPage = () => {
           </div>
         </main>
         {/* Shipping Address  */}
-        <main className="container mx-auto px-4 py-8 max-w-4xl">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h1 className="text-2xl font-bold mb-6 font-playfair flex items-center">
-              Delivery Address
-            </h1>
+        {address.length > 0 ? (
+          <main className="container mx-auto px-4 py-8 max-w-4xl">
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h1 className="text-2xl font-bold mb-6 font-playfair flex items-center">
+                Delivery Address
+              </h1>
 
-            <>
-              <div className="w-full">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div
-                    className={`group border rounded-xl p-5 bg-white shadow-sm relative transition-all duration-300 cursor-pointer hover:border-primary/60 hover:shadow-md ${"border-primary border-2 bg-primary/5"}`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="bg-primary/10 rounded-full p-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-primary"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5.121 17.804A8.966 8.966 0 0112 15c2.02 0 3.877.67 5.303 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="text-sm text-dark space-y-1">
-                        <h3 className="font-semibold text-base leading-snug">
-                          {address.name}
-                        </h3>
+              <>
+                <div className="w-full">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div
+                      className={`group border rounded-xl p-5 bg-white shadow-sm relative transition-all duration-300 cursor-pointer hover:border-primary/60 hover:shadow-md ${"border-primary border-2 bg-primary/5"}`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="bg-primary/10 rounded-full p-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-primary"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5.121 17.804A8.966 8.966 0 0112 15c2.02 0 3.877.67 5.303 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="text-sm text-dark space-y-1">
+                          <h3 className="font-semibold text-base leading-snug">
+                            {address.name}
+                          </h3>
 
-                        <p className="text-muted text-sm leading-tight">
-                          <span className="font-medium"> </span>{" "}
-                          {address.Address},{" "}
-                        </p>
-                        <p className="text-muted text-sm leading-tight">
-                          <span className="font-medium">City : </span>{" "}
-                          {address.city},{" "}
-                        </p>
+                          <p className="text-muted text-sm leading-tight">
+                            <span className="font-medium"> </span>{" "}
+                            {address.Address}
+                          </p>
+                          <p className="text-muted text-sm leading-tight">
+                            <span className="font-medium">City : </span>{" "}
+                            {address.city}
+                          </p>
 
-                        <p className="text-muted text-sm leading-tight">
-                          <span className="font-medium">Pincode :</span>{" "}
-                          {address.pincode},
-                        </p>
-                        <p className="text-muted text-sm leading-tight">
-                          {address.landmark},
-                        </p>
-                        <p className="text-muted text-sm">{address.country}</p>
-                        <p className="text-muted text-sm">
-                          <span className="font-medium">Phone:</span>{" "}
-                          {address.phone}
-                        </p>
+                          <p className="text-muted text-sm leading-tight">
+                            <span className="font-medium">Pincode :</span>{" "}
+                            {address.pincode}
+                          </p>
+                          <p className="text-muted text-sm leading-tight">
+                            {address.landmark}
+                          </p>
+                          <p className="text-muted text-sm">
+                            {address.country}
+                          </p>
+                          <p className="text-muted text-sm">
+                            <span className="font-medium">Phone:</span>{" "}
+                            {address.phone}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </>
-          </div>
-        </main>
+              </>
+            </div>
+          </main>
+        ) : (
+          ""
+        )}
       </div>
       {/* Main Content (Your existing cart layout) */}
       <main className="container mx-auto px-4 py-6 sm:py-8">

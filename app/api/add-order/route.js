@@ -1,25 +1,17 @@
 // app/api/add-order/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/server/firebase/firebase";
 import admin from "firebase-admin";
-interface Cart {
-  product: string;
-  price: number;
-  Quantity: number;
-}
-interface AddOrderBody {
-  cart: Cart[];
-}
-// Generates a random four-digit number
-function generateSecureCode(): number {
+
+function generateSecureCode() {
   return Math.floor(1000 + Math.random() * 9000);
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
   try {
-    const body: AddOrderBody = await request.json();
-    const { cart } = body;
-    console.log(cart);
+    const body = await request.json();
+    const { cart, Address } = body;
+    console.log(cart, Address);
     // if (!userId || typeof amount !== "number" || !trackingId) {
     //   return NextResponse.json(
     //     { error: "userId, amount (number), and trackingId are required" },
@@ -29,8 +21,8 @@ export async function POST(request: NextRequest) {
     cart.forEach((element) => {
       const newOrder = {
         orderId: db.collection("_").doc().id, // auto-generated ID
-        amount: element.price,
-        trackingId: element.product,
+        ProductName: element.name,
+        Price: element.price,
         secureCode: generateSecureCode(),
       };
       db.collection("Users")
@@ -41,8 +33,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err: unknown) {
-    if (err instanceof Error) {
+  } catch (err) {
+    if (err) {
       console.error("Error in add-order route:", err.message);
     } else {
       console.error("Unknown error in add-order route:", err);

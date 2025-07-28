@@ -46,7 +46,7 @@ export async function DELETE(req: Request) {
     addressArray.splice(index, 1); // Remove the item at the given index
     await userRef.update({ Address: addressArray });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ status: 200, success: true });
   } catch (error) {
     console.error("Error deleting address:", error);
     return NextResponse.json(
