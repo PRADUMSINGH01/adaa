@@ -685,8 +685,8 @@ export default function UserDashboard() {
                     No Orders Found
                   </h3>
                   <p className="max-w-md mx-auto mb-6 text-gray-600">
-                    You haven't placed any orders yet. Explore our collections
-                    and make your first purchase!
+                    You haven&apos;t placed any orders yet. Explore our
+                    collections and make your first purchase!
                   </p>
                   <Link
                     href="/"
