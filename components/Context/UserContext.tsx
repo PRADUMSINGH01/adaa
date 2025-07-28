@@ -10,13 +10,12 @@ import {
 
 // Define the shape of your user data
 interface Order {
-  id: string;
-  orderNumber: string;
+  ProductName: string;
+  orderId: string;
   secureCode: number;
-  amount: number;
+  price: number;
   trackingId: string;
   orderDate: string;
-  price: number;
   status: "delivered" | "processing" | "cancelled" | string; // Union type for status
   trackingStage: "shipped" | "in_transit" | "out_for_delivery" | "delivered"; // New tracking stage
   estimatedDelivery?: string; // Optional delivery estimate

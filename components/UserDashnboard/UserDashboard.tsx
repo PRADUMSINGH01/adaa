@@ -465,14 +465,14 @@ export default function UserDashboard() {
                 <div className="space-y-6">
                   {userData.Orders.map((order) => (
                     <div
-                      key={order.id}
+                      key={order.orderId}
                       className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
                     >
                       {/* Order Header */}
                       <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
                         <div>
-                          <h3 className="font-poppins font-semibold text-gray-900 text-lg">
-                            Order #{order.orderNumber}
+                          <h3 className="font-semibold text-gray-900 text-lg">
+                            Order #{order.orderId}
                           </h3>
                           <p className="text-sm text-gray-500 mt-1">
                             Placed on{" "}
@@ -493,7 +493,7 @@ export default function UserDashboard() {
                               Total:
                             </span>
                             <span className="font-semibold text-gray-900">
-                              ${order.price}
+                              ${order.price.toFixed(2)}
                             </span>
                           </div>
 
@@ -513,10 +513,20 @@ export default function UserDashboard() {
                         </div>
                       </div>
 
+                      {/* Product Preview */}
+                      <div className="flex items-center py-4 border-t border-gray-100">
+                        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        <div className="ml-4">
+                          <h4 className="font-medium text-gray-900">
+                            {order.ProductName}
+                          </h4>
+                        </div>
+                      </div>
+
                       {/* Order Tracking Section */}
                       {order.status !== "cancelled" && (
                         <div className="mt-6 pt-5 border-t border-gray-100">
-                          <h4 className="text-base font-poppins font-medium text-gray-900 mb-5">
+                          <h4 className="text-base font-medium text-gray-900 mb-5">
                             Order Tracking
                           </h4>
 
@@ -526,11 +536,8 @@ export default function UserDashboard() {
 
                             <div className="relative z-10 grid grid-cols-4">
                               {[
-                                {
-                                  stage: "shipped",
-                                  label: "Shipped from Jaipur",
-                                },
-                                { stage: "in_transit", label: "Reached Delhi" },
+                                { stage: "shipped", label: "Shipped" },
+                                { stage: "in_transit", label: "In Transit" },
                                 {
                                   stage: "out_for_delivery",
                                   label: "Out for Delivery",
@@ -563,7 +570,7 @@ export default function UserDashboard() {
                                           : "bg-gray-200"
                                       }`}
                                     >
-                                      {isCompleted ? (
+                                      {isCompleted && (
                                         <svg
                                           className="h-3.5 w-3.5 text-white"
                                           fill="none"
@@ -577,11 +584,11 @@ export default function UserDashboard() {
                                             d="M5 13l4 4L19 7"
                                           />
                                         </svg>
-                                      ) : null}
+                                      )}
                                     </div>
                                     <div className="mt-3 text-center max-w-[90px]">
                                       <p
-                                        className={`text-xs font-poppins font-medium ${
+                                        className={`text-xs font-medium ${
                                           isCompleted || isCurrent
                                             ? "text-gray-900"
                                             : "text-gray-400"
@@ -619,12 +626,12 @@ export default function UserDashboard() {
                                 />
                               </svg>
                               <div>
-                                <p className="text-sm font-poppins text-blue-800">
+                                <p className="text-sm text-blue-800">
                                   {order.trackingStage === "shipped" &&
-                                    "Your order has shipped from Jaipur warehouse. Estimated delivery: 3-5 business days"}
+                                    "Your order has shipped from our warehouse. Estimated delivery: 3-5 business days"}
 
                                   {order.trackingStage === "in_transit" &&
-                                    "Package arrived at Delhi distribution center. Next stop: your local facility"}
+                                    "Package is in transit. Next stop: your local distribution center"}
 
                                   {order.trackingStage === "out_for_delivery" &&
                                     "Driver is on the way with your package. Expected delivery today before 8 PM"}
@@ -637,6 +644,22 @@ export default function UserDashboard() {
                           </div>
                         </div>
                       )}
+
+                      {/* Action Buttons */}
+                      <div className="mt-6 flex flex-wrap gap-3">
+                        <button className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                          View Details
+                        </button>
+                        <button className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                          Contact Support
+                        </button>
+                        {order.status !== "delivered" &&
+                          order.status !== "cancelled" && (
+                            <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors">
+                              Cancel Order
+                            </button>
+                          )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -658,32 +681,21 @@ export default function UserDashboard() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2 font-playfair text-gray-800">
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">
                     No Orders Found
                   </h3>
-                  <p className="max-w-md mx-auto mb-6 font-poppins text-gray-600">
-                    You haven&apos;t placed any orders yet. Explore our
-                    collections and make your first purchase!
+                  <p className="max-w-md mx-auto mb-6 text-gray-600">
+                    You haven't placed any orders yet. Explore our collections
+                    and make your first purchase!
                   </p>
                   <Link
                     href="/"
-                    className="inline-block py-3 px-8 font-poppins font-medium rounded-lg transition duration-300"
-                    style={{
-                      backgroundColor: "#E07A5F",
-                      color: "#F8F5F2",
-                    }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#D57A7A")
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#E07A5F")
-                    }
+                    className="inline-block py-3 px-8 font-medium text-white bg-primary rounded-lg transition duration-300 hover:bg-primary-hover"
                   >
                     Start Shopping
                   </Link>
                 </div>
               ))}
-
             {activeSection === "returns" && (
               <div className="space-y-6">
                 <h2
