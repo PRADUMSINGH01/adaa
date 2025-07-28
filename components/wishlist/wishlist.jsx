@@ -1,49 +1,60 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FiHeart, FiTrash2, FiLoader } from "react-icons/fi";
 import Image from "next/image";
 import Loading from "@/app/loading";
 import { useUserData } from "@/components/Context/UserContext";
 import Link from "next/link";
 
-interface WishlistItem {
-  id: string;
-  images: string[];
-  name: string;
-  price: string;
-  discountPrice?: string;
-  inStock?: boolean;
-}
-
-const UserWishlist: React.FC = () => {
+const UserWishlist = () => {
+  const router = useRouter();
   const { userData, loading } = useUserData();
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const [isProcessing, setIsProcessing] = useState<string | null>(null);
-  const [notification, setNotification] = useState<{
-    type: string;
-    message: string;
-  } | null>(null);
+  const [wishlist, setWishlist] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(null);
+  const [notification, setNotification] = useState(null);
 
+  // Initialize local wishlist from userData
   useEffect(() => {
     if (!loading && userData?.wishlist) {
       setWishlist(userData.wishlist);
     }
   }, [userData, loading]);
 
-  const showNotification = (type: string, message: string) => {
+  // Listen for any “wishlistUpdated” event to re-fetch fresh data
+  useEffect(() => {
+    const onWishlistUpdate = () => {
+      router.refresh();
+    };
+    window.addEventListener("wishlistUpdated", onWishlistUpdate);
+    return () => {
+      window.removeEventListener("wishlistUpdated", onWishlistUpdate);
+    };
+  }, [router]);
+
+  const showNotification = (message) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleRemove = (id: string) => {
+  const handleRemove = async (id) => {
     setIsProcessing(id);
-    // Simulate API call
-    setTimeout(() => {
-      setWishlist(wishlist.filter((item) => item.id !== id));
+    try {
+      // ← replace this with your real API call:
+      await new Promise((res) => setTimeout(res, 800));
+
+      // remove locally for instant UI feedback
+      setWishlist((w) => w.filter((item) => item.id !== id));
       showNotification("success", "Item removed from wishlist");
+
+      // notify any listeners (and this component itself) to re-fetch server data
+      window.dispatchEvent(new Event("wishlistUpdated"));
+    } catch (err) {
+      showNotification("error", "Failed to remove item");
+    } finally {
       setIsProcessing(null);
-    }, 800);
+    }
   };
 
   if (loading) return <Loading />;
@@ -72,36 +83,11 @@ const UserWishlist: React.FC = () => {
             }`}
           >
             {notification.type === "success" ? (
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              <FiHeart className="h-5 w-5" />
             ) : (
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <FiTrash2 className="h-5 w-5" />
             )}
           </div>
-
           <div className="flex-1">
             <p className="font-medium text-white text-base">
               {notification.type === "success" ? "Success!" : "Notice"}
@@ -110,25 +96,12 @@ const UserWishlist: React.FC = () => {
               {notification.message}
             </p>
           </div>
-
           <button
             onClick={() => setNotification(null)}
             className="text-[#F5F0E6] hover:text-white transition-colors"
             aria-label="Close notification"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <FiTrash2 className="h-5 w-5" />
           </button>
         </div>
       )}
@@ -191,7 +164,6 @@ const UserWishlist: React.FC = () => {
                         </span>
                       </div>
                     )}
-
                     {item.discountPrice && (
                       <span className="absolute top-3 left-3 bg-[#E07A5F] text-white text-xs font-bold px-2 py-1 rounded">
                         SALE
@@ -203,7 +175,6 @@ const UserWishlist: React.FC = () => {
                     <h3 className="font-medium text-[#4A4A48] line-clamp-2 mb-2 text-sm sm:text-base">
                       {item.name}
                     </h3>
-
                     <div className="mt-auto">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-base sm:text-lg font-bold text-[#4A4A48]">
@@ -215,7 +186,6 @@ const UserWishlist: React.FC = () => {
                           </span>
                         )}
                       </div>
-
                       <div className="flex gap-2">
                         <button
                           onClick={(e) => {
@@ -257,7 +227,6 @@ const UserWishlist: React.FC = () => {
             opacity: 1;
           }
         }
-
         @keyframes fadeOut {
           from {
             opacity: 1;
@@ -267,18 +236,6 @@ const UserWishlist: React.FC = () => {
             opacity: 0;
             transform: translateX(100%);
             display: none;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .text-sm-responsive {
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-          }
-
-          .px-4-responsive {
-            padding-left: 1rem;
-            padding-right: 1rem;
           }
         }
       `}</style>

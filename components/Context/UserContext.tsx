@@ -10,11 +10,30 @@ import {
 
 // Define the shape of your user data
 interface Order {
-  userId: string;
+  id: string;
+  orderNumber: string;
   secureCode: number;
   amount: number;
   trackingId: string;
+  orderDate: string;
+  price: number;
+  status: "delivered" | "processing" | "cancelled" | string; // Union type for status
+  trackingStage: "shipped" | "in_transit" | "out_for_delivery" | "delivered"; // New tracking stage
+  estimatedDelivery?: string; // Optional delivery estimate
+  shippingHistory?: {
+    // Detailed shipping timeline
+    status: TrackingStage;
+    location: string;
+    timestamp: string;
+    description: string;
+  }[];
 }
+
+type TrackingStage =
+  | "shipped"
+  | "in_transit"
+  | "out_for_delivery"
+  | "delivered";
 type UserDataType = {
   wishlist: wishlist[];
   Address: Address[];

@@ -18,7 +18,7 @@ export const WishlistAlert = ({
   onClose,
 }: AlertProps) => {
   useEffect(() => {
-    const timer = setTimeout(onClose, 5000);
+    const timer = setTimeout(onClose, 2000);
     return () => clearTimeout(timer);
   }, [onClose]);
 

@@ -374,103 +374,229 @@ export default function UserDashboard() {
                 )}
               </div>
             )}
-
-            {activeSection === "orders" && (
-              <div className="space-y-6">
-                <h2 className="font-playfair text-3xl font-bold text-dark mb-6">
-                  Order History
-                </h2>
-
-                {userData?.Orders && userData.Orders.length > 0 ? (
-                  <div className="space-y-4">
-                    {userData.Orders.map((order) => (
-                      <div
-                        key={order.userId}
-                        className="bg-white p-6 rounded-xl shadow-sm border border-[#F5F0E6] transition-all hover:shadow-md"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-poppins font-medium text-dark text-lg">
-                            {order.userId}
+            {activeSection === "orders" &&
+              (userData.Orders && userData.Orders.length > 0 ? (
+                <div className="space-y-6">
+                  {userData.Orders.map((order) => (
+                    <div
+                      key={order.id}
+                      className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
+                    >
+                      {/* Order Header */}
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
+                        <div>
+                          <h3 className="font-poppins font-semibold text-gray-900 text-lg">
+                            Order #{order.orderNumber}
                           </h3>
-                          {/* <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              order.Status === "Delivered"
+                          <p className="text-sm text-gray-500 mt-1">
+                            Placed on{" "}
+                            {new Date(order.orderDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-700">
+                              Total:
+                            </span>
+                            <span className="font-semibold text-gray-900">
+                              ${order.price}
+                            </span>
+                          </div>
+
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium capitalize ${
+                              order.status === "delivered"
                                 ? "bg-green-100 text-green-800"
+                                : order.status === "processing"
+                                ? "bg-blue-100 text-blue-800"
+                                : order.status === "cancelled"
+                                ? "bg-red-100 text-red-800"
                                 : "bg-yellow-100 text-yellow-800"
                             }`}
                           >
-                            {order.Status}
-                          </span> */}
-                        </div>
-
-                        <div className="flex items-center justify-between text-sm text-[#4A4A48] font-poppins">
-                          <p>
-                            <span className="font-medium">Order #</span>{" "}
-                            {order.trackingId}
-                          </p>
-                          <p>{order.secureCode}</p>
+                            {order.status}
+                          </span>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div
-                    className="text-center py-12 rounded-xl"
-                    style={{ backgroundColor: "#F5F0E6" }}
-                  >
+
+                      {/* Order Tracking Section */}
+                      {order.status !== "cancelled" && (
+                        <div className="mt-6 pt-5 border-t border-gray-100">
+                          <h4 className="text-base font-poppins font-medium text-gray-900 mb-5">
+                            Order Tracking
+                          </h4>
+
+                          <div className="relative">
+                            {/* Progress Line */}
+                            <div className="absolute top-3 left-0 right-0 h-1 bg-gray-200 z-0"></div>
+
+                            <div className="relative z-10 grid grid-cols-4">
+                              {[
+                                {
+                                  stage: "shipped",
+                                  label: "Shipped from Jaipur",
+                                },
+                                { stage: "in_transit", label: "Reached Delhi" },
+                                {
+                                  stage: "out_for_delivery",
+                                  label: "Out for Delivery",
+                                },
+                                { stage: "delivered", label: "Delivered" },
+                              ].map((step, index) => {
+                                const isCurrent =
+                                  order.trackingStage === step.stage;
+                                const isCompleted =
+                                  order.trackingStage === "delivered" ||
+                                  index <
+                                    [
+                                      "shipped",
+                                      "in_transit",
+                                      "out_for_delivery",
+                                      "delivered",
+                                    ].indexOf(order.trackingStage);
+
+                                return (
+                                  <div
+                                    key={step.stage}
+                                    className="flex flex-col items-center"
+                                  >
+                                    <div
+                                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                        isCompleted
+                                          ? "bg-green-500 shadow-sm"
+                                          : isCurrent
+                                          ? "border-2 border-green-500 bg-white shadow-sm"
+                                          : "bg-gray-200"
+                                      }`}
+                                    >
+                                      {isCompleted ? (
+                                        <svg
+                                          className="h-3.5 w-3.5 text-white"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={3}
+                                            d="M5 13l4 4L19 7"
+                                          />
+                                        </svg>
+                                      ) : null}
+                                    </div>
+                                    <div className="mt-3 text-center max-w-[90px]">
+                                      <p
+                                        className={`text-xs font-poppins font-medium ${
+                                          isCompleted || isCurrent
+                                            ? "text-gray-900"
+                                            : "text-gray-400"
+                                        }`}
+                                      >
+                                        {step.label}
+                                      </p>
+                                      {isCurrent && (
+                                        <div className="mt-1.5 flex justify-center">
+                                          <div className="h-1.5 w-1.5 bg-green-500 rounded-full animate-ping"></div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Status Message */}
+                          <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-100">
+                            <div className="flex items-start">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-blue-500 mt-0.5 mr-2 flex-shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                              <div>
+                                <p className="text-sm font-poppins text-blue-800">
+                                  {order.trackingStage === "shipped" &&
+                                    "Your order has shipped from Jaipur warehouse. Estimated delivery: 3-5 business days"}
+
+                                  {order.trackingStage === "in_transit" &&
+                                    "Package arrived at Delhi distribution center. Next stop: your local facility"}
+
+                                  {order.trackingStage === "out_for_delivery" &&
+                                    "Driver is on the way with your package. Expected delivery today before 8 PM"}
+
+                                  {order.trackingStage === "delivered" &&
+                                    `Package was delivered successfully on ${new Date().toLocaleDateString()}`}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 px-4 rounded-xl bg-gray-50">
+                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-24 h-24 mx-auto flex items-center justify-center mb-6">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-16 w-16 mx-auto mb-4"
+                      className="h-12 w-12 text-gray-400"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke="#4A4A48"
+                      stroke="currentColor"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={1.5}
-                        d="M3 3h18M9 3v18M15 3v18"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                       />
                     </svg>
-                    <h3
-                      className="text-xl font-semibold mb-2"
-                      style={{
-                        fontFamily: '"Playfair Display", serif',
-                        color: "#4A4A48",
-                      }}
-                    >
-                      No Orders Found
-                    </h3>
-                    <p
-                      className="max-w-md mx-auto mb-6"
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        color: "#4A4A48",
-                      }}
-                    >
-                      You haven&apos;t placed any orders yet. Explore our
-                      collections and make your first purchase!
-                    </p>
-                    <Link
-                      href="/"
-                      className="inline-block py-3 px-8 font-poppins font-medium rounded-lg transition duration-300"
-                      style={{
-                        backgroundColor: "#E07A5F",
-                        color: "#F8F5F2",
-                      }}
-                      onMouseOver={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#D57A7A")
-                      }
-                      onMouseOut={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#E07A5F")
-                      }
-                    >
-                      Shop Now
-                    </Link>
                   </div>
-                )}
-              </div>
-            )}
+                  <h3 className="text-xl font-semibold mb-2 font-playfair text-gray-800">
+                    No Orders Found
+                  </h3>
+                  <p className="max-w-md mx-auto mb-6 font-poppins text-gray-600">
+                    You haven&apos;t placed any orders yet. Explore our
+                    collections and make your first purchase!
+                  </p>
+                  <Link
+                    href="/"
+                    className="inline-block py-3 px-8 font-poppins font-medium rounded-lg transition duration-300"
+                    style={{
+                      backgroundColor: "#E07A5F",
+                      color: "#F8F5F2",
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#D57A7A")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#E07A5F")
+                    }
+                  >
+                    Start Shopping
+                  </Link>
+                </div>
+              ))}
 
             {activeSection === "returns" && (
               <div className="space-y-6">

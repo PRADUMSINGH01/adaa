@@ -5,6 +5,7 @@ import { useCart } from "@/app/CartContext"; // Adjust path as needed
 import { useRouter } from "next/navigation";
 interface RazorpayButtonProps {
   price: number;
+  Address: string[];
 }
 
 interface RazorpayResponse {
@@ -52,10 +53,10 @@ declare global {
   }
 }
 
-const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
+const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
   const [sdkReady, setSdkReady] = useState(false);
   const router = useRouter();
-  const { clearCart } = useCart();
+  const { cart, clearCart } = useCart();
 
   useEffect(() => {
     if (window.Razorpay) {
@@ -108,11 +109,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price }) => {
             const res = await fetch("/api/add-order", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                userId: "hs947518@gmail.com",
-                amount: price,
-                trackingId: "Your_Tracking_Id",
-              }),
+              body: JSON.stringify({ cart, Address }),
             });
             if (res) {
               clearCart();

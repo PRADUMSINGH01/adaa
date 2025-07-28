@@ -101,7 +101,7 @@ export default function KurtiGrid() {
             : kurtis.map((kurti) => (
                 <div
                   key={kurti.id}
-                  className="group bg-light rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                  className="group bg-light rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
                 >
                   <div className="relative aspect-[4/5] overflow-hidden">
                     <div className="absolute top-4 right-4 z-20">
@@ -132,70 +132,28 @@ export default function KurtiGrid() {
                   </div>
 
                   <div className="p-6">
-                    <h3 className="font-poppins text-lg font-semibold text-dark mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                    <h3 className="font-poppins text-sm  text-dark mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-200">
                       {kurti.name}
                     </h3>
 
                     {/* Price */}
                     <div className="flex items-baseline justify-between mb-4">
                       <div className="flex items-baseline space-x-2">
-                        <span className="font-poppins text-xl font-bold text-dark">
+                        <span className="font-poppins text-md font-bold text-dark">
                           ₹{kurti.price}
                         </span>
-                        {kurti.originalPrice && (
-                          <span className="font-poppins text-sm text-dark/50 line-through">
-                            ₹{kurti.originalPrice}
-                          </span>
-                        )}
                       </div>
-                      {kurti.onSale && kurti.originalPrice && (
+                      {/* {kurti.onSale && kurti.originalPrice && (
                         <span className="font-poppins text-sm font-medium text-primary">
                           Save ₹
                           {calculateSavings(kurti.originalPrice, kurti.price)}
                         </span>
-                      )}
+                      )} */}
                     </div>
-
-                    {/* Colors */}
-                    {kurti.colorsAvailable &&
-                      kurti.colorsAvailable.length > 0 && (
-                        <div className="flex items-center justify-between">
-                          <div className="flex space-x-2">
-                            {kurti.colorsAvailable
-                              .slice(0, 4)
-                              .map((color, idx) => (
-                                <div
-                                  key={idx}
-                                  className="h-6 w-6 rounded-full border-2 border-white shadow-md ring-1 ring-dark/10"
-                                  style={{ backgroundColor: color }}
-                                />
-                              ))}
-                            {kurti.colorsAvailable.length > 4 && (
-                              <div className="h-6 w-6 rounded-full bg-neutral border-2 border-white shadow-md ring-1 ring-dark/10 flex items-center justify-center">
-                                <span className="text-xs font-medium text-dark">
-                                  +{kurti.colorsAvailable.length - 4}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                          <span className="font-poppins text-xs text-dark/60">
-                            {kurti.colorsAvailable.length} colors
-                          </span>
-                        </div>
-                      )}
                   </div>
                 </div>
               ))}
         </div>
-
-        {/* Load More Button */}
-        {!loading && kurtis.length > 0 && (
-          <div className="text-center mt-16">
-            <button className="font-poppins bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-200 hover:shadow-lg hover:scale-105">
-              Load More Products
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );
@@ -207,11 +165,4 @@ function calculateDiscount(original: string, current: string) {
   const orig = parseNum(original);
   const curr = parseNum(current);
   return orig > 0 ? Math.round(((orig - curr) / orig) * 100) : 0;
-}
-
-function calculateSavings(original: string, current: string) {
-  const parseNum = (p: string) => parseFloat(p.replace(/[^0-9.]/g, "")) || 0;
-  const orig = parseNum(original);
-  const curr = parseNum(current);
-  return orig > curr ? (orig - curr).toFixed(0) : "0";
 }

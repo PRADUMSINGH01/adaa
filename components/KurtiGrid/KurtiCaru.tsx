@@ -113,7 +113,7 @@ export function KurtiCarousel({ images }: { images?: string[] }) {
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-xl bg-gray-100"
+      className="relative w-full overflow-hidden  bg-gray-100"
       // Pause autoplay on hover (desktop) or when focus/touch starts
       onMouseEnter={() => setPlaying(false)}
       onMouseLeave={() => setPlaying(true)}
