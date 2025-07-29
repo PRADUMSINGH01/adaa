@@ -36,10 +36,15 @@ export default function KurtiGrid() {
     setLoading(true);
     fetch("/api/fetchKurti")
       .then((res) => res.json())
-      .then((data: Kurti[]) => setKurties(data))
+      .then((data: Kurti[]) => {
+        // Get the latest 8 kurtis
+        const latestEight = data.slice(-8).reverse(); // reverse if you want newest first
+        setKurties(latestEight);
+      })
       .catch((err) => console.error("Fetch error:", err))
       .finally(() => setLoading(false));
   }, []);
+  
 
   return (
     <section className="bg-neutral py-12 md:py-20 lg:py-28">
