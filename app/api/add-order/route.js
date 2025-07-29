@@ -11,17 +11,6 @@ export async function POST(request) {
     const body = await request.json();
     const { userId, cart, Address } = body;
 
-    // Validate the incoming request body
-    if (!userId) {
-      return NextResponse.json(
-        {
-          error:
-            "Invalid request body. userId, cart, and Address are required.",
-        },
-        { status: 400 }
-      );
-    }
-
     // Create a new order object for each item in the cart
     const newOrders = cart.map((item) => ({
       orderId: db.collection("Orders").doc().id, // Generate a unique ID
@@ -37,10 +26,7 @@ export async function POST(request) {
     }));
 
     // Get a reference to the user's document
-    const userDocRef = db.collection("Users").doc("hs947518@gmail.com");
-
-    // Atomically add the new order objects to the 'Orders' array
-    // The FieldValue.arrayUnion can take multiple arguments
+    const userDocRef = db.collection("Users").doc(userId);
     await userDocRef.update({
       Orders: getFirestore().FieldValue.arrayUnion(...newOrders),
     });
