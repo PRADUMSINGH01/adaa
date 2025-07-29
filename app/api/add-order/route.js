@@ -37,7 +37,7 @@ export async function POST(request) {
     }));
 
     // Get a reference to the user's document
-    const userDocRef = db.collection("Users").doc(userId);
+    const userDocRef = db.collection("Users").doc("hs947518@gmail.com");
 
     // Atomically add the new order objects to the 'Orders' array
     // The FieldValue.arrayUnion can take multiple arguments
