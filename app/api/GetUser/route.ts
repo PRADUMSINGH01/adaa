@@ -20,7 +20,7 @@ export async function GET() {
       );
     }
 
-    const userEmail = "hs947518@gmail.com"; //session.user.email;
+    const userEmail = session.user.email;
 
     // Use UID instead of email for document ID
     const userDoc = await db.collection("Users").doc(userEmail).get();

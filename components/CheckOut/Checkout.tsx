@@ -116,7 +116,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
                 Address,
               }),
             });
-            if (res) {
+            if (res.status === 200) {
               clearCart();
               router.push("/Order_Completed");
             }
