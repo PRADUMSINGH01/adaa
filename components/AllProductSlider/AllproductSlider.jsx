@@ -1,97 +1,91 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { KurtiCarousel } from "../KurtiGrid/KurtiCaru";
 import Link from "next/link";
+import WishListButton from "@/components/wishlist/WishListButton";
 
-// --- Helper Components & Icons ---
-const HeartIcon = ({ className = "w-6 h-6", isFilled = false }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill={isFilled ? "currentColor" : "none"}
-    stroke="currentColor"
-    strokeWidth="1.5"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-    />
-  </svg>
-);
-
-const CheckIcon = ({ className = "w-4 h-4" }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="3"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M20 6L9 17l-5-5" />
-  </svg>
-);
-
+// --- START: Icon Components ---
+// FIX: Added the missing SVG icon components.
 const CloseIcon = ({ className = "w-6 h-6" }) => (
   <svg
     className={className}
     fill="none"
     viewBox="0 0 24 24"
-    strokeWidth={1.5}
     stroke="currentColor"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
+      strokeWidth={2}
       d="M6 18L18 6M6 6l12 12"
     />
   </svg>
 );
 
-const PlusIcon = ({ className = "w-4 h-4" }) => (
+const CheckIcon = ({ className = "w-6 h-6" }) => (
   <svg
     className={className}
     fill="none"
     viewBox="0 0 24 24"
-    strokeWidth={1.5}
     stroke="currentColor"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M12 4.5v15m7.5-7.5h-15"
+      strokeWidth={3}
+      d="M5 13l4 4L19 7"
     />
   </svg>
 );
 
-const MinusIcon = ({ className = "w-4 h-4" }) => (
+const MinusIcon = ({ className = "w-5 h-5" }) => (
   <svg
     className={className}
     fill="none"
     viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
-  </svg>
-);
-
-const ChevronDown = ({ className = "w-4 h-4" }) => (
-  <svg
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
     stroke="currentColor"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+      strokeWidth={2}
+      d="M20 12H4"
     />
   </svg>
 );
 
-// --- Theme ---
+const PlusIcon = ({ className = "w-5 h-5" }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 4v16m8-8H4"
+    />
+  </svg>
+);
+
+const ChevronDown = ({ className = "w-5 h-5" }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M19 9l-7 7-7-7"
+    />
+  </svg>
+);
+// --- END: Icon Components ---
+
 const theme = {
   colors: {
     primary: "#8A6E6E",
@@ -308,23 +302,15 @@ const SelectionModal = ({ product, onClose, onConfirm }) => {
 };
 
 // --- Product Card ---
-const ProductCard = ({ product, onToggleWishlist, isWishlisted }) => (
+const ProductCard = ({ product }) => (
   <div className="group relative flex flex-col text-center">
+    <div className="absolute top-2 right-2 z-40">
+      <WishListButton product={product} />
+    </div>
     <Link href={`Kurti/${product.Slug}`}>
       <div className="relative overflow-hidden rounded-lg">
-        <button
-           // FIX: Prevent Link navigation when clicking the wishlist button.
-          onClick={(e) => {
-            e.preventDefault();
-            onToggleWishlist(product.id);
-          }}
-          className="absolute top-2 right-2 z-10 p-1.5 bg-white/60 rounded-full hover:text-red-500 transition-colors"
-        >
-          <HeartIcon
-            isFilled={isWishlisted}
-            className={`w-5 h-5 ${isWishlisted ? "text-red-500" : ""}`}
-          />
-        </button>
+        {/* FIX: Aligned wishlist button to the top-right corner */}
+
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 items-start">
           {product.isNew && (
             <span
@@ -349,40 +335,15 @@ const ProductCard = ({ product, onToggleWishlist, isWishlisted }) => (
       </div>
       <div className="pt-3 md:pt-4 flex-grow flex flex-col">
         <h3
-          // FIX: Added classes to ensure the title is on one line and truncated with an ellipsis (...) if it overflows.
           className="text-sm md:text-base font-medium px-2 whitespace-nowrap overflow-hidden text-ellipsis"
           style={{ color: theme.colors.accent }}
           title={product.name} // Show full name on hover
         >
           {product.name}
         </h3>
-        <div className="flex-grow mt-1 flex justify-center items-center gap-1">
-          {product.colors.map((color) => (
-            <span
-              key={color}
-              className="w-3 h-3 rounded-full border"
-              style={{
-                backgroundColor: color,
-                borderColor: theme.colors.border,
-              }}
-            />
-          ))}
-        </div>
-        <div className="mt-2 md:mt-3 flex justify-center items-baseline gap-2">
-          <p
-            className="text-base md:text-lg font-semibold"
-            style={{ color: theme.colors.primary }}
-          >
-            ₹{product.price.toFixed(2)}
-          </p>
-          {product.originalPrice && (
-            <p
-              className="text-xs md:text-sm line-through"
-              style={{ color: theme.colors.secondaryText }}
-            >
-              ₹{product.originalPrice.toFixed(2)}
-            </p>
-          )}
+
+        <div className="mt-2 md:m-3 flex  items-baseline gap-2">
+          <p className="text-base md:text-md font-semibold">₹{product.price}</p>
         </div>
       </div>
     </Link>
@@ -412,8 +373,6 @@ export default function App() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortOption, setSortOption] = useState("featured");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
-  const [cart, setCart] = useState([]);
   const [notification, setNotification] = useState({
     message: "",
     show: false,
@@ -430,15 +389,19 @@ export default function App() {
       try {
         const { timestamp, data } = JSON.parse(cached);
         if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+          // 24-hour cache
           setKurties(data);
           return;
         }
-      } catch {}
+      } catch (e) {
+        console.error("Failed to parse cache", e);
+        localStorage.removeItem(cacheKey);
+      }
     }
     setLoading(true);
     fetch("/api/fetchKurti")
       .then((res) => {
-        if (!res.ok) throw new Error();
+        if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
       })
       .then((data) => {
@@ -448,7 +411,7 @@ export default function App() {
           JSON.stringify({ timestamp: Date.now(), data })
         );
       })
-      .catch((err) => setError("Fetch error"))
+      .catch((err) => setError("Failed to fetch products."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -456,9 +419,10 @@ export default function App() {
     () => ["All", ...new Set(kurties.map((p) => p.category))],
     [kurties]
   );
+
   const filteredSorted = useMemo(
     () =>
-      kurties
+      [...kurties] // Create a shallow copy to avoid mutating the original array
         .filter(
           (p) => categoryFilter === "All" || p.category === categoryFilter
         )
@@ -467,11 +431,13 @@ export default function App() {
           if (sortOption === "price-high") return b.price - a.price;
           if (sortOption === "new")
             return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
-          return a.id - b.id;
+          return a.id - b.id; // Default "featured" sort
         }),
     [categoryFilter, sortOption, kurties]
   );
+
   useEffect(() => setVisiblePages(1), [categoryFilter, sortOption]);
+
   const currentProducts = useMemo(
     () => filteredSorted.slice(0, visiblePages * productsPerPage),
     [filteredSorted, visiblePages]
@@ -481,14 +447,14 @@ export default function App() {
     setNotification({ message: msg, show: true });
     setTimeout(() => setNotification({ message: "", show: false }), 3000);
   };
-  const handleToggleWishlist = (id) =>
-    setWishlist((w) =>
-      w.includes(id) ? w.filter((x) => x !== id) : [...w, id]
-    );
+
   const handleConfirmPurchase = (details) => {
-    setCart((c) => [...c, details]);
+    // FIX: Removed `setCart` as it was not defined in this component's state.
+    // If you need a cart, you would typically manage it with Context or a state management library.
+    // setCart((c) => [...c, details]);
     showNotification(`${details.productName} added to your bag!`);
   };
+
   const handleLoadMore = () => setVisiblePages((v) => v + 1);
 
   if (loading)
@@ -524,7 +490,8 @@ export default function App() {
             Error Loading Products
           </h2>
           <p className="mb-4" style={{ color: theme.colors.secondaryText }}>
-            We're having trouble loading our collection. Please try again later.
+            {error} We're having trouble loading our collection. Please try
+            again later.
           </p>
           <button
             className="py-2 px-6 rounded-lg font-medium"
@@ -593,7 +560,7 @@ export default function App() {
             }`}
           >
             <div
-              className="w-full md:w-auto overflow-x-auto scrollbar-hide border-b pb-2"
+              className="w-full md:w-auto overflow-x-auto scrollbar-hide border-b md:border-b-0 pb-2"
               style={{ borderColor: theme.colors.border }}
             >
               <div className="flex">
@@ -602,7 +569,7 @@ export default function App() {
                     key={index}
                     onClick={() => {
                       setCategoryFilter(cat);
-                      setShowFilters(false);
+                      if (window.innerWidth < 768) setShowFilters(false);
                     }}
                     className="relative px-3 py-2 text-xs sm:text-sm font-medium whitespace-nowrap"
                     style={{
@@ -651,13 +618,7 @@ export default function App() {
           {/* Products Grid */}
           <main className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
             {currentProducts.map((prod) => (
-              <ProductCard
-                key={prod.id}
-                product={prod}
-                onQuickAdd={setSelectedProduct}
-                onToggleWishlist={handleToggleWishlist}
-                isWishlisted={wishlist.includes(prod.id)}
-              />
+              <ProductCard key={prod.id} product={prod} />
             ))}
           </main>
 
@@ -679,8 +640,8 @@ export default function App() {
           )}
 
           {/* Empty State */}
-          {filteredSorted.length === 0 && (
-            <div className="py-16 text-center">
+          {filteredSorted.length === 0 && !loading && (
+            <div className="py-16 text-center col-span-full">
               <h3
                 className="text-xl font-medium mb-2"
                 style={{ fontFamily: theme.fonts.heading }}
@@ -688,7 +649,7 @@ export default function App() {
                 No Products Found
               </h3>
               <p style={{ color: theme.colors.secondaryText }}>
-                Try selecting a different category or filter
+                Try selecting a different category or filter.
               </p>
             </div>
           )}

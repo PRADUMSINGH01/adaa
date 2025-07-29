@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     }
 
     const doc = querySnapshot.docs[0];
-    console.log(doc);
+
     return NextResponse.json({
       id: doc.id,
       ...doc.data(),
