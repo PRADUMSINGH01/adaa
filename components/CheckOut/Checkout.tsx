@@ -1,5 +1,5 @@
 "use client";
-
+import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { useCart } from "@/app/CartContext"; // Adjust path as needed
 import { useRouter } from "next/navigation";
@@ -57,6 +57,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
   const [sdkReady, setSdkReady] = useState(false);
   const router = useRouter();
   const { cart, clearCart } = useCart();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (window.Razorpay) {
@@ -109,7 +110,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
             const res = await fetch("/api/add-order", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ cart, Address }),
+              body: JSON.stringify({ userId: session?.user.id, cart, Address }),
             });
             if (res) {
               clearCart();

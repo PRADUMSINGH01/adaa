@@ -39,10 +39,13 @@ const UserWishlist = () => {
   const handleRemove = async (id) => {
     setIsProcessing({ [id]: "removing" });
     try {
-      await new Promise((res) => setTimeout(res, 800));
-      setWishlist((w) => w.filter((item) => item.id !== id));
-      showNotification("success", "Item removed from wishlist");
-      window.dispatchEvent(new Event("wishlistUpdated"));
+      await fetch("/api/RemoveFromwishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: id,
+        }),
+      });
     } catch (err) {
       showNotification("error", "Failed to remove item");
     } finally {
@@ -152,7 +155,7 @@ const UserWishlist = () => {
                 className="bg-white rounded-xl shadow-sm border border-[#4A4A48]/10 overflow-hidden flex flex-col transition-all hover:shadow-md"
               >
                 <div className="relative aspect-[3/4] w-full">
-                  <Link href={`/products/${item.sku}`}>
+                  <Link href={`/kurti/${item.Slug}`}>
                     <Image
                       src={item.images[0] || "/placeholder-image.jpg"}
                       alt={item.name}

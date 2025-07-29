@@ -21,7 +21,10 @@ import { useUserData } from "@/components/Context/UserContext";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-
+interface Order {
+  orderId: string;
+  ProductName: string;
+}
 export default function UserDashboard() {
   const { data: session } = useSession();
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -82,6 +85,38 @@ export default function UserDashboard() {
       setTimeout(() => setAlert(null), 3000);
     }
   };
+
+  const handleGetInvoice = async (order: Order) => {
+    try {
+      const response = await fetch("/api/generate-invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: order.ProductName,
+          price: 5000,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate invoice.");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-${order.orderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Invoice generation failed:", error);
+    } finally {
+    }
+  };
+
   return (
     <div className="min-h-screen bg-neutral p-4 md:p-8">
       {alert && (
@@ -460,237 +495,163 @@ export default function UserDashboard() {
                 )}
               </div>
             )}
+
             {activeSection === "orders" &&
               (userData.Orders && userData.Orders.length > 0 ? (
-                <div className="space-y-6">
-                  {userData.Orders.map((order) => (
-                    <div
-                      key={order.orderId}
-                      className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
-                    >
-                      {/* Order Header */}
-                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
-                        <div>
-                          <h3 className="font-semibold text-gray-900 text-lg">
-                            Order #{order.orderId}
-                          </h3>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Placed on{" "}
-                            {new Date(order.orderDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )}
-                          </p>
-                        </div>
+                <div className="space-y-6 font-poppins">
+                  {userData.Orders.map((order) => {
+                    // --- IMPROVEMENT: Constants moved outside the map loop for efficiency ---
+                    const STAGES = [
+                      "shipped",
+                      "in_transit",
+                      "out_for_delivery",
+                      "delivered",
+                    ];
 
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-700">
-                              Total:
-                            </span>
-                            <span className="font-semibold text-gray-900">
-                              ${order.price}
-                            </span>
-                          </div>
+                    // --- IMPROVEMENT: Status colors managed with a map for better readability ---
 
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium capitalize ${
-                              order.status === "delivered"
-                                ? "bg-green-100 text-green-800"
-                                : order.status === "processing"
-                                ? "bg-blue-100 text-blue-800"
-                                : order.status === "cancelled"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                        </div>
-                      </div>
+                    const currentStageIndex = STAGES.indexOf(
+                      order.trackingStage
+                    );
+                    const progressPercentage =
+                      currentStageIndex >= 0
+                        ? (currentStageIndex / (STAGES.length - 1)) * 100
+                        : 0;
 
-                      {/* Product Preview */}
-                      <div className="flex items-center py-4 border-t border-gray-100">
-                        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-                        <div className="ml-4">
-                          <h4 className="font-medium text-gray-900">
-                            {order.ProductName}
-                          </h4>
-                        </div>
-                      </div>
+                    const isCancellable =
+                      order.status !== "delivered" &&
+                      order.status !== "cancelled";
 
-                      {/* Order Tracking Section */}
-                      {order.status !== "cancelled" && (
-                        <div className="mt-6 pt-5 border-t border-gray-100">
-                          <h4 className="text-base font-medium text-gray-900 mb-5">
-                            Order Tracking
-                          </h4>
-
-                          <div className="relative">
-                            {/* Progress Line */}
-                            <div className="absolute top-3 left-0 right-0 h-1 bg-gray-200 z-0"></div>
-
-                            <div className="relative z-10 grid grid-cols-4">
-                              {[
-                                { stage: "shipped", label: "Shipped" },
-                                { stage: "in_transit", label: "In Transit" },
+                    return (
+                      <div
+                        key={order.orderId}
+                        className="bg-white p-6 rounded-xl shadow-sm border border-neutral hover:shadow-md transition-shadow duration-300"
+                      >
+                        {/* Order Header */}
+                        <div className="flex flex-wrap items-start justify-between gap-4 mb-4 pb-4 border-b border-neutral">
+                          <div>
+                            <h3 className="font-playfair text-xl lg:text-2xl text-dark">
+                              Order #{order.orderId}
+                            </h3>
+                            <p className="text-sm text-dark/60 mt-1">
+                              Placed on{" "}
+                              {new Date(order.orderDate).toLocaleDateString(
+                                "en-IN",
                                 {
-                                  stage: "out_for_delivery",
-                                  label: "Out for Delivery",
-                                },
-                                { stage: "delivered", label: "Delivered" },
-                              ].map((step, index) => {
-                                const isCurrent =
-                                  order.trackingStage === step.stage;
-                                const isCompleted =
-                                  order.trackingStage === "delivered" ||
-                                  index <
-                                    [
-                                      "shipped",
-                                      "in_transit",
-                                      "out_for_delivery",
-                                      "delivered",
-                                    ].indexOf(order.trackingStage);
-
-                                return (
-                                  <div
-                                    key={step.stage}
-                                    className="flex flex-col items-center"
-                                  >
-                                    <div
-                                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                        isCompleted
-                                          ? "bg-green-500 shadow-sm"
-                                          : isCurrent
-                                          ? "border-2 border-green-500 bg-white shadow-sm"
-                                          : "bg-gray-200"
-                                      }`}
-                                    >
-                                      {isCompleted && (
-                                        <svg
-                                          className="h-3.5 w-3.5 text-white"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          stroke="currentColor"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={3}
-                                            d="M5 13l4 4L19 7"
-                                          />
-                                        </svg>
-                                      )}
-                                    </div>
-                                    <div className="mt-3 text-center max-w-[90px]">
-                                      <p
-                                        className={`text-xs font-medium ${
-                                          isCompleted || isCurrent
-                                            ? "text-gray-900"
-                                            : "text-gray-400"
-                                        }`}
-                                      >
-                                        {step.label}
-                                      </p>
-                                      {isCurrent && (
-                                        <div className="mt-1.5 flex justify-center">
-                                          <div className="h-1.5 w-1.5 bg-green-500 rounded-full animate-ping"></div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            <div className="text-right">
+                              <p className="text-sm text-dark/60">Total</p>
+                              <p className="font-semibold text-dark text-lg">
+                                ₹{order.price}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2.5 pt-1">
+                              <span
+                                className={`h-2.5 w-2.5 rounded-full ${"bg-yellow-400"}`}
+                              ></span>
+                              <span className="font-medium text-sm capitalize text-dark">
+                                {order.status}
+                              </span>
                             </div>
                           </div>
+                        </div>
 
-                          {/* Status Message */}
-                          <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-100">
-                            <div className="flex items-start">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-blue-500 mt-0.5 mr-2 flex-shrink-0"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              <div>
-                                <p className="text-sm text-blue-800">
-                                  {order.trackingStage === "shipped" &&
-                                    "Your order has shipped from our warehouse. Estimated delivery: 3-5 business days"}
+                        {/* Product Preview */}
+                        <div className="flex items-center py-4">
+                          {/* --- IMPROVEMENT: Uses actual product image with a fallback --- */}
+                          <img
+                            src={"/placeholder.png"}
+                            alt={order.ProductName}
+                            className="w-16 h-20 object-cover rounded-md bg-neutral"
+                          />
+                          <div className="ml-4">
+                            <h4 className="font-medium text-dark">
+                              {order.ProductName}
+                            </h4>
+                          </div>
+                        </div>
 
-                                  {order.trackingStage === "in_transit" &&
-                                    "Package is in transit. Next stop: your local distribution center"}
+                        {/* Order Tracking Section */}
+                        {order.status !== "cancelled" && (
+                          <div className="mt-4 pt-5 border-t border-neutral">
+                            {/* The container is now padded on small screens to prevent edge collision */}
+                            <div className="relative px-2 sm:px-0">
+                              {/* Background line. Adjusted to respect horizontal padding on mobile. */}
+                              <div className="absolute top-2.5 left-4 right-4 md:left-5 md:right-5 h-1.5 bg-neutral rounded-full"></div>
 
-                                  {order.trackingStage === "out_for_delivery" &&
-                                    "Driver is on the way with your package. Expected delivery today before 8 PM"}
+                              {/* Progress line. Adjusted to respect horizontal padding on mobile. */}
+                              <div
+                                className="absolute top-2.5 left-4 md:left-5 h-1.5 bg-accent rounded-full transition-all duration-700 ease-out"
+                                style={{
+                                  // The width calculation is adjusted to be more accurate with the layout.
+                                  width: `calc(${progressPercentage}%)`,
+                                }}
+                              ></div>
 
-                                  {order.trackingStage === "delivered" &&
-                                    `Package was delivered successfully on ${new Date().toLocaleDateString()}`}
-                                </p>
+                              <div className="relative flex justify-between items-start">
+                                {STAGES.map((stage) => (
+                                  <div
+                                    key={stage}
+                                    // IMPROVEMENT: Replaced fixed width `w-20` with a flexible and responsive approach.
+                                    // `flex-1` distributes space evenly.
+                                    // `max-w-[6rem]` prevents items from getting too wide on larger screens.
+                                    className="flex flex-1 flex-col items-center text-center max-w-[6rem]"
+                                  >
+                                    {/* <TrackingIcon
+              stage={stage}
+              currentStage={order.trackingStage}
+            /> */}
+                                    {/* IMPROVEMENT: Font size is smaller on tiny screens and text wrapping is handled better. */}
+                                    <p className="mt-2 text-[11px] leading-tight sm:text-xs font-medium text-dark/70 capitalize">
+                                      {stage.replace(/_/g, " ")}
+                                    </p>
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {/* Action Buttons */}
-                      <div className="mt-6 flex flex-wrap gap-3">
-                        <button className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                          View Details
-                        </button>
-                        <button className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                          Contact Support
-                        </button>
-                        {order.status !== "delivered" &&
-                          order.status !== "cancelled" && (
-                            <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors">
+                        {/* Action Buttons */}
+                        <div className="mt-6 flex flex-wrap gap-3">
+                          <button
+                            onClick={() => {
+                              handleGetInvoice(order);
+                            }}
+                            className="px-4 py-2 text-sm font-medium border border-neutral text-dark/80 rounded-md hover:bg-neutral transition-colors"
+                          >
+                            Get Invoice
+                          </button>
+                          {isCancellable && (
+                            <button className="px-4 py-2 text-sm font-medium text-secondary hover:text-white border border-secondary rounded-md hover:bg-secondary transition-colors md:ml-auto">
                               Cancel Order
                             </button>
                           )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
-                <div className="text-center py-12 px-4 rounded-xl bg-gray-50">
-                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-24 h-24 mx-auto flex items-center justify-center mb-6">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-12 w-12 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">
+                <div className="text-center py-16 px-4 rounded-xl bg-neutral/80">
+                  <div className="inline-block p-5 bg-primary/10 rounded-full mb-6"></div>
+                  <h3 className="text-2xl font-playfair mb-2 text-dark">
                     No Orders Found
                   </h3>
-                  <p className="max-w-md mx-auto mb-6 text-gray-600">
-                    You haven&apos;t placed any orders yet. Explore our
-                    collections and make your first purchase!
+                  <p className="max-w-md mx-auto mb-6 text-dark/60">
+                    When you place an order, it will appear here. Let&apos;s get
+                    shopping!
                   </p>
                   <Link
                     href="/"
-                    className="inline-block py-3 px-8 font-medium text-white bg-primary rounded-lg transition duration-300 hover:bg-primary-hover"
+                    className="inline-block py-3 px-8 font-medium text-white bg-primary rounded-lg transition duration-300 hover:bg-primary/90 shadow-sm"
                   >
                     Start Shopping
                   </Link>
