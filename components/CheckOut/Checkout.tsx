@@ -110,11 +110,15 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
             const res = await fetch("/api/add-order", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId: session?.user.id, cart, Address }),
+              body: JSON.stringify({
+                userId: session?.user.email,
+                cart,
+                Address,
+              }),
             });
             if (res) {
               clearCart();
-              router.push("/");
+              router.push("/Order_Completed");
             }
           }
         },
