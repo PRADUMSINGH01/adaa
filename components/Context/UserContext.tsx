@@ -10,7 +10,8 @@ import {
 
 // Define the shape of your user data
 interface Order {
-  ProductName: string;
+  productImage: string;
+  productName: string;
   orderId: string;
   secureCode: number;
   price: number;

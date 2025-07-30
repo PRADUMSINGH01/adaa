@@ -1,34 +1,46 @@
-// app/api/add-order/route.ts
+// app/api/add-order/route.js
 import { NextResponse } from "next/server";
-import { db } from "@/server/firebase/firebase";
+import { db } from "@/server/firebase/firebase"; // your Admin SDK init
+import { FieldValue } from "firebase-admin/firestore";
 
+// helper to generate a 4‑digit secure code
 function generateSecureCode() {
   return Math.floor(1000 + Math.random() * 9000);
 }
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const { userId, cart, Address } = body;
+    // parse the incoming JSON body
+    const { cart, Address } = await request.json();
 
-    // Create a new order object for each item in the cart
+    const userId = "hs947518@gmail.com";
+    if (!userId || !Array.isArray(cart) || !Address) {
+      return NextResponse.json(
+        { error: "Missing userId, cart array, or Address" },
+        { status: 400 }
+      );
+    }
+
+    // build the new orders array
     const newOrders = cart.map((item) => ({
-      orderId: db.collection("Orders").doc().id, // Generate a unique ID
-      ProductName: item.name,
-      price: item.price, // Standardized to lowercase 'p'
-      ProductImage:
-        item.images[0] || "https://placehold.co/64x80/e2e8f0/e2e8f0?text=.", // Add a placeholder
+      orderId: db.collection("Orders").doc().id,
+      productName: item.name,
+      price: item.price,
+      productImage:
+        item.image || "https://placehold.co/64x80/e2e8f0/e2e8f0?text=No+Image",
       orderDate: new Date().toISOString(),
-      status: "processing", // Initial status of the order
-      trackingStage: "processing", // Initial tracking stage
+      status: "processing",
+      trackingStage: "processing",
       secureCode: generateSecureCode(),
-      shippingAddress: Address, // Attach the shipping address to the order
+      shippingAddress: Address,
     }));
 
-    // Get a reference to the user's document
+    // get a reference to the user's document
     const userDocRef = db.collection("Users").doc(userId);
+
+    // atomically append the new orders onto the Orders array
     await userDocRef.update({
-      Orders: getFirestore().FieldValue.arrayUnion(...newOrders),
+      Orders: FieldValue.arrayUnion(...newOrders),
     });
 
     return NextResponse.json(

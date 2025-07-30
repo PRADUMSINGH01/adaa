@@ -23,8 +23,9 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 interface Order {
   orderId: string;
-  ProductName: string;
+  productName: string;
 }
+import Image from "next/image";
 export default function UserDashboard() {
   const { data: session } = useSession();
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -86,13 +87,25 @@ export default function UserDashboard() {
     }
   };
 
+  const HandleCancleOrder = async (email: string, orderId: string) => {
+    const res = await fetch("/api/cancel-order", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, orderId: orderId }),
+    });
+    if (res) {
+      console.log("Order cancelled");
+    }
+    return true;
+  };
+
   const handleGetInvoice = async (order: Order) => {
     try {
       const response = await fetch("/api/generate-invoice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productName: order.ProductName,
+          productName: order.productName,
           price: 5000,
         }),
       });
@@ -116,7 +129,6 @@ export default function UserDashboard() {
     } finally {
     }
   };
-
   return (
     <div className="min-h-screen bg-neutral p-4 md:p-8">
       {alert && (
@@ -533,6 +545,7 @@ export default function UserDashboard() {
                             <h3 className="font-playfair text-xl lg:text-2xl text-dark">
                               Order #{order.orderId}
                             </h3>
+
                             <p className="text-sm text-dark/60 mt-1">
                               Placed on{" "}
                               {new Date(order.orderDate).toLocaleDateString(
@@ -546,7 +559,7 @@ export default function UserDashboard() {
                             </p>
                           </div>
                           <div className="flex items-center gap-6">
-                            <div className="text-right">
+                            <div className="text-center items-center py-4 mx-4 flex w-full ">
                               <p className="text-sm text-dark/60">Total</p>
                               <p className="font-semibold text-dark text-lg">
                                 ₹{order.price}
@@ -564,16 +577,19 @@ export default function UserDashboard() {
                         </div>
 
                         {/* Product Preview */}
-                        <div className="flex items-center py-4">
+                        <div className="flex items-center  py-4">
                           {/* --- IMPROVEMENT: Uses actual product image with a fallback --- */}
-                          <img
-                            src={"/placeholder.png"}
-                            alt={order.ProductName}
-                            className="w-16 h-20 object-cover rounded-md bg-neutral"
+                          <Image
+                            src={`${order.productImage}`}
+                            alt={"DummY"}
+                            width={400}
+                            height={400}
+                            className=" w-16 h-20 object-cover rounded-md bg-neutral"
                           />
+
                           <div className="ml-4">
                             <h4 className="font-medium text-dark">
-                              {order.ProductName}
+                              {order.productName}
                             </h4>
                           </div>
                         </div>
@@ -621,16 +637,26 @@ export default function UserDashboard() {
 
                         {/* Action Buttons */}
                         <div className="mt-6 flex flex-wrap gap-3">
-                          <button
-                            onClick={() => {
-                              handleGetInvoice(order);
-                            }}
-                            className="px-4 py-2 text-sm font-medium border border-neutral text-dark/80 rounded-md hover:bg-neutral transition-colors"
-                          >
-                            Get Invoice
-                          </button>
                           {isCancellable && (
-                            <button className="px-4 py-2 text-sm font-medium text-secondary hover:text-white border border-secondary rounded-md hover:bg-secondary transition-colors md:ml-auto">
+                            <button
+                              onClick={() => {
+                                handleGetInvoice(order);
+                              }}
+                              className="px-4 py-2 text-sm font-medium border border-neutral text-dark/80 rounded-md hover:bg-neutral transition-colors"
+                            >
+                              Get Invoice
+                            </button>
+                          )}
+                          {isCancellable && (
+                            <button
+                              onClick={() =>
+                                HandleCancleOrder(
+                                  "hs947518@gmail.com",
+                                  order.orderId
+                                )
+                              }
+                              className="px-4 py-2 text-sm font-medium text-secondary hover:text-white border border-secondary rounded-md hover:bg-secondary transition-colors md:ml-auto"
+                            >
                               Cancel Order
                             </button>
                           )}
@@ -819,7 +845,7 @@ export default function UserDashboard() {
                             <p className="font-poppins text-dark">
                               24/7 Support Line
                             </p>
-                            <p className="text-secondary">+91 12345 67890</p>
+                            <p className="text-secondary">+91 7270854122</p>
                           </div>
                         </div>
 
@@ -830,7 +856,7 @@ export default function UserDashboard() {
                               Email Support
                             </p>
                             <p className="text-secondary">
-                              support@kurtikraft.com
+                              navaastorecare@gmail.com
                             </p>
                           </div>
                         </div>
