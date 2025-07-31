@@ -3,7 +3,6 @@ import { db } from "@/server/firebase/firebase";
 
 interface SimilarRequest {
   color: string;
-  size: string;
 }
 
 interface Product {
@@ -46,13 +45,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { color, size } = body as SimilarRequest;
-  if (
-    typeof color !== "string" ||
-    typeof size !== "string" ||
-    !color.trim() ||
-    !size.trim()
-  ) {
+  const { color } = body as SimilarRequest;
+  if (typeof color !== "string" || !color.trim()) {
     return NextResponse.json(
       { error: '"color" and "size" must be non-empty strings' },
       { status: 400 }
@@ -62,9 +56,7 @@ export async function POST(req: NextRequest) {
   try {
     // 3. Build query
     const productsRef = db.collection("Products");
-    const query = productsRef
-      .where("colors", "array-contains", color.trim())
-      .where("sizes", "array-contains", size.trim());
+    const query = productsRef.where("colors", "array-contains", color.trim());
 
     // 4. Fetch matching products
     const snapshot = await query.get();

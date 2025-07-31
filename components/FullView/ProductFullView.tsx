@@ -139,7 +139,6 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
         quantity,
         image: product.images[0],
       };
-      console.log(newItem);
       addToCart(newItem);
       setLiveMessage(`${quantity} ${product.name} added to cart.`);
       setToastType("success");
@@ -151,32 +150,32 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
     }
   };
 
-  // Handle buy now
-  const handleBuyNow = async () => {
-    if (!selectedSize || !selectedColor) {
-      setLiveMessage("Please select size and color.");
-      return;
-    }
-    if (product.stock === 0) {
-      setLiveMessage("Out of stock.");
-      return;
-    }
-    setIsBuying(true);
-    try {
-      router.push(
-        `/checkout?productId=${encodeURIComponent(
-          product.id
-        )}&size=${encodeURIComponent(selectedSize)}&color=${encodeURIComponent(
-          selectedColor
-        )}&qty=${quantity}`
-      );
-    } catch (err) {
-      console.error(err);
-      setLiveMessage("Failed to proceed to buy. Please try again.");
-    } finally {
-      setIsBuying(false);
-    }
-  };
+  // // Handle buy now
+  // const handleBuyNow = async () => {
+  //   if (!selectedSize || !selectedColor) {
+  //     setLiveMessage("Please select size and color.");
+  //     return;
+  //   }
+  //   if (product.stock === 0) {
+  //     setLiveMessage("Out of stock.");
+  //     return;
+  //   }
+  //   setIsBuying(true);
+  //   try {
+  //     router.push(
+  //       `/checkout?productId=${encodeURIComponent(
+  //         product.id
+  //       )}&size=${encodeURIComponent(selectedSize)}&color=${encodeURIComponent(
+  //         selectedColor
+  //       )}&qty=${quantity}`
+  //     );
+  //   } catch (err) {
+  //     console.error(err);
+  //     setLiveMessage("Failed to proceed to buy. Please try again.");
+  //   } finally {
+  //     setIsBuying(false);
+  //   }
+  // };
 
   // Zoom handlers
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -213,6 +212,22 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   };
 
   // --- RENDER ---
+
+
+
+
+  useEffect(()=>{
+ async  function simialproduct(color:string){
+const res = await fetch('/api/Similar' ,{
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({color}),
+})
+console.log(res)
+return true
+}
+simialproduct("red")
+  },[])
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl min-h-screen">
       {/* Live region for announcements */}
@@ -519,7 +534,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               <FiShoppingCart className="w-5 h-5" aria-hidden="true" />
               {adding ? "Adding..." : "Add to Cart"}
             </button>
-            <button
+            {/* <button
               onClick={handleBuyNow}
               disabled={
                 !selectedSize ||
@@ -556,7 +571,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               ) : (
                 "Buy Now"
               )}
-            </button>
+            </button> */}
             <div className="flex gap-2 w-full md:w-auto justify-center">
               <button
                 onClick={handleWishlist}

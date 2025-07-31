@@ -12,6 +12,7 @@ type SortOption = "featured" | "price-low" | "price-high" | "rating" | "newest";
 
 interface Product {
   id: string;
+  Slug: string;
   rating: number;
   reviews: number;
   name: string;
@@ -369,7 +370,7 @@ export default function ProductGrid({ params }: { params: string }) {
                       <article key={product.id} className="group relative">
                         <div
                           className="relative overflow-hidden cursor-pointer"
-                          onClick={() => handleViewFullProduct(product.id)}
+                          onClick={() => handleViewFullProduct(product.Slug)}
                         >
                           <div className="aspect-w-[4] aspect-h-[5] bg-neutral">
                             <KurtiCarousel images={product.images} />
@@ -384,10 +385,10 @@ export default function ProductGrid({ params }: { params: string }) {
                         <div className="pt-4">
                           <h3 className="font-playfair text-lg text-dark leading-tight">
                             <a
-                              href={`/Kurti/${product.id}`}
+                              href={`/Kurti/${product.Slug}`}
                               onClick={(e) => {
                                 e.preventDefault();
-                                handleViewFullProduct(product.id);
+                                handleViewFullProduct(product.Slug);
                               }}
                               className="hover:text-primary transition-colors"
                             >
