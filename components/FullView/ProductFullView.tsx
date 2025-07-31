@@ -50,7 +50,6 @@ interface ProductDetailViewProps {
 const tabs = ["description", "care", "reviews"] as const;
 
 export default function ProductDetailView({ product }: ProductDetailViewProps) {
-  const router = useRouter();
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error" | "info">(
     "success"
@@ -67,7 +66,6 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
-  const [isBuying, setIsBuying] = useState(false);
   const { addToCart, isInitialized } = useCart();
 
   // Tabs
@@ -213,21 +211,18 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
   // --- RENDER ---
 
-
-
-
-  useEffect(()=>{
- async  function simialproduct(color:string){
-const res = await fetch('/api/Similar' ,{
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({color}),
-})
-console.log(res)
-return true
-}
-simialproduct("red")
-  },[])
+  useEffect(() => {
+    async function simialproduct(color: string) {
+      const res = await fetch("/api/Similar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ color }),
+      });
+      console.log(res);
+      return true;
+    }
+    simialproduct("red");
+  }, []);
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl min-h-screen">
       {/* Live region for announcements */}
