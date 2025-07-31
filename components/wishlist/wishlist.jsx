@@ -7,6 +7,7 @@ import Image from "next/image";
 import Loading from "@/app/loading";
 import { useUserData } from "@/components/Context/UserContext";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const UserWishlist = () => {
   const router = useRouter();
@@ -14,10 +15,15 @@ const UserWishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const [isProcessing, setIsProcessing] = useState({});
   const [notification, setNotification] = useState(null);
+  const { data: session } = useSession();
+
+  const userId = session?.user.email;
 
   useEffect(() => {
-    if (!loading && userData?.wishlist) {
+    if (!loading && userData?.wishlist && !userId) {
       setWishlist(userData.wishlist);
+    } else {
+      router.push("/Login");
     }
   }, [userData, loading]);
 
@@ -36,7 +42,7 @@ const UserWishlist = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleRemove = async (id) => {
+  const handleRemove = async (id, userId) => {
     setIsProcessing({ [id]: "removing" });
     try {
       await fetch("/api/RemoveFromwishlist", {
@@ -44,6 +50,7 @@ const UserWishlist = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productId: id,
+          userId: userId,
         }),
       });
     } catch (err) {
@@ -215,7 +222,7 @@ const UserWishlist = () => {
                       <button
                         onClick={(e) => {
                           e.preventDefault();
-                          handleRemove(item.id);
+                          handleRemove(item.id, userId);
                         }}
                         disabled={isProcessing[item.id]}
                         className={`p-3 rounded-lg transition flex-1 flex items-center justify-center ${

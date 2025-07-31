@@ -4,7 +4,7 @@ import { db } from "@/server/firebase/firebase";
 
 export async function POST(req) {
   try {
-    const { productId } = await req.json();
+    const { productId, userId } = await req.json();
 
     if (!productId) {
       return Response.json(
@@ -14,7 +14,7 @@ export async function POST(req) {
     }
 
     const productRef = db
-      .collection("users")
+      .collection("Users")
       .doc(userId)
       .collection("wishlist")
       .doc(productId);
