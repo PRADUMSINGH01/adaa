@@ -16,7 +16,6 @@ import {
   FiPlus,
 } from "react-icons/fi";
 import { useCart } from "@/app/CartContext";
-import { useRouter } from "next/navigation"; // or next/router
 import Toast from "../Alerts/NotificationToast";
 export interface Product {
   id: string;
