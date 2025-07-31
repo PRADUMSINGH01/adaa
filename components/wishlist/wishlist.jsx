@@ -162,7 +162,7 @@ const UserWishlist = () => {
                 className="bg-white rounded-xl shadow-sm border border-[#4A4A48]/10 overflow-hidden flex flex-col transition-all hover:shadow-md"
               >
                 <div className="relative aspect-[3/4] w-full">
-                  <Link href={`/kurti/${item.Slug}`}>
+                  <Link href={`/Kurti/${item.Slug}`}>
                     <Image
                       src={item.images[0] || "/placeholder-image.jpg"}
                       alt={item.name}
