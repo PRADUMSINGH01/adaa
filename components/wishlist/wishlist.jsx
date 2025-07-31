@@ -20,10 +20,8 @@ const UserWishlist = () => {
   const userId = session?.user.email;
 
   useEffect(() => {
-    if (!loading && userData?.wishlist && !userId) {
+    if (!loading && userData?.wishlist) {
       setWishlist(userData.wishlist);
-    } else {
-      router.push("/Login");
     }
   }, [userData, loading]);
 

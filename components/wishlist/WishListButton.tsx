@@ -5,7 +5,7 @@ import { IoClose, IoHeart } from "react-icons/io5";
 import { FiHeart } from "react-icons/fi";
 import addToWishlist from "@/server/AddWishlist";
 import { wishlist } from "@/server/types";
-
+import { useSession } from "next-auth/react";
 interface AlertProps {
   message: string;
   type?: "success" | "error";
@@ -61,9 +61,12 @@ const WishListButton = ({ product }: WishListButtonProps) => {
   const [alertType, setAlertType] = useState<"success" | "error">("success");
   const [liked, setLiked] = useState<boolean>(false);
   const IconButton = liked ? IoHeart : FiHeart;
-
+  const { data: session } = useSession();
   const handleClick = async () => {
     setLiked(true);
+    if (!session?.user.email) {
+      window.location.href = "/Login";
+    }
     try {
       const res = await addToWishlist(product);
       if (res?.success) {
