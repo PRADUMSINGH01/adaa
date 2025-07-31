@@ -11,16 +11,16 @@ interface FirebaseError extends Error {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized - No active session" },
-        { status: 401 }
-      );
-    }
+    // if (!session?.user?.email) {
+    //   return NextResponse.json(
+    //     { error: "Unauthorized - No active session" },
+    //     { status: 401 }
+    //   );
+    // }
 
-    const userEmail = session.user.email;
+    const userEmail = "hs947518@gmail.com"; //session.user.email;
 
     // Use UID instead of email for document ID
     const userDoc = await db.collection("Users").doc(userEmail).get();

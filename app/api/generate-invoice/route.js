@@ -1,233 +1,284 @@
-// /app/api/generate-invoice/route.js
-
 import { NextResponse } from "next/server";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fs from "fs";
+import path from "path";
 
-// Force the route to run on the Node.js runtime.
-// This is crucial for libraries like pdf-lib that rely on Node.js APIs.
 export const runtime = "nodejs";
 
-/**
- * This is the Route Handler for POST requests to generate an invoice.
- * It expects a JSON body with `productName` and `price`.
- * Example request body:
- * {
- * "productName": "Premium Leather Bag",
- * "price": 1250.00
- * }
- */
 export async function POST(req) {
   try {
-    // 1. Extract product details from the request body.
     const { productName, price } = await req.json();
-
-    // Basic validation to ensure required fields are present.
     if (!productName || typeof price !== "number") {
       return NextResponse.json(
-        { error: "Product name and a valid price are required." },
+        { error: "Product name and valid price required." },
         { status: 400 }
       );
     }
 
-    // 2. Generate dynamic invoice details.
-    const orderDetails = {
-      orderId: `INV-${Date.now()}`, // Generate a unique invoice ID
-      orderDate: new Date().toISOString(),
-      customer: {
-        name: "Valued Customer", // Generic customer name
-        address: "Billing address not provided",
-      },
-      items: [
-        {
-          id: 1,
-          description: productName,
-          quantity: 1,
-          price: price,
-        },
-      ],
-      taxRate: 0.18, // 18% GST
-    };
+    const orderId = `INV-${Date.now()}`;
+    const orderDate = new Date().toLocaleDateString("en-IN");
 
-    // 3. Create a new PDF Document.
+    // Create PDF document
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]); // A4 paper size
+    const page = pdfDoc.addPage([595, 842]);
     const { width, height } = page.getSize();
 
-    // 4. Embed standard fonts.
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const helveticaBoldFont = await pdfDoc.embedFont(
-      StandardFonts.HelveticaBold
-    );
+    // Embed fonts
+    const headerFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const bodyFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-    // Helper function for drawing text on the page.
-    const drawText = (text, options) => {
-      page.drawText(text, {
-        font: helveticaFont,
-        color: rgb(0.1, 0.1, 0.1),
-        ...options,
+    // Theme colors
+    const primary = rgb(224 / 255, 122 / 255, 95 / 255);
+    const accent = rgb(138 / 255, 155 / 255, 110 / 255);
+    const dark = rgb(74 / 255, 74 / 255, 72 / 255);
+    const white = rgb(1, 1, 1);
+
+    // Load and embed logo image from public folder
+    const logoPath = path.resolve("./public/logo.png");
+    let logoImage;
+    try {
+      const logoBytes = fs.readFileSync(logoPath);
+      logoImage = await pdfDoc.embedPng(logoBytes);
+    } catch {
+      logoImage = null;
+    }
+
+    // Header banner
+    page.drawRectangle({
+      x: 0,
+      y: height - 100,
+      width,
+      height: 100,
+      color: primary,
+    });
+
+    // Draw logo if available
+    if (logoImage) {
+      const logoDims = logoImage.scale(0.15);
+      page.drawImage(logoImage, {
+        x: 50,
+        y: height - logoDims.height - 20,
+        width: logoDims.width,
+        height: logoDims.height,
       });
-    };
+    } else {
+      // Fallback to text brand name
+      page.drawText("Navaa.store", {
+        x: 50,
+        y: height - 60,
+        size: 28,
+        font: headerFont,
+        color: white,
+      });
+    }
 
-    // --- Invoice Header ---
-    drawText("INVOICE", {
-      x: 50,
+    // Invoice title
+    page.drawText("INVOICE", {
+      x: width - 160,
       y: height - 60,
-      font: helveticaBoldFont,
-      size: 28,
+      size: 24,
+      font: headerFont,
+      color: white,
     });
-    drawText("Your Company Name", {
+
+    // Company info
+    page.drawText("123 Commerce Street, Seeloo, Rajasthan", {
       x: 50,
-      y: height - 90,
-      font: helveticaBoldFont,
-      size: 14,
-    });
-    drawText("123 Commerce Street, Seeloo, Rajasthan", {
-      x: 50,
-      y: height - 105,
+      y: height - 120,
       size: 10,
+      font: bodyFont,
+      color: dark,
     });
-    drawText("your-email@example.com", { x: 50, y: height - 120, size: 10 });
-
-    // --- Invoice Details (Right Aligned) ---
-    const rightAlignX = width - 200;
-    drawText("Invoice #:", {
-      x: rightAlignX,
-      y: height - 90,
-      font: helveticaBoldFont,
-      size: 12,
-    });
-    drawText(orderDetails.orderId, {
-      x: rightAlignX + 70,
-      y: height - 90,
-      size: 12,
-    });
-
-    drawText("Date:", {
-      x: rightAlignX,
-      y: height - 105,
-      font: helveticaBoldFont,
-      size: 12,
-    });
-    drawText(new Date(orderDetails.orderDate).toLocaleDateString("en-IN"), {
-      x: rightAlignX + 70,
-      y: height - 105,
-      size: 12,
-    });
-
-    // --- Bill To Section ---
-    drawText("BILL TO:", {
+    page.drawText("Email: care@navaa.store", {
       x: 50,
-      y: height - 160,
-      font: helveticaBoldFont,
+      y: height - 135,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+
+    // Invoice details right-aligned
+    const rightX = width - 200;
+    page.drawText(`Invoice # ${orderId}`, {
+      x: rightX,
+      y: height - 120,
       size: 12,
+      font: bodyFont,
+      color: dark,
     });
-    drawText(orderDetails.customer.name, { x: 50, y: height - 175, size: 10 });
+    page.drawText(`Date: ${orderDate}`, {
+      x: rightX,
+      y: height - 135,
+      size: 12,
+      font: bodyFont,
+      color: dark,
+    });
 
-    // --- Items Table ---
-    const tableTop = height - 230;
+    // Bill to
+    page.drawText("Bill To:", {
+      x: 50,
+      y: height - 180,
+      size: 12,
+      font: headerFont,
+      color: dark,
+    });
+    page.drawText("Valued Customer", {
+      x: 50,
+      y: height - 195,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+
+    // Table header
+    const tableY = height - 240;
+    page.drawText("Description", {
+      x: 55,
+      y: tableY,
+      size: 12,
+      font: headerFont,
+      color: dark,
+    });
+    page.drawText("Qty", {
+      x: 370,
+      y: tableY,
+      size: 12,
+      font: headerFont,
+      color: dark,
+    });
+    page.drawText("Unit Price", {
+      x: 420,
+      y: tableY,
+      size: 12,
+      font: headerFont,
+      color: dark,
+    });
+    page.drawText("Total", {
+      x: 500,
+      y: tableY,
+      size: 12,
+      font: headerFont,
+      color: dark,
+    });
     page.drawLine({
-      start: { x: 50, y: tableTop },
-      end: { x: width - 50, y: tableTop },
-      thickness: 1.5,
-      color: rgb(0, 0, 0),
+      start: { x: 50, y: tableY - 5 },
+      end: { x: width - 50, y: tableY - 5 },
+      thickness: 1,
+      color: accent,
     });
 
-    const tableHeaders = [
-      { text: "Description", x: 55 },
-      { text: "Qty", x: 370 },
-      { text: "Unit Price", x: 420 },
-      { text: "Total", x: 500 },
-    ];
-    tableHeaders.forEach((header) => {
-      drawText(header.text, {
-        x: header.x,
-        y: tableTop - 15,
-        font: helveticaBoldFont,
-        size: 10,
-      });
+    // Item row
+    const itemY = tableY - 25;
+    page.drawText(productName, {
+      x: 55,
+      y: itemY,
+      size: 10,
+      font: bodyFont,
+      color: dark,
     });
-
-    page.drawLine({
-      start: { x: 50, y: tableTop - 25 },
-      end: { x: width - 50, y: tableTop - 25 },
-      thickness: 0.5,
-      color: rgb(0.5, 0.5, 0.5),
+    page.drawText("1", {
+      x: 380,
+      y: itemY,
+      size: 10,
+      font: bodyFont,
+      color: dark,
     });
-
-    // --- Table Row for the Product ---
-    const item = orderDetails.items[0];
-    const itemY = tableTop - 40;
-    drawText(item.description, { x: 55, y: itemY, size: 10 });
-    drawText(item.quantity.toString(), { x: 370, y: itemY, size: 10 });
-    // FIX: Replaced "₹" with "Rs." to avoid encoding errors.
-    drawText(`Rs. ${item.price.toFixed(2)}`, { x: 420, y: itemY, size: 10 });
-    drawText(`Rs. ${(item.quantity * item.price).toFixed(2)}`, {
+    page.drawText(`Rs. ${price.toFixed(2)}`, {
+      x: 420,
+      y: itemY,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+    page.drawText(`Rs. ${price.toFixed(2)}`, {
       x: 500,
       y: itemY,
       size: 10,
+      font: bodyFont,
+      color: dark,
     });
 
-    // --- Totals Section ---
-    const subtotal = item.quantity * item.price;
-    const tax = subtotal * orderDetails.taxRate;
-    const grandTotal = subtotal + tax;
-
-    const totalsY = itemY - 60;
-    // FIX: Replaced "₹" with "Rs."
-    drawText("Subtotal:", { x: 420, y: totalsY, size: 10 });
-    drawText(`Rs. ${subtotal.toFixed(2)}`, { x: 500, y: totalsY, size: 10 });
-
-    drawText("Tax (18%):", { x: 420, y: totalsY - 20, size: 10 });
-    drawText(`Rs. ${tax.toFixed(2)}`, { x: 500, y: totalsY - 20, size: 10 });
-
-    page.drawLine({
-      start: { x: 410, y: totalsY - 30 },
-      end: { x: width - 50, y: totalsY - 30 },
-      thickness: 1,
-      color: rgb(0, 0, 0),
-    });
-
-    drawText("Grand Total:", {
+    // Totals
+    const subtotal = price;
+    const tax = subtotal * 0.18;
+    const totalY = itemY - 50;
+    page.drawText("Subtotal:", {
       x: 420,
-      y: totalsY - 45,
-      font: helveticaBoldFont,
-      size: 12,
-    });
-    drawText(`Rs. ${grandTotal.toFixed(2)}`, {
-      x: 500,
-      y: totalsY - 45,
-      font: helveticaBoldFont,
-      size: 12,
-    });
-
-    // --- Footer ---
-    drawText("Thank you for your business!", {
-      x: 50,
-      y: 80,
-      font: helveticaBoldFont,
-      size: 12,
-    });
-    drawText("Payment is due within 30 days of invoice date.", {
-      x: 50,
-      y: 65,
+      y: totalY,
       size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+    page.drawText(`Rs. ${subtotal.toFixed(2)}`, {
+      x: 500,
+      y: totalY,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+    page.drawText("Tax (18%):", {
+      x: 420,
+      y: totalY - 15,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+    page.drawText(`Rs. ${tax.toFixed(2)}`, {
+      x: 500,
+      y: totalY - 15,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+    page.drawLine({
+      start: { x: 410, y: totalY - 25 },
+      end: { x: width - 50, y: totalY - 25 },
+      thickness: 1,
+      color: accent,
+    });
+    page.drawText("Grand Total:", {
+      x: 420,
+      y: totalY - 40,
+      size: 12,
+      font: headerFont,
+      color: dark,
+    });
+    page.drawText(`Rs. ${(subtotal + tax).toFixed(2)}`, {
+      x: 500,
+      y: totalY - 40,
+      size: 12,
+      font: headerFont,
+      color: dark,
     });
 
-    // 5. Serialize the PDF to bytes.
-    const pdfBytes = await pdfDoc.save();
+    // Footer
+    page.drawText("Thank you for shopping at Navaa.store", {
+      x: 50,
+      y: 50,
+      size: 10,
+      font: bodyFont,
+      color: dark,
+    });
+    page.drawText("Payment due within 30 days", {
+      x: 50,
+      y: 35,
+      size: 8,
+      font: bodyFont,
+      color: dark,
+    });
 
-    // 6. Send the PDF to the client as a downloadable file.
+    const pdfBytes = await pdfDoc.save();
     return new NextResponse(pdfBytes, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="invoice-${orderDetails.orderId}.pdf"`,
+        "Content-Disposition": `attachment; filename="invoice-${orderId}.pdf"`,
       },
     });
-  } catch (error) {
-    console.error("Failed to generate invoice:", error);
+  } catch (e) {
+    console.error(e);
     return NextResponse.json(
-      { error: "An unexpected error occurred while generating the invoice." },
+      { error: "Could not generate invoice." },
       { status: 500 }
     );
   }

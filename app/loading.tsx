@@ -8,7 +8,7 @@ export default function Loading() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-neutral">
       <FiLoader className="text-primary text-6xl animate-spin mb-6" />
       <h1 className="font-playfair text-4xl font-bold text-dark tracking-wider">
-        Adaa.com
+        Navaa.store
       </h1>
     </div>
   );

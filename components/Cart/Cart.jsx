@@ -35,7 +35,7 @@ const CartPage = () => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
-  const [address, setaddress] = useState(userData.Address[0] || []);
+  const [address, setaddress] = useState(userData.Address[0]);
   const subtotal = totalPrice;
   const freeShippingThreshold = 50;
   const shipping =
@@ -119,11 +119,18 @@ const CartPage = () => {
         <main className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="bg-white rounded-xl shadow-lg p-6">
             <>
-              <p className="text-gray-600 mb-6">
-                Select a delivery address or add a new one. Your order will be
-                shipped to this address.
-              </p>
-
+              <div className=" flex justify-between items-center ">
+                <p className="text-gray-600 mb-6">
+                  Select a delivery address. Your order will be deliver to this
+                  address.
+                </p>
+                <Link
+                  href="/User/Add-Address"
+                  className="inline-block py-3 px-6 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-[#D57A7A] transition"
+                >
+                  Add New Address
+                </Link>
+              </div>
               <div className="w-full">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {userData && userData?.Address?.length > 0 ? (
@@ -133,12 +140,6 @@ const CartPage = () => {
                         className={`group border rounded-xl p-5 bg-white shadow-sm relative transition-all duration-300 cursor-pointer hover:border-primary/60 hover:shadow-md ${"border-primary border-2 bg-primary/5"}`}
                         onClick={() => setaddress(address)}
                       >
-                        {address.isDefault && (
-                          <span className="absolute top-3 right-3 bg-primary text-white text-xs px-2 py-1 rounded-full shadow-md">
-                            Default
-                          </span>
-                        )}
-
                         <div className="flex items-start gap-4">
                           <div className="bg-primary/10 rounded-full p-2">
                             <svg
@@ -204,7 +205,9 @@ const CartPage = () => {
           </div>
         </main>
         {/* Shipping Address  */}
-        {address.length > 0 ? (
+
+        {console.log(userData.Address.length)}
+        {userData.Address.length > 1 ? (
           <main className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h1 className="text-2xl font-bold mb-6 font-playfair flex items-center">
@@ -236,31 +239,31 @@ const CartPage = () => {
                         </div>
                         <div className="text-sm text-dark space-y-1">
                           <h3 className="font-semibold text-base leading-snug">
-                            {address.name}
+                            {address?.name}
                           </h3>
 
                           <p className="text-muted text-sm leading-tight">
                             <span className="font-medium"> </span>{" "}
-                            {address.Address}
+                            {address?.Address}
                           </p>
                           <p className="text-muted text-sm leading-tight">
                             <span className="font-medium">City : </span>{" "}
-                            {address.city}
+                            {address?.city}
                           </p>
 
                           <p className="text-muted text-sm leading-tight">
                             <span className="font-medium">Pincode :</span>{" "}
-                            {address.pincode}
+                            {address?.pincode}
                           </p>
                           <p className="text-muted text-sm leading-tight">
-                            {address.landmark}
+                            {address?.landmark}
                           </p>
                           <p className="text-muted text-sm">
-                            {address.country}
+                            {address?.country}
                           </p>
                           <p className="text-muted text-sm">
                             <span className="font-medium">Phone:</span>{" "}
-                            {address.phone}
+                            {address?.phone}
                           </p>
                         </div>
                       </div>
@@ -568,11 +571,16 @@ const CartPage = () => {
 
                   <div className="mt-6">
                     {/* Link to Address page */}
-
-                    <RazorpayButton
-                      price={total.toFixed(2)}
-                      Address={address}
-                    />
+                    {address ? (
+                      <RazorpayButton
+                        price={total.toFixed(2)}
+                        Address={address}
+                      />
+                    ) : (
+                      <div className="p-3 bg-accent text-white rounded-md flex justify-center w-full">
+                        Please Add Address Before placing{" "}
+                      </div>
+                    )}
 
                     <p className="text-center text-xs text-gray-500 mt-3">
                       By placing your order, you agree to our{" "}

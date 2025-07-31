@@ -163,13 +163,13 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
     <button
       onClick={handlePayment}
       disabled={!sdkReady}
-      className={`py-2 px-6 rounded-2xl shadow-md font-poppins transition-all ${
+      className={`py-2 px-6 rounded-2xl shadow-md font-poppins transition-all w-full ${
         sdkReady
           ? "bg-[#E07A5F] hover:bg-[#D57A7A] text-[#F8F5F2]"
           : "bg-gray-300 text-gray-600 cursor-not-allowed"
       }`}
     >
-      {sdkReady ? `Pay ₹${price}` : "Loading..."}
+      {sdkReady ? `Pay ₹ ${price}` : "Loading..."}
     </button>
   );
 };
