@@ -1,10 +1,12 @@
 // src/app/cart/page.tsx (or your CartPage file)
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUserData } from "@/components/Context/UserContext";
 import { useRouter } from "next/navigation";
 import RazorpayButton from "../CheckOut/Checkout";
 import Link from "next/link";
+import { FaExclamationCircle, FaTimes } from "react-icons/fa";
+
 import {
   FiShoppingBag,
   FiX,
@@ -35,7 +37,9 @@ const CartPage = () => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
-  const [address, setaddress] = useState(userData.Address[0]);
+  const [address, setaddress] = useState(null);
+  const [Alert, setAlert] = useState(false);
+
   const subtotal = totalPrice;
   const freeShippingThreshold = 50;
   const shipping =
@@ -47,6 +51,18 @@ const CartPage = () => {
   const taxRate = 0.08;
   const tax = Math.max(0, subtotal - discount) * taxRate;
   const total = Math.max(0, subtotal - discount) + shipping + tax;
+
+  useEffect(() => {
+    if (
+      userData &&
+      Array.isArray(userData.Address) &&
+      userData.Address.length > 0
+    ) {
+      setaddress(userData.Address[0]);
+    } else if (userData) {
+      setAlert(true);
+    }
+  }, [address]);
 
   const handleApplyCoupon = () => {
     // ... (your existing coupon logic)
@@ -90,12 +106,30 @@ const CartPage = () => {
       </div>
     );
   }
-
-  // Sample address data
-
   return (
     <div className="min-h-screen bg-[#F5F0E6] font-poppins text-[#4A4A48]">
       {/* Updated Header with Progress Bar */}
+      {Alert && (
+        <div
+          role="alert"
+          className="flex items-start z-50 bg-white border-l-4 border-red-500 p-4 shadow-lg rounded-md space-x-3 animate-fade-in fixed top-4 right-4 max-w-sm"
+        >
+          <FaExclamationCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-semibold text-red-600">Address Required</p>
+            <p className="text-sm text-gray-600">
+              Please add an address before placing your order.
+            </p>
+          </div>
+          <button
+            onClick={() => setAlert(false)}
+            aria-label="Dismiss"
+            className="text-gray-400 hover:text-gray-600 transition"
+          >
+            <FaTimes className="w-5 h-5" />
+          </button>
+        </div>
+      )}
       <header className="bg-white shadow-sm  top-0 z-50 py-3 h-30">
         <div className="container mx-auto px-2.5 sm:px-4 flex items-center justify-between gap-2 sm:gap-3 md:gap-4">
           <Link
@@ -119,14 +153,14 @@ const CartPage = () => {
         <main className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="bg-white rounded-xl shadow-lg p-6">
             <>
-              <div className=" flex justify-between items-center ">
+              <div className=" flex flex-col justify-between items-center ">
                 <p className="text-gray-600 mb-6">
                   Select a delivery address. Your order will be deliver to this
                   address.
                 </p>
                 <Link
                   href="/User/Add-Address"
-                  className="inline-block py-3 px-6 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-[#D57A7A] transition"
+                  className="inline-block py-3 px-6 mb-3 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-[#D57A7A] transition"
                 >
                   Add New Address
                 </Link>
@@ -206,7 +240,6 @@ const CartPage = () => {
         </main>
         {/* Shipping Address  */}
 
-        {console.log(userData.Address.length)}
         {userData.Address.length > 1 ? (
           <main className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="bg-white rounded-xl shadow-lg p-6">
@@ -571,16 +604,11 @@ const CartPage = () => {
 
                   <div className="mt-6">
                     {/* Link to Address page */}
-                    {address ? (
-                      <RazorpayButton
-                        price={total.toFixed(2)}
-                        Address={address}
-                      />
-                    ) : (
-                      <div className="p-3 bg-accent text-white rounded-md flex justify-center w-full">
-                        Please Add Address Before placing{" "}
-                      </div>
-                    )}
+
+                    <RazorpayButton
+                      price={total.toFixed(2)}
+                      Address={address}
+                    />
 
                     <p className="text-center text-xs text-gray-500 mt-3">
                       By placing your order, you agree to our{" "}
@@ -625,7 +653,7 @@ const CartPage = () => {
           <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             <div>
               <h3 className="font-playfair text-lg sm:text-xl font-bold mb-3">
-                Fashion Boutique
+                Navaa.store
               </h3>
               <p className="text-gray-300 text-xs sm:text-sm">
                 Premium quality fashion for the modern individual.
@@ -702,7 +730,7 @@ const CartPage = () => {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-6 sm:mt-8 pt-5 sm:pt-6 text-center text-xs text-gray-400">
-            © {new Date().getFullYear()} Fashion Boutique. All rights reserved.
+            © {new Date().getFullYear()} Navaa.store. All rights reserved.
           </div>
         </div>
       </footer>
