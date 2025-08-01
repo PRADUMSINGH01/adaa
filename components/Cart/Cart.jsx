@@ -60,7 +60,9 @@ const CartPage = () => {
     ) {
       setaddress(userData.Address[0]);
     } else if (userData) {
-      setAlert(true);
+      setTimeout(() => {
+        setAlert(true);
+      }, 300);
     }
   }, [address]);
 
