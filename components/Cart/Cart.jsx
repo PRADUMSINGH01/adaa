@@ -37,7 +37,7 @@ const CartPage = () => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponMessage, setCouponMessage] = useState("");
-  const [address, setaddress] = useState(null);
+  const [address, setaddress] = useState([]);
   const [Alert, setAlert] = useState(false);
 
   const subtotal = totalPrice;
@@ -59,10 +59,6 @@ const CartPage = () => {
       userData.Address.length > 0
     ) {
       setaddress(userData.Address[0]);
-    } else if (userData) {
-      setTimeout(() => {
-        setAlert(true);
-      }, 300);
     }
   }, [address]);
 
@@ -98,6 +94,13 @@ const CartPage = () => {
     setCouponMessage("");
   };
 
+  const CheckAddress = () => {
+    if (userData.Address.length >= 0) {
+      setAlert(true);
+    } else {
+      console.log("save");
+    }
+  };
   if (!isInitialized) {
     return (
       <div className="min-h-screen bg-[#F5F0E6] flex items-center justify-center p-4">
@@ -108,6 +111,7 @@ const CartPage = () => {
       </div>
     );
   }
+
   return (
     <div className="min-h-screen bg-[#F5F0E6] font-poppins text-[#4A4A48]">
       {/* Updated Header with Progress Bar */}
@@ -160,12 +164,6 @@ const CartPage = () => {
                   Select a delivery address. Your order will be deliver to this
                   address.
                 </p>
-                <Link
-                  href="/User/Add-Address"
-                  className="inline-block py-3 px-6 mb-3 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-[#D57A7A] transition"
-                >
-                  Add New Address
-                </Link>
               </div>
               <div className="w-full">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -517,7 +515,7 @@ const CartPage = () => {
               </div>
 
               {/* Order Summary */}
-              <div className="lg:w-[50%] ">
+              <div className="lg:w-[50%] " onClick={() => CheckAddress()}>
                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 sticky top-20">
                   <h2 className="text-lg sm:text-xl font-bold mb-4 font-playfair border-b pb-2.5">
                     Order Summary
@@ -606,7 +604,6 @@ const CartPage = () => {
 
                   <div className="mt-6">
                     {/* Link to Address page */}
-
                     <RazorpayButton
                       price={total.toFixed(2)}
                       Address={address}

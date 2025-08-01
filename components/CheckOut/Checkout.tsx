@@ -162,7 +162,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
   return (
     <button
       onClick={handlePayment}
-      disabled={!sdkReady}
+      disabled={!sdkReady && Address.length === 0}
       className={`py-2 px-6 rounded-2xl shadow-md font-poppins transition-all w-full ${
         sdkReady
           ? "bg-[#E07A5F] hover:bg-[#D57A7A] text-[#F8F5F2]"
