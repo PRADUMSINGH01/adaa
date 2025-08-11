@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { useCart } from "@/app/CartContext"; // Adjust path as needed
 import { useRouter } from "next/navigation";
+import logo from "@/app/(Images)/logo.png";
 interface RazorpayButtonProps {
   price: number;
   Address: string[];
@@ -31,20 +32,7 @@ interface RazorpayOptions {
   theme?: {
     color: string;
   };
-  config?: {
-    display: {
-      blocks: {
-        card: {
-          name: string;
-          instruments: { method: string }[];
-        };
-      };
-      sequence: string[];
-      preferences: {
-        show_default_blocks: boolean;
-      };
-    };
-  };
+  // The 'config' property is no longer needed here
 }
 
 declare global {
@@ -77,6 +65,12 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
       return;
     }
 
+    // Ensure an address is selected before proceeding
+    if (Address.length === 0) {
+      alert("Please select a shipping address.");
+      return;
+    }
+
     try {
       // 1. Create order
       const res = await fetch("/api/Payment", {
@@ -92,9 +86,9 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
         amount: orderData.amount,
         currency: orderData.currency || "INR",
-        name: "Your Company Name",
+        name: "Navaa.store",
         description: "Purchase Description",
-        image: "/logo.png",
+        image: `${logo}`, // Make sure this path is correct in your public folder
         order_id: orderData.id,
         handler: async (response: RazorpayResponse) => {
           const verifyRes = await fetch("/api/Verify", {
@@ -123,30 +117,18 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
           }
         },
         prefill: {
-          name: "",
-          email: "",
-          contact: "",
+          name: session?.user?.name || "",
+          email: session?.user?.email || "",
+          contact: "", // You can prefill this if you have the user's phone number
         },
         theme: {
           color: "#E07A5F",
         },
-        config: {
-          display: {
-            blocks: {
-              card: {
-                name: "Card Payments",
-                instruments: [{ method: "card" }],
-              },
-            },
-            sequence: ["card"],
-            preferences: {
-              show_default_blocks: false,
-            },
-          },
-        },
+        // REMOVED: The 'config' block that restricted payment to 'card' only.
+        // Razorpay will now show all available payment methods by default.
       };
 
-      const rzp = new window.Razorpay!(options);
+      const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -162,9 +144,10 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ price, Address }) => {
   return (
     <button
       onClick={handlePayment}
-      disabled={!sdkReady && Address.length === 0}
+      // Corrected disabled logic: button is disabled if SDK is not ready OR if no address is selected.
+      disabled={!sdkReady || Address.length === 0}
       className={`py-2 px-6 rounded-2xl shadow-md font-poppins transition-all w-full ${
-        sdkReady
+        sdkReady && Address.length > 0
           ? "bg-[#E07A5F] hover:bg-[#D57A7A] text-[#F8F5F2]"
           : "bg-gray-300 text-gray-600 cursor-not-allowed"
       }`}
